@@ -1,0 +1,212 @@
+.previewSection h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+.exportSettingsInfo {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #f0f8ff;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--tiktok-blue);
+}
+
+.exportSettingsInfo p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.separator {
+  color: var(--text-secondary);
+  margin: 0 8px;
+}
+
+.customSizeBadge {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: var(--tiktok-pink);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exportPreview {
+  width: 100%;
+  background: #E5E5E5;
+  padding: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.exportContent {
+  background: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.tiktokComment {
+  background: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.commentMain {
+  display: flex;
+  align-items: flex-start;
+}
+
+.avatarContainer {
+  flex-shrink: 0;
+}
+
+.commentAvatar,
+.defaultAvatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.defaultAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.commentRight {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
+}
+
+.commentHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.usernameContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.commentUsername {
+  font-weight: 700;
+  color: #161823;
+  line-height: 1;
+}
+
+.verifiedBadge {
+  background: #20D5EC;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.commentText {
+  color: #161823;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  font-weight: 400;
+}
+
+.commentFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.commentDate, .commentReply {
+  color: rgba(22, 24, 35, 0.5);
+  font-weight: 400;
+}
+
+.commentReply {
+  font-weight: 600;
+  color: rgba(22, 24, 35, 0.5);
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(22, 24, 35, 0.5);
+}
+
+.heartIcon {
+  color: rgba(22, 24, 35, 0.5);
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+}
+
+.likeCount {
+  font-weight: 400;
+}
+
+.dislikeIcon {
+  transform: translateY(4px);
+}
+
+@media (max-width: 768px) {
+  .exportPreview {
+    padding: 20px;
+  }
+
+  .exportSettingsInfo p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .customSizeBadge {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .exportPreview {
+    padding: 15px;
+  }
+
+  .previewSection h3 {
+    font-size: 16px;
+  }
+
+  .exportSettingsInfo {
+    padding: 10px;
+    font-size: 13px;
+  }
+}

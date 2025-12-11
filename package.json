@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
+    "i18next": "^25.7.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-i18next": "^16.4.1",
     "react-icons": "^5.5.0"
   },
   "devDependencies": {

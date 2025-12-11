@@ -1,0 +1,77 @@
+.controlsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.exportButton {
+  width: 100%;
+  color: white;
+  height: 56px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: var(--transition);
+}
+
+.exportButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.exportButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.downloadIcon {
+  font-size: 18px;
+}
+
+.exportInfo {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.exportInfo p {
+  margin: 8px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .exportButton {
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .exportInfo {
+    padding: 12px;
+    font-size: 13px;
+  }
+}

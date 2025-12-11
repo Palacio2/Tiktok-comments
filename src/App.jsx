@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import Header from './components/Header/Header'
 import CommentForm from './components/CommentForm/CommentForm'
 import CommentImageExporter from './components/CommentImageExporter/CommentImageExporter'
 import { loadComments, saveComment, clearComments } from './utils/storage'
 import styles from './App.module.css'
 
 function App() {
+  const { t } = useTranslation();
   const [comments, setComments] = useState([])
   const [currentComment, setCurrentComment] = useState(null)
-  const [language, setLanguage] = useState('uk')
   const [exportSettings, setExportSettings] = useState({
     format: 'png', // 'png' або 'svg'
     width: 1080,
@@ -40,10 +42,6 @@ function App() {
     setComments(updatedComments)
   }, [])
 
-  const toggleLanguage = useCallback(() => {
-    setLanguage(prev => prev === 'uk' ? 'en' : 'uk')
-  }, [])
-
   const updateExportSettings = useCallback((newSettings) => {
     setExportSettings(prev => ({ ...prev, ...newSettings }))
   }, [])
@@ -51,28 +49,12 @@ function App() {
   return (
     <div className={styles.app}>
       <div className={styles.container}>
-        <header className={styles.header}>
-          <div className={styles.headerTop}>
-            <h1>TikTok Comment Generator</h1>
-            <button 
-              className={styles.languageToggle}
-              onClick={toggleLanguage}
-              aria-label={language === 'uk' ? 'Switch to English' : 'Перемкнути на українську'}
-            >
-              <span className={styles.globeIcon}>🌐</span>
-              <span>{language === 'uk' ? 'UA' : 'EN'}</span>
-            </button>
-          </div>
-          <p className={styles.subtitle}>
-            {language === 'uk' ? 'Створюйте реалістичні скріншоти коментарів' : 'Create realistic comment screenshots'}
-          </p>
-        </header>
+        <Header />
 
         <div className={styles.mainContent}>
           <div className={styles.formWrapper}>
             <CommentForm 
               onGenerate={handleGenerateComment} 
-              language={language}
               exportSettings={exportSettings}
               updateExportSettings={updateExportSettings}
             />
@@ -81,14 +63,14 @@ function App() {
               <button 
                 className={styles.clearButton}
                 onClick={() => {
-                  if (window.confirm(language === 'uk' ? 'Видалити історію?' : 'Clear history?')) {
+                  if (window.confirm(t('confirmClearHistory'))) {
                     clearComments()
                     setComments([])
                     setCurrentComment(null)
                   }
                 }}
               >
-                {language === 'uk' ? 'Очистити історію' : 'Clear history'}
+                {t('clearHistory')}
               </button>
             )}
           </div>
@@ -97,7 +79,6 @@ function App() {
             <div className={styles.previewWrapper}>
               <CommentImageExporter 
                 comment={currentComment} 
-                language={language}
                 exportSettings={exportSettings}
               />
             </div>
