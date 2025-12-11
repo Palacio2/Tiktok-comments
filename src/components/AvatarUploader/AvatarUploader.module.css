@@ -1,0 +1,189 @@
+.simpleUploader {
+  width: 100%;
+  position: relative;
+}
+
+.uploadBtn {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(45deg, var(--bg-primary), var(--bg-secondary));
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadBtn:hover {
+  border-color: var(--tiktok-blue);
+  color: var(--tiktok-blue);
+  background: linear-gradient(45deg, rgba(37, 244, 238, 0.05), rgba(37, 244, 238, 0.1));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(37, 244, 238, 0.15);
+}
+
+.uploadBtn:active {
+  transform: translateY(0);
+}
+
+.uploadBtn i {
+  color: var(--tiktok-blue);
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.uploadBtn:hover i {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.uploadBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(37, 244, 238, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.uploadBtn:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.avatarPreview {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  background: linear-gradient(45deg, rgba(254, 44, 85, 0.05), rgba(37, 244, 238, 0.05));
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  transition: var(--transition);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.avatarPreview:hover {
+  border-color: var(--tiktok-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(254, 44, 85, 0.1);
+}
+
+.avatarImg {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
+}
+
+.avatarPreview:hover .avatarImg {
+  transform: scale(1.05) rotate(5deg);
+  border-color: var(--tiktok-pink);
+}
+
+.removeBtn {
+  background: linear-gradient(45deg, #ff4757, #ff3838);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+  margin-left: auto;
+}
+
+.removeBtn:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+}
+
+.removeBtn:active {
+  transform: scale(0.95);
+}
+
+.fileInput {
+  display: none;
+}
+
+/* Ефект drag and drop */
+.simpleUploader.dragover .uploadBtn {
+  border-color: var(--tiktok-pink);
+  background: linear-gradient(45deg, rgba(254, 44, 85, 0.1), rgba(254, 44, 85, 0.05));
+  color: var(--tiktok-pink);
+}
+
+.simpleUploader.dragover .uploadBtn i {
+  animation: bounce 0.5s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-5px); }
+}
+
+/* Інформація про файл */
+.fileInfo {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  opacity: 0.8;
+  transition: var(--transition);
+}
+
+.simpleUploader:hover .fileInfo {
+  opacity: 1;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .uploadBtn {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  
+  .avatarImg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .removeBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .avatarPreview {
+    gap: 15px;
+    padding: 12px;
+  }
+  
+  .avatarImg {
+    width: 45px;
+    height: 45px;
+  }
+}

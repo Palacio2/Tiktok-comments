@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* TikTok Brand Colors */
+  --tiktok-black: #161823;
+  --tiktok-white: #FFFFFF;
+  --tiktok-pink: #FE2C55;
+  --tiktok-blue: #25F4EE;
+  
+  /* UI Colors */
+  --bg-page: #F2F2F2;
+  --bg-card: #FFFFFF;
+  --text-main: #161823;
+  --text-secondary: rgba(22, 24, 35, 0.5); /* Реальний колір сірого тексту в TikTok */
+  --border-color: rgba(22, 24, 35, 0.12);
+  --input-bg: #F1F1F2; /* Колір інпутів у TikTok */
+  
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  
+  --transition: all 0.2s ease-in-out;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
