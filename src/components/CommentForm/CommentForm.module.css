@@ -320,3 +320,26 @@
     gap: 10px;
   }
 }
+
+.autoBadge {
+  background: var(--tiktok-blue);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.autoHint {
+  display: block;
+  margin-top: 8px;
+  color: var(--tiktok-blue);
+  font-style: italic;
+  font-size: 12px;
+}
+
+.dimensionInput input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

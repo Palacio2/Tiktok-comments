@@ -29,6 +29,26 @@ const formatLikeCount = (count) => {
   return (count / 1000).toFixed(count % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k'
 }
 
+// Функція для розрахунку розмірів на основі ширини
+const calculateSizes = (baseWidth) => {
+  const scale = baseWidth / 1080 // Стандартна ширина
+  
+  return {
+    padding: Math.max(20, 40 * scale),
+    avatarSize: Math.max(50, 110 * scale),
+    avatarFontSize: Math.max(20, 48 * scale),
+    usernameFontSize: Math.max(20, 38 * scale),
+    verifiedSize: Math.max(16, 32 * scale),
+    verifiedFontSize: Math.max(10, 18 * scale),
+    textFontSize: Math.max(24, 42 * scale),
+    dateFontSize: Math.max(20, 36 * scale),
+    iconFontSize: Math.max(24, 46 * scale),
+    likeFontSize: Math.max(18, 34 * scale),
+    gap: Math.max(16, 32 * scale),
+    actionGap: Math.max(20, 40 * scale)
+  }
+}
+
 function CommentImageExporter({ comment, language, exportSettings }) {
   const exportRef = useRef(null)
   const [isExporting, setIsExporting] = useState(false)
@@ -40,20 +60,20 @@ function CommentImageExporter({ comment, language, exportSettings }) {
     if (exportRef.current) {
       const updateHeight = () => {
         const height = exportRef.current.scrollHeight
-        const minHeight = exportSettings.height || 600
-        setPreviewHeight(Math.max(minHeight, height + 60))
+        const minHeight = exportSettings.customSize ? exportSettings.height : Math.max(600, exportSettings.height)
+        setPreviewHeight(Math.max(minHeight, height))
       }
       
       updateHeight()
       const timer = setTimeout(updateHeight, 100)
       return () => clearTimeout(timer)
     }
-  }, [comment, exportSettings.height])
+  }, [comment, exportSettings])
   
   const handleExport = useCallback(async () => {
     if (!exportRef.current || isExporting) return
     
-    setIsExportting(true)
+    setIsExporting(true)
     
     try {
       const width = exportSettings.width || 1080
@@ -62,14 +82,14 @@ function CommentImageExporter({ comment, language, exportSettings }) {
       const options = {
         width: width,
         height: height,
-        style: {
-          width: `${width}px`,
-          height: `${height}px`,
-          backgroundColor: 'white',
-        },
+        backgroundColor: 'white',
         quality: 1.0,
-        pixelRatio: 2,
+        pixelRatio: exportSettings.format === 'svg' ? 1 : 2,
         cacheBust: true,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }
       }
       
       let dataUrl
@@ -94,7 +114,7 @@ function CommentImageExporter({ comment, language, exportSettings }) {
         ? `Не вдалося експортувати як ${exportSettings.format.toUpperCase()}. Спробуйте ще раз.` 
         : `Failed to export as ${exportSettings.format.toUpperCase()}. Please try again.`)
     } finally {
-      setIsExportting(false)
+      setIsExporting(false)
     }
   }, [isExporting, previewHeight, language, exportSettings])
 
@@ -114,7 +134,17 @@ function CommentImageExporter({ comment, language, exportSettings }) {
   if (!comment) return null
   
   const formattedLikes = formatLikeCount(comment.likes)
-  const finalHeight = exportSettings.customSize ? exportSettings.height : previewHeight
+  const finalHeight = exportSettings.customSize || exportSettings.height !== 'auto' 
+  ? (exportSettings.height === 'auto' ? previewHeight : exportSettings.height) 
+  : previewHeight
+  const sizes = calculateSizes(exportSettings.width)
+  
+  // Стилі для контейнера експорту
+  const exportContentStyle = {
+    width: `${exportSettings.width}px`,
+    height: `${finalHeight}px`,
+    backgroundColor: 'white'
+  }
 
   return (
     <div className={styles.exporterContainer}>
@@ -136,13 +166,19 @@ function CommentImageExporter({ comment, language, exportSettings }) {
         </div>
         
         <div className={styles.exportPreview}>
-          <div className={styles.exportContent} ref={exportRef}>
-            <div className={styles.tiktokComment} style={{
-              padding: `${Math.min(40, 40 * (exportSettings.width / 1080))}px`
-            }}>
-              <div className={styles.commentMain} style={{
-                gap: `${Math.min(32, 32 * (exportSettings.width / 1080))}px`
-              }}>
+          <div 
+            className={styles.exportContent} 
+            ref={exportRef}
+            style={exportContentStyle}
+          >
+            <div 
+              className={styles.tiktokComment}
+              style={{ padding: `${sizes.padding}px` }}
+            >
+              <div 
+                className={styles.commentMain}
+                style={{ gap: `${sizes.gap}px` }}
+              >
                 <div className={styles.commentLeft}>
                   <div className={styles.avatarContainer}>
                     {comment.avatar ? (
@@ -151,8 +187,8 @@ function CommentImageExporter({ comment, language, exportSettings }) {
                         alt={`${language === 'uk' ? 'Аватар' : 'Avatar'} ${comment.username}`}
                         className={styles.commentAvatar}
                         style={{
-                          width: `${Math.min(110, 110 * (exportSettings.width / 1080))}px`,
-                          height: `${Math.min(110, 110 * (exportSettings.width / 1080))}px`
+                          width: `${sizes.avatarSize}px`,
+                          height: `${sizes.avatarSize}px`
                         }}
                       />
                     ) : (
@@ -160,9 +196,9 @@ function CommentImageExporter({ comment, language, exportSettings }) {
                         className={styles.defaultAvatar} 
                         style={{ 
                           backgroundColor: avatarData.color,
-                          width: `${Math.min(110, 110 * (exportSettings.width / 1080))}px`,
-                          height: `${Math.min(110, 110 * (exportSettings.width / 1080))}px`,
-                          fontSize: `${Math.min(48, 48 * (exportSettings.width / 1080))}px`
+                          width: `${sizes.avatarSize}px`,
+                          height: `${sizes.avatarSize}px`,
+                          fontSize: `${sizes.avatarFontSize}px`
                         }}
                       >
                         {avatarData.initial}
@@ -174,62 +210,73 @@ function CommentImageExporter({ comment, language, exportSettings }) {
                 <div className={styles.commentRight}>
                   <div className={styles.commentHeader}>
                     <div className={styles.usernameContainer}>
-                      <div className={styles.commentUsername} style={{
-                        fontSize: `${Math.min(38, 38 * (exportSettings.width / 1080))}px`
-                      }}>
+                      <div 
+                        className={styles.commentUsername}
+                        style={{ fontSize: `${sizes.usernameFontSize}px` }}
+                      >
                         {comment.username}
                       </div>
                       {comment.verified && (
-                        <span className={styles.verifiedBadge} style={{
-                          width: `${Math.min(32, 32 * (exportSettings.width / 1080))}px`,
-                          height: `${Math.min(32, 32 * (exportSettings.width / 1080))}px`,
-                          fontSize: `${Math.min(18, 18 * (exportSettings.width / 1080))}px`
-                        }}>
+                        <span 
+                          className={styles.verifiedBadge}
+                          style={{
+                            width: `${sizes.verifiedSize}px`,
+                            height: `${sizes.verifiedSize}px`,
+                            fontSize: `${sizes.verifiedFontSize}px`
+                          }}
+                        >
                           ✓
                         </span>
                       )}
                     </div>
-                    <div className={styles.commentText} style={{
-                      fontSize: `${Math.min(42, 42 * (exportSettings.width / 1080))}px`
-                    }}>
+                    <div 
+                      className={styles.commentText}
+                      style={{ fontSize: `${sizes.textFontSize}px` }}
+                    >
                       {comment.commentText}
                     </div>
                   </div>
                   
                   <div className={styles.commentFooter}>
                     <div className={styles.footerLeft}>
-                      <div className={styles.commentDate} style={{
-                        fontSize: `${Math.min(36, 36 * (exportSettings.width / 1080))}px`
-                      }}>
+                      <div 
+                        className={styles.commentDate}
+                        style={{ fontSize: `${sizes.dateFontSize}px` }}
+                      >
                         {formatDate(comment.date)}
                       </div>
-                      <div className={styles.commentReply} style={{
-                        fontSize: `${Math.min(36, 36 * (exportSettings.width / 1080))}px`
-                      }}>
+                      <div 
+                        className={styles.commentReply}
+                        style={{ fontSize: `${sizes.dateFontSize}px` }}
+                      >
                         {language === 'uk' ? 'Відповісти' : 'Reply'}
                       </div>
                     </div>
                     
                     <div className={styles.footerRight}>
-                      <div className={styles.actionRow} style={{
-                        gap: `${Math.min(40, 40 * (exportSettings.width / 1080))}px`
-                      }}>
+                      <div 
+                        className={styles.actionRow}
+                        style={{ gap: `${sizes.actionGap}px` }}
+                      >
                         <div className={styles.actionButton}>
-                          <IoMdHeartEmpty className={styles.heartIcon} style={{
-                            fontSize: `${Math.min(46, 46 * (exportSettings.width / 1080))}px`
-                          }} />
+                          <IoMdHeartEmpty 
+                            className={styles.heartIcon}
+                            style={{ fontSize: `${sizes.iconFontSize}px` }}
+                          />
                           {formattedLikes && (
-                            <span className={styles.likeCount} style={{
-                              fontSize: `${Math.min(34, 34 * (exportSettings.width / 1080))}px`
-                            }}>
+                            <span 
+                              className={styles.likeCount}
+                              style={{ fontSize: `${sizes.likeFontSize}px` }}
+                            >
                               {formattedLikes}
                             </span>
                           )}
                         </div>
                         <div className={styles.actionButton}>
-                          <BiDislike className={styles.dislikeIcon} style={{
-                            fontSize: `${Math.min(48, 48 * (exportSettings.width / 1080))}px`
-                          }} />
+                          <BiDislike 
+                            className={styles.dislikeIcon}
+                            style={{ fontSize: `${sizes.iconFontSize}px` }}
+                          />
                         </div>
                       </div>
                     </div>

@@ -9,11 +9,11 @@ function App() {
   const [currentComment, setCurrentComment] = useState(null)
   const [language, setLanguage] = useState('uk')
   const [exportSettings, setExportSettings] = useState({
-    format: 'png', // 'png' або 'svg'
-    width: 1080,
-    height: 600,
-    customSize: false
-  })
+  format: 'png',
+  width: 1080,
+  height: 'auto',
+  customSize: false
+})
 
   useEffect(() => {
     const savedComments = loadComments()

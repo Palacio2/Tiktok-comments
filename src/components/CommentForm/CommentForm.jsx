@@ -12,12 +12,16 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
     date: ''
   })
 
+  const [tempCustomWidth, setTempCustomWidth] = useState(1080)
+  const [tempCustomHeight, setTempCustomHeight] = useState(600)
+
   const presetSizes = [
-    { width: 1080, height: 600, label: 'Standard (1080×600)' },
-    { width: 1200, height: 630, label: 'Social Media (1200×630)' },
-    { width: 800, height: 600, label: 'Square-ish (800×600)' },
-    { width: 1920, height: 1080, label: 'Full HD (1920×1080)' },
-    { width: 1080, height: 1920, label: 'Stories (1080×1920)' }
+    { width: 1080, height: 'auto', label: 'Standard (1080×auto)' },
+    { width: 1200, height: 'auto', label: 'Social Media (1200×auto)' },
+    { width: 800, height: 'auto', label: 'Square-ish (800×auto)' },
+    { width: 1920, height: 'auto', label: 'Full HD (1920×auto)' },
+    { width: 1080, height: 1920, label: 'Stories (1080×1920)' },
+    { width: 'custom', height: 'custom', label: 'Custom Size' }
   ]
 
   const handleInputChange = useCallback((e) => {
@@ -38,27 +42,63 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
     if (name === 'format') {
       updateExportSettings({ format: value })
     } else if (name === 'presetSize') {
-      const selectedSize = presetSizes.find(size => 
-        `${size.width}×${size.height}` === value
-      )
-      if (selectedSize) {
+      if (value === 'custom×custom') {
+        // Якщо вибрали "Custom Size"
         updateExportSettings({
-          width: selectedSize.width,
-          height: selectedSize.height,
-          customSize: false
+          width: tempCustomWidth,
+          height: tempCustomHeight,
+          customSize: true
+        })
+      } else {
+        const selectedSize = presetSizes.find(size => 
+          `${size.width}×${size.height}` === value
+        )
+        if (selectedSize) {
+          updateExportSettings({
+            width: selectedSize.width === 'custom' ? tempCustomWidth : selectedSize.width,
+            height: selectedSize.height === 'custom' ? tempCustomHeight : selectedSize.height,
+            customSize: selectedSize.width === 'custom'
+          })
+        }
+      }
+    } else if (name === 'customWidth') {
+      const newValue = parseInt(value) || 100
+      setTempCustomWidth(newValue)
+      if (exportSettings.customSize) {
+        updateExportSettings({
+          width: newValue,
+          customSize: true
         })
       }
-    } else if (name === 'customWidth' || name === 'customHeight') {
-      const newValue = parseInt(value) || 0
-      updateExportSettings(prev => ({
-        ...prev,
-        [name === 'customWidth' ? 'width' : 'height']: Math.max(100, Math.min(newValue, 5000)),
-        customSize: true
-      }))
-    } else if (name === 'useCustomSize') {
-      updateExportSettings({ customSize: checked })
+    } else if (name === 'customHeight') {
+      const newValue = parseInt(value) || 100
+      setTempCustomHeight(newValue)
+      if (exportSettings.customSize) {
+        updateExportSettings({
+          height: newValue,
+          customSize: true
+        })
+      }
     }
-  }, [updateExportSettings, presetSizes])
+  }, [updateExportSettings, presetSizes, exportSettings.customSize, tempCustomWidth, tempCustomHeight])
+
+  const handleCustomSizeToggle = useCallback(() => {
+    if (exportSettings.customSize) {
+      // Переключаємо на стандартний розмір
+      updateExportSettings({
+        width: 1080,
+        height: 'auto',
+        customSize: false
+      })
+    } else {
+      // Переключаємо на власний розмір
+      updateExportSettings({
+        width: tempCustomWidth,
+        height: tempCustomHeight,
+        customSize: true
+      })
+    }
+  }, [exportSettings.customSize, updateExportSettings, tempCustomWidth, tempCustomHeight])
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault()
@@ -80,13 +120,22 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
       verified: false,
       date: ''
     })
+    setTempCustomWidth(1080)
+    setTempCustomHeight(600)
     updateExportSettings({
       format: 'png',
       width: 1080,
-      height: 600,
+      height: 'auto',
       customSize: false
     })
   }, [language, updateExportSettings])
+
+  const getCurrentPresetValue = () => {
+    if (exportSettings.customSize) {
+      return 'custom×custom'
+    }
+    return `${exportSettings.width}×${exportSettings.height}`
+  }
 
   return (
     <div className={styles.formContainer}>
@@ -222,10 +271,9 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
             <select
               id="presetSize"
               name="presetSize"
-              value={`${exportSettings.width}×${exportSettings.height}`}
+              value={getCurrentPresetValue()}
               onChange={handleExportSettingsChange}
               className={styles.selectInput}
-              disabled={exportSettings.customSize}
             >
               {presetSizes.map(size => (
                 <option key={`${size.width}×${size.height}`} value={`${size.width}×${size.height}`}>
@@ -235,21 +283,7 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
             </select>
           </div>
           
-          <div className={styles.checkboxRow}>
-            <label className={styles.checkboxLabel}>
-              <span>
-                {language === 'uk' ? 'Власний розмір' : 'Custom Size'}
-              </span>
-              <input
-                type="checkbox"
-                name="useCustomSize"
-                checked={exportSettings.customSize}
-                onChange={handleExportSettingsChange}
-              />
-            </label>
-          </div>
-          
-          {exportSettings.customSize && (
+          {(exportSettings.customSize || getCurrentPresetValue() === 'custom×custom') && (
             <div className={styles.dimensionsRow}>
               <div className={styles.dimensionInput}>
                 <label htmlFor="customWidth">
@@ -259,7 +293,7 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
                   type="number"
                   id="customWidth"
                   name="customWidth"
-                  value={exportSettings.width}
+                  value={exportSettings.customSize ? exportSettings.width : tempCustomWidth}
                   onChange={handleExportSettingsChange}
                   min="100"
                   max="5000"
@@ -276,7 +310,7 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
                   type="number"
                   id="customHeight"
                   name="customHeight"
-                  value={exportSettings.height}
+                  value={exportSettings.customSize ? exportSettings.height : tempCustomHeight}
                   onChange={handleExportSettingsChange}
                   min="100"
                   max="5000"
@@ -289,7 +323,15 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
           
           <div className={styles.sizePreview}>
             <div className={styles.sizePreviewBox}>
-              <span>{exportSettings.width} × {exportSettings.height} px</span>
+              <span>
+                {exportSettings.width} × 
+                {exportSettings.customSize ? exportSettings.height : 'auto'} px
+                {!exportSettings.customSize && (
+                  <span className={styles.autoBadge}>
+                    {language === 'uk' ? ' (авто)' : ' (auto)'}
+                  </span>
+                )}
+              </span>
             </div>
             <small>
               {exportSettings.format === 'svg' 
@@ -300,6 +342,13 @@ function CommentForm({ onGenerate, language, exportSettings, updateExportSetting
                   ? 'PNG — растровий формат з підтримкою прозорості'
                   : 'PNG — raster format with transparency support'}
             </small>
+            {!exportSettings.customSize && (
+              <small className={styles.autoHint}>
+                {language === 'uk' 
+                  ? 'Висота автоматично підлаштовується під текст коментаря'
+                  : 'Height automatically adjusts to comment content'}
+              </small>
+            )}
           </div>
         </div>
         
