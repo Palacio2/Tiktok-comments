@@ -1,22 +1,26 @@
 .exporterContainer {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
+  width: 100%;
 }
 
 .previewSection h3 {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .exportSettingsInfo {
   margin-bottom: 20px;
-  padding: 12px;
-  background: #f0f8ff;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, rgba(37, 244, 238, 0.05), rgba(254, 44, 85, 0.05));
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--tiktok-blue);
+  border-left: 4px solid var(--tiktok-pink);
 }
 
 .exportSettingsInfo p {
@@ -36,11 +40,12 @@
 .customSizeBadge {
   margin-left: auto;
   padding: 4px 10px;
-  background: var(--tiktok-pink);
+  background: linear-gradient(90deg, var(--tiktok-pink), #FF6B6B);
   color: white;
   border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .exportPreview {
@@ -54,6 +59,7 @@
   overflow: auto;
   max-width: 100%;
   box-sizing: border-box;
+  min-height: 400px;
 }
 
 .exportContent {
@@ -63,6 +69,9 @@
   overflow: hidden;
   min-width: 200px;
   min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tiktokComment {
@@ -70,12 +79,16 @@
   width: 100%;
   box-sizing: border-box;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .commentMain {
   display: flex;
   align-items: flex-start;
   height: 100%;
+  width: 100%;
 }
 
 .avatarContainer {
@@ -125,7 +138,7 @@
 }
 
 .verifiedBadge {
-  background: #20D5EC;
+  background: linear-gradient(45deg, #20D5EC, #25F4EE);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -133,6 +146,7 @@
   justify-content: center;
   font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(32, 213, 236, 0.3);
 }
 
 .commentText {
@@ -183,12 +197,15 @@
   align-items: center;
   gap: 8px;
   color: rgba(22, 24, 35, 0.5);
+  transition: color 0.2s;
 }
+
 
 .heartIcon {
   color: rgba(22, 24, 35, 0.5);
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
   flex-shrink: 0;
+  transition: color 0.2s;
 }
 
 .likeCount {
@@ -198,6 +215,10 @@
 .dislikeIcon {
   transform: translateY(2px);
   flex-shrink: 0;
+}
+
+.controlsSection {
+  margin-top: 10px;
 }
 
 .exportButton {
@@ -214,16 +235,24 @@
   justify-content: center;
   gap: 10px;
   transition: var(--transition);
+  background: linear-gradient(90deg, var(--tiktok-pink), #FF0050);
+  box-shadow: 0 4px 15px rgba(254, 44, 85, 0.25);
 }
 
 .exportButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(254, 44, 85, 0.35);
+}
+
+.exportButton:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .exportButton:disabled {
   opacity: 0.7;
   cursor: wait;
+  transform: none;
+  box-shadow: none;
 }
 
 .spinner {
@@ -236,7 +265,8 @@
 }
 
 .downloadIcon {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .exportInfo {
@@ -247,6 +277,7 @@
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.5;
+  border: 1px solid #eee;
 }
 
 .exportInfo p {
@@ -260,15 +291,21 @@
   to { transform: rotate(360deg); }
 }
 
+/* Tablet Responsive */
 @media (max-width: 768px) {
+  .exporterContainer {
+    gap: 20px;
+  }
+  
   .exportPreview {
-    padding: 10px;
+    padding: 15px;
+    min-height: 350px;
   }
   
   .exportSettingsInfo p {
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 6px;
   }
   
   .customSizeBadge {
@@ -288,15 +325,54 @@
   .commentFooter {
     flex-wrap: wrap;
     gap: 15px;
+    margin-top: 20px;
   }
   
   .footerLeft {
     order: 2;
     width: 100%;
     justify-content: flex-start;
+    gap: 20px;
   }
   
   .footerRight {
     order: 1;
+  }
+  
+  .exportButton {
+    height: 52px;
+    font-size: 15px;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .previewSection h3 {
+    font-size: 16px;
+  }
+  
+  .exportSettingsInfo {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .exportPreview {
+    padding: 12px;
+    min-height: 300px;
+  }
+  
+  .exportButton {
+    height: 48px;
+    font-size: 14px;
+  }
+  
+  .footerLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .actionRow {
+    gap: 15px;
   }
 }

@@ -5,24 +5,19 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* TikTok Brand Colors */
-  --tiktok-black: #161823;
-  --tiktok-white: #FFFFFF;
+  /* Modern Palette */
+  --bg-page: #FAFAFA;
+  --bg-card: #FFFFFF;
+  --text-main: #121212;
+  --text-secondary: #757575;
+  --border-color: #E0E0E0;
+  
   --tiktok-pink: #FE2C55;
   --tiktok-blue: #25F4EE;
   
-  /* UI Colors */
-  --bg-page: #F2F2F2;
-  --bg-card: #FFFFFF;
-  --text-main: #161823;
-  --text-secondary: rgba(22, 24, 35, 0.5); /* Реальний колір сірого тексту в TikTok */
-  --border-color: rgba(22, 24, 35, 0.12);
-  --input-bg: #F1F1F2; /* Колір інпутів у TikTok */
-  
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 24px;
+  --radius-lg: 16px;
   
   --transition: all 0.2s ease-in-out;
 }
@@ -32,6 +27,10 @@ body {
   background-color: var(--bg-page);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 * {

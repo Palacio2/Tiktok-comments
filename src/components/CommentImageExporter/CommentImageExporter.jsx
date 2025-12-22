@@ -17,22 +17,13 @@ const getDefaultAvatarData = (username) => {
 
 const formatLikeCount = (count) => {
   if (!count || count === 0) return null
-  
-  if (count < 1000) {
-    return count.toString()
-  }
-  
-  if (count < 10000) {
-    return Math.floor(count / 1000) + 'k'
-  }
-  
+  if (count < 1000) return count.toString()
+  if (count < 10000) return Math.floor(count / 1000) + 'k'
   return (count / 1000).toFixed(count % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k'
 }
 
-// Функція для розрахунку розмірів на основі ширини
 const calculateSizes = (baseWidth) => {
-  const scale = baseWidth / 1080 // Стандартна ширина
-  
+  const scale = baseWidth / 1080
   return {
     padding: Math.max(20, 40 * scale),
     avatarSize: Math.max(50, 110 * scale),
@@ -49,7 +40,7 @@ const calculateSizes = (baseWidth) => {
   }
 }
 
-function CommentImageExporter({ comment, language, exportSettings }) {
+function CommentImageExporter({ comment, language, translations: t, exportSettings }) {
   const exportRef = useRef(null)
   const [isExporting, setIsExporting] = useState(false)
   const [previewHeight, setPreviewHeight] = useState(exportSettings.height)
@@ -59,36 +50,48 @@ function CommentImageExporter({ comment, language, exportSettings }) {
   useEffect(() => {
     if (exportRef.current) {
       const updateHeight = () => {
-        const height = exportRef.current.scrollHeight
-        const minHeight = exportSettings.customSize ? exportSettings.height : Math.max(600, exportSettings.height)
-        setPreviewHeight(Math.max(minHeight, height))
+        // Завжди вимірюємо реальну висоту контенту
+        const contentHeight = exportRef.current.scrollHeight
+        
+        if (exportSettings.customSize) {
+           // Якщо кастомний розмір - використовуємо його
+           const fixedHeight = parseInt(exportSettings.height) || contentHeight
+           setPreviewHeight(fixedHeight)
+        } else {
+           // Якщо авто - просто записуємо реальну висоту контенту
+           setPreviewHeight(contentHeight)
+        }
       }
       
+      // Викликаємо оновлення одразу і з невеликою затримкою для надійності
       updateHeight()
-      const timer = setTimeout(updateHeight, 100)
+      const timer = setTimeout(updateHeight, 50)
       return () => clearTimeout(timer)
     }
   }, [comment, exportSettings])
   
   const handleExport = useCallback(async () => {
     if (!exportRef.current || isExporting) return
-    
     setIsExporting(true)
     
     try {
-      const width = exportSettings.width || 1080
-      const height = exportSettings.customSize ? exportSettings.height : previewHeight
+      const width = parseInt(exportSettings.width) || 1080
+      const height = exportSettings.customSize 
+        ? parseInt(exportSettings.height) 
+        : previewHeight
       
+      const pixelRatio = (exportSettings.customSize || exportSettings.format === 'svg') ? 1 : 2
+
       const options = {
         width: width,
         height: height,
         backgroundColor: 'white',
         quality: 1.0,
-        pixelRatio: exportSettings.format === 'svg' ? 1 : 2,
+        pixelRatio: pixelRatio,
         cacheBust: true,
         style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left'
+           transform: 'none', 
+           margin: 0
         }
       }
       
@@ -104,92 +107,71 @@ function CommentImageExporter({ comment, language, exportSettings }) {
       }
       
       const link = document.createElement('a')
-      link.download = `tiktok-comment-${Date.now()}.${fileExtension}`
+      link.download = `tiktok-comment-${width}x${height}-${Date.now()}.${fileExtension}`
       link.href = dataUrl
       link.click()
       
     } catch (error) {
       console.error('Export error:', error)
-      alert(language === 'uk' 
-        ? `Не вдалося експортувати як ${exportSettings.format.toUpperCase()}. Спробуйте ще раз.` 
-        : `Failed to export as ${exportSettings.format.toUpperCase()}. Please try again.`)
+      alert(language === 'uk' ? 'Помилка експорту' : 'Export failed')
     } finally {
       setIsExporting(false)
     }
   }, [isExporting, previewHeight, language, exportSettings])
 
   const formatDate = (dateString) => {
-    if (!dateString) return language === 'uk' ? '12-11' : '12-11'
-
+    if (!dateString) return '12-11'
     const date = new Date(dateString)
-
-    if (isNaN(date.getTime())) return language === 'uk' ? '12-11' : '12-11'
-
+    if (isNaN(date.getTime())) return '12-11'
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
-    
     return `${month}-${day}`
   }
   
   if (!comment) return null
   
   const formattedLikes = formatLikeCount(comment.likes)
-  const finalHeight = exportSettings.customSize || exportSettings.height !== 'auto' 
-  ? (exportSettings.height === 'auto' ? previewHeight : exportSettings.height) 
-  : previewHeight
+
+  // 👇 ГОЛОВНЕ ВИПРАВЛЕННЯ:
+  // Якщо режим не кастомний і висота 'auto', ставимо CSS 'auto',
+  // щоб браузер сам "сплюснув" блок до розміру тексту.
+  const styleHeight = (exportSettings.customSize || exportSettings.height !== 'auto') 
+      ? `${exportSettings.height}px` 
+      : 'auto';
+
   const sizes = calculateSizes(exportSettings.width)
   
-  // Стилі для контейнера експорту
   const exportContentStyle = {
     width: `${exportSettings.width}px`,
-    height: `${finalHeight}px`,
+    height: styleHeight, // Використовуємо правильний стиль
     backgroundColor: 'white'
   }
 
   return (
     <div className={styles.exporterContainer}>
       <div className={styles.previewSection}>
-        <h3>
-          {language === 'uk' ? 'Попередній перегляд для експорту' : 'Export Preview'}
-        </h3>
+        <h3>{language === 'uk' ? 'Попередній перегляд' : 'Preview'}</h3>
         <div className={styles.exportSettingsInfo}>
           <p>
-            <strong>{language === 'uk' ? 'Формат:' : 'Format:'}</strong> {exportSettings.format.toUpperCase()}
-            <span className={styles.separator}>•</span>
-            <strong>{language === 'uk' ? 'Розміри:' : 'Dimensions:'}</strong> {exportSettings.width}px × {finalHeight}px
+            {/* Для відображення інфо показуємо previewHeight, який вирахував useEffect */}
+            <strong>{exportSettings.width}px × {exportSettings.customSize ? exportSettings.height : previewHeight}px</strong>
             {exportSettings.customSize && (
-              <span className={styles.customSizeBadge}>
-                {language === 'uk' ? 'Власний розмір' : 'Custom Size'}
-              </span>
+              <span className={styles.customSizeBadge}>Custom</span>
             )}
           </p>
         </div>
         
         <div className={styles.exportPreview}>
-          <div 
-            className={styles.exportContent} 
-            ref={exportRef}
-            style={exportContentStyle}
-          >
-            <div 
-              className={styles.tiktokComment}
-              style={{ padding: `${sizes.padding}px` }}
-            >
-              <div 
-                className={styles.commentMain}
-                style={{ gap: `${sizes.gap}px` }}
-              >
+          <div className={styles.exportContent} ref={exportRef} style={exportContentStyle}>
+            <div className={styles.tiktokComment} style={{ padding: `${sizes.padding}px` }}>
+              <div className={styles.commentMain} style={{ gap: `${sizes.gap}px` }}>
                 <div className={styles.commentLeft}>
                   <div className={styles.avatarContainer}>
                     {comment.avatar ? (
                       <img 
                         src={comment.avatar} 
-                        alt={`${language === 'uk' ? 'Аватар' : 'Avatar'} ${comment.username}`}
                         className={styles.commentAvatar}
-                        style={{
-                          width: `${sizes.avatarSize}px`,
-                          height: `${sizes.avatarSize}px`
-                        }}
+                        style={{ width: `${sizes.avatarSize}px`, height: `${sizes.avatarSize}px` }}
                       />
                     ) : (
                       <div 
@@ -210,73 +192,42 @@ function CommentImageExporter({ comment, language, exportSettings }) {
                 <div className={styles.commentRight}>
                   <div className={styles.commentHeader}>
                     <div className={styles.usernameContainer}>
-                      <div 
-                        className={styles.commentUsername}
-                        style={{ fontSize: `${sizes.usernameFontSize}px` }}
-                      >
+                      <div className={styles.commentUsername} style={{ fontSize: `${sizes.usernameFontSize}px` }}>
                         {comment.username}
                       </div>
                       {comment.verified && (
-                        <span 
-                          className={styles.verifiedBadge}
-                          style={{
-                            width: `${sizes.verifiedSize}px`,
-                            height: `${sizes.verifiedSize}px`,
-                            fontSize: `${sizes.verifiedFontSize}px`
-                          }}
-                        >
-                          ✓
-                        </span>
+                        <span className={styles.verifiedBadge} style={{
+                            width: `${sizes.verifiedSize}px`, height: `${sizes.verifiedSize}px`, fontSize: `${sizes.verifiedFontSize}px`
+                          }}>✓</span>
                       )}
                     </div>
-                    <div 
-                      className={styles.commentText}
-                      style={{ fontSize: `${sizes.textFontSize}px` }}
-                    >
+                    <div className={styles.commentText} style={{ fontSize: `${sizes.textFontSize}px` }}>
                       {comment.commentText}
                     </div>
                   </div>
                   
                   <div className={styles.commentFooter}>
                     <div className={styles.footerLeft}>
-                      <div 
-                        className={styles.commentDate}
-                        style={{ fontSize: `${sizes.dateFontSize}px` }}
-                      >
+                      <div className={styles.commentDate} style={{ fontSize: `${sizes.dateFontSize}px` }}>
                         {formatDate(comment.date)}
                       </div>
-                      <div 
-                        className={styles.commentReply}
-                        style={{ fontSize: `${sizes.dateFontSize}px` }}
-                      >
+                      <div className={styles.commentReply} style={{ fontSize: `${sizes.dateFontSize}px` }}>
                         {language === 'uk' ? 'Відповісти' : 'Reply'}
                       </div>
                     </div>
                     
                     <div className={styles.footerRight}>
-                      <div 
-                        className={styles.actionRow}
-                        style={{ gap: `${sizes.actionGap}px` }}
-                      >
+                      <div className={styles.actionRow} style={{ gap: `${sizes.actionGap}px` }}>
                         <div className={styles.actionButton}>
-                          <IoMdHeartEmpty 
-                            className={styles.heartIcon}
-                            style={{ fontSize: `${sizes.iconFontSize}px` }}
-                          />
+                          <IoMdHeartEmpty className={styles.heartIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
                           {formattedLikes && (
-                            <span 
-                              className={styles.likeCount}
-                              style={{ fontSize: `${sizes.likeFontSize}px` }}
-                            >
+                            <span className={styles.likeCount} style={{ fontSize: `${sizes.likeFontSize}px` }}>
                               {formattedLikes}
                             </span>
                           )}
                         </div>
                         <div className={styles.actionButton}>
-                          <BiDislike 
-                            className={styles.dislikeIcon}
-                            style={{ fontSize: `${sizes.iconFontSize}px` }}
-                          />
+                          <BiDislike className={styles.dislikeIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
                         </div>
                       </div>
                     </div>
@@ -293,47 +244,16 @@ function CommentImageExporter({ comment, language, exportSettings }) {
           onClick={handleExport}
           className={styles.exportButton}
           disabled={isExporting}
-          style={{
-            background: exportSettings.format === 'svg' 
-              ? 'linear-gradient(to right, #FFA726, #FF9800)'
-              : 'linear-gradient(to right, var(--tiktok-pink), #FF6B6B)'
-          }}
         >
           {isExporting ? (
-            <>
-              <span className={styles.spinner}></span>
-              {language === 'uk' ? 'Експорт...' : 'Exporting...'}
-            </>
+             language === 'uk' ? 'Експорт...' : 'Exporting...'
           ) : (
             <>
               <span className={styles.downloadIcon}>↓</span>
-              {language === 'uk' 
-                ? `Завантажити як ${exportSettings.format.toUpperCase()}`
-                : `Download as ${exportSettings.format.toUpperCase()}`}
+              {language === 'uk' ? 'Завантажити зображення' : 'Download Image'}
             </>
           )}
         </button>
-        
-        <div className={styles.exportInfo}>
-          <p>
-            <strong>{language === 'uk' ? 'Розміри:' : 'Dimensions:'}</strong> {exportSettings.width} × {finalHeight} {language === 'uk' ? 'пікселів' : 'pixels'}
-          </p>
-          <p>
-            <strong>{language === 'uk' ? 'Формат:' : 'Format:'}</strong> {exportSettings.format.toUpperCase()} 
-            {exportSettings.format === 'svg' 
-              ? language === 'uk' 
-                ? ' (векторний, масштабується без втрат)' 
-                : ' (vector, scales without loss)'
-              : language === 'uk'
-                ? ' (з високою якістю)'
-                : ' (high quality)'}
-          </p>
-          {!exportSettings.customSize && (
-            <p>
-              <strong>{language === 'uk' ? 'Висота:' : 'Height:'}</strong> {language === 'uk' ? 'Автоматично підлаштовується' : 'Auto-adjusts to content'}
-            </p>
-          )}
-        </div>
       </div>
     </div>
   )
