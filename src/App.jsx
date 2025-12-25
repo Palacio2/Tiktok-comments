@@ -10,7 +10,8 @@ const LANGUAGES = [
   { code: 'uk', label: 'Українська', countryCode: 'ua' },
   { code: 'en', label: 'English', countryCode: 'us' },
   { code: 'pl', label: 'Polski', countryCode: 'pl' },
-  { code: 'fr', label: 'Français', countryCode: 'fr' }
+  { code: 'fr', label: 'Français', countryCode: 'fr' },
+  { code: 'ru', label: 'Русский', countryCode: 'ru' },
 ];
 
 function App() {

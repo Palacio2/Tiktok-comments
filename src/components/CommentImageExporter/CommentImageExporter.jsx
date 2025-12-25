@@ -50,20 +50,14 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
   useEffect(() => {
     if (exportRef.current) {
       const updateHeight = () => {
-        // Завжди вимірюємо реальну висоту контенту
         const contentHeight = exportRef.current.scrollHeight
-        
         if (exportSettings.customSize) {
-           // Якщо кастомний розмір - використовуємо його
            const fixedHeight = parseInt(exportSettings.height) || contentHeight
            setPreviewHeight(fixedHeight)
         } else {
-           // Якщо авто - просто записуємо реальну висоту контенту
            setPreviewHeight(contentHeight)
         }
       }
-      
-      // Викликаємо оновлення одразу і з невеликою затримкою для надійності
       updateHeight()
       const timer = setTimeout(updateHeight, 50)
       return () => clearTimeout(timer)
@@ -76,10 +70,7 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
     
     try {
       const width = parseInt(exportSettings.width) || 1080
-      const height = exportSettings.customSize 
-        ? parseInt(exportSettings.height) 
-        : previewHeight
-      
+      const height = exportSettings.customSize ? parseInt(exportSettings.height) : previewHeight
       const pixelRatio = (exportSettings.customSize || exportSettings.format === 'svg') ? 1 : 2
 
       const options = {
@@ -89,14 +80,11 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
         quality: 1.0,
         pixelRatio: pixelRatio,
         cacheBust: true,
-        style: {
-           transform: 'none', 
-           margin: 0
-        }
+        style: { transform: 'none', margin: 0 }
       }
       
-      let dataUrl
-      let fileExtension
+      let dataUrl;
+      let fileExtension;
       
       if (exportSettings.format === 'svg') {
         dataUrl = await toSvg(exportRef.current, options)
@@ -113,7 +101,8 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
       
     } catch (error) {
       console.error('Export error:', error)
-      alert(language === 'uk' ? 'Помилка експорту' : 'Export failed')
+      const errorMsg = language === 'uk' ? 'Помилка експорту' : (language === 'ru' ? 'Ошибка экспорта' : 'Export failed');
+      alert(errorMsg)
     } finally {
       setIsExporting(false)
     }
@@ -131,10 +120,6 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
   if (!comment) return null
   
   const formattedLikes = formatLikeCount(comment.likes)
-
-  // 👇 ГОЛОВНЕ ВИПРАВЛЕННЯ:
-  // Якщо режим не кастомний і висота 'auto', ставимо CSS 'auto',
-  // щоб браузер сам "сплюснув" блок до розміру тексту.
   const styleHeight = (exportSettings.customSize || exportSettings.height !== 'auto') 
       ? `${exportSettings.height}px` 
       : 'auto';
@@ -143,17 +128,25 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
   
   const exportContentStyle = {
     width: `${exportSettings.width}px`,
-    height: styleHeight, // Використовуємо правильний стиль
+    height: styleHeight,
     backgroundColor: 'white'
+  }
+
+  // Локалізація тексту "Відповісти"
+  const getReplyText = () => {
+    if (language === 'uk') return 'Відповісти';
+    if (language === 'ru') return 'Ответить';
+    if (language === 'pl') return 'Odpowiedz';
+    if (language === 'fr') return 'Répondre';
+    return 'Reply';
   }
 
   return (
     <div className={styles.exporterContainer}>
       <div className={styles.previewSection}>
-        <h3>{language === 'uk' ? 'Попередній перегляд' : 'Preview'}</h3>
+        <h3>{t.preview}</h3>
         <div className={styles.exportSettingsInfo}>
           <p>
-            {/* Для відображення інфо показуємо previewHeight, який вирахував useEffect */}
             <strong>{exportSettings.width}px × {exportSettings.customSize ? exportSettings.height : previewHeight}px</strong>
             {exportSettings.customSize && (
               <span className={styles.customSizeBadge}>Custom</span>
@@ -170,6 +163,7 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
                     {comment.avatar ? (
                       <img 
                         src={comment.avatar} 
+                        alt="avatar"
                         className={styles.commentAvatar}
                         style={{ width: `${sizes.avatarSize}px`, height: `${sizes.avatarSize}px` }}
                       />
@@ -212,7 +206,7 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
                         {formatDate(comment.date)}
                       </div>
                       <div className={styles.commentReply} style={{ fontSize: `${sizes.dateFontSize}px` }}>
-                        {language === 'uk' ? 'Відповісти' : 'Reply'}
+                        {getReplyText()}
                       </div>
                     </div>
                     
@@ -245,12 +239,10 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
           className={styles.exportButton}
           disabled={isExporting}
         >
-          {isExporting ? (
-             language === 'uk' ? 'Експорт...' : 'Exporting...'
-          ) : (
+          {isExporting ? t.exporting : (
             <>
               <span className={styles.downloadIcon}>↓</span>
-              {language === 'uk' ? 'Завантажити зображення' : 'Download Image'}
+              {t.download}
             </>
           )}
         </button>

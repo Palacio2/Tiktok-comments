@@ -170,5 +170,48 @@ export const translations = {
     },
     aiLangName: 'French',
     aiPromptStyle: 'Write in informal French (internet slang, verlan). Use lowercase mostly.'
+  },
+ru: {
+    appTitle: 'TikTok Comment Generator',
+    subtitle: 'Создавайте реалистичные скриншоты комментариев',
+    info: 'Информация',
+    username: 'Имя пользователя:',
+    verified: 'Верификация',
+    avatar: 'Аватар:',
+    text: 'Текст комментария:',
+    aiBtn: '✨ AI Генератор',
+    likes: 'Лайки:',
+    date: 'Дата:',
+    export: 'Экспорт',
+    size: 'Размер:',
+    create: 'Создать',
+    reset: 'Сбросить',
+    clearHistory: 'Очистить историю',
+    preview: 'Предпросмотр',
+    download: 'Скачать изображение',
+    exporting: 'Экспорт...',
+    aiTitle: '✨ AI Генератор',
+    topic: 'Тема / Контекст:',
+    topicPlaceholder: 'Напр.: смешное видео с котом',
+    mood: 'Настроение:',
+    length: 'Длина:',
+    generate: 'Сгенерировать',
+    regenerate: '🔄 Другой вариант',
+    apply: '✅ Применить',
+    emptyState: '👈 Создай свой смешной комментарий!',
+    moods: {
+      positive: '😍 Фанат',
+      funny: '😂 Смешно',
+      shocked: '😱 Шок',
+      hater: '😒 Хейтер',
+      question: '🤔 Вопрос'
+    },
+    lengths: {
+      short: 'Короткий',
+      medium: 'Средний',
+      long: 'Длинный'
+    },
+    aiLangName: 'Russian',
+    aiPromptStyle: 'Write in informal Russian (Internet slang). Use lowercase mostly.'
   }
 };
