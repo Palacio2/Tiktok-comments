@@ -1,145 +1,108 @@
-import { useRef, useCallback, useState, useEffect } from 'react'
-import { toPng, toSvg } from 'html-to-image'
+import { useRef } from 'react'
 import styles from './CommentImageExporter.module.css'
-import { BiDislike } from "react-icons/bi"; 
+import { BiDislike, BiCopy } from "react-icons/bi"; 
 import { IoMdHeartEmpty } from "react-icons/io"; 
+import { FaLock } from 'react-icons/fa';
+import { getDefaultAvatarData, formatLikeCount, calculatePreviewSizes } from '../../utils/helpers'
+import { useAutoHeight } from '../../hooks/useAutoHeight'
+import { useCommentExport } from '../../hooks/useCommentExport'
 
-const AVATAR_COLORS = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2']
+// 🆕 Внутрішній компонент для рендеру ОДНОГО коментаря
+// Він приймає дані, розміри та прапорці
+const SingleCommentRender = ({ data, sizes, formatDate, replyLabelText, isDark, isNested = false }) => {
+    const avatarData = !data.avatar ? getDefaultAvatarData(data.username) : null;
+    const formattedLikes = formatLikeCount(data.likes);
 
-const getDefaultAvatarData = (username) => {
-  if (!username || username.length < 2) {
-    return { color: '#CCCCCC', initial: '?' }
-  }
-  const color = AVATAR_COLORS[username.length % AVATAR_COLORS.length]
-  const initial = username.charAt(1).toUpperCase()
-  return { color, initial }
-}
+    return (
+        <div className={styles.commentMain} style={{ gap: `${sizes.gap}px`, marginTop: isNested ? `${sizes.gap}px` : 0 }}>
+            {/* Ліва частина: Аватар */}
+            <div className={styles.commentLeft}>
+                <div className={styles.avatarContainer}>
+                {data.avatar ? (
+                    <img src={data.avatar} alt="avatar" className={styles.commentAvatar} style={{ width: `${sizes.avatarSize}px`, height: `${sizes.avatarSize}px` }} />
+                ) : (
+                    <div className={styles.defaultAvatar} style={{ backgroundColor: avatarData.color, width: `${sizes.avatarSize}px`, height: `${sizes.avatarSize}px`, fontSize: `${sizes.avatarFontSize}px` }}>
+                    {avatarData.initial}
+                    </div>
+                )}
+                </div>
+            </div>
+            
+            {/* Права частина: Текст та інфо */}
+            <div className={styles.commentRight}>
+                <div className={styles.commentHeader}>
+                    <div className={styles.usernameContainer}>
+                        <div className={styles.commentUsername} style={{ fontSize: `${sizes.usernameFontSize}px` }}>
+                        {data.username}
+                        </div>
+                        {data.verified && (
+                        <span className={styles.verifiedBadge} style={{ width: `${sizes.verifiedSize}px`, height: `${sizes.verifiedSize}px`, fontSize: `${sizes.verifiedFontSize}px` }}>✓</span>
+                        )}
+                    </div>
+                    <div className={styles.commentText} style={{ fontSize: `${sizes.textFontSize}px` }}>
+                        {data.commentText}
+                    </div>
+                </div>
+                
+                <div className={styles.commentFooter}>
+                    <div className={styles.footerLeft}>
+                        <div className={styles.commentDate} style={{ fontSize: `${sizes.dateFontSize}px` }}>
+                        {formatDate(data.date)}
+                        </div>
+                        {/* Текст кнопки "Reply" */}
+                        <div className={styles.commentReply} style={{ fontSize: `${sizes.dateFontSize}px` }}>
+                        {replyLabelText}
+                        </div>
+                    </div>
+                    
+                    <div className={styles.footerRight}>
+                        <div className={styles.actionRow} style={{ gap: `${sizes.actionGap}px` }}>
+                            <div className={styles.actionButton}>
+                                <IoMdHeartEmpty className={styles.heartIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
+                                {formattedLikes && <span className={styles.likeCount} style={{ fontSize: `${sizes.likeFontSize}px` }}>{formattedLikes}</span>}
+                            </div>
+                            <div className={styles.actionButton}>
+                                <BiDislike className={styles.dislikeIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
-const formatLikeCount = (count) => {
-  if (!count || count === 0) return null
-  if (count < 1000) return count.toString()
-  if (count < 10000) return Math.floor(count / 1000) + 'k'
-  return (count / 1000).toFixed(count % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k'
-}
-
-const calculateSizes = (baseWidth) => {
-  const scale = baseWidth / 1080
-  return {
-    padding: Math.max(20, 40 * scale),
-    avatarSize: Math.max(50, 110 * scale),
-    avatarFontSize: Math.max(20, 48 * scale),
-    usernameFontSize: Math.max(20, 38 * scale),
-    verifiedSize: Math.max(16, 32 * scale),
-    verifiedFontSize: Math.max(10, 18 * scale),
-    textFontSize: Math.max(24, 42 * scale),
-    dateFontSize: Math.max(20, 36 * scale),
-    iconFontSize: Math.max(24, 46 * scale),
-    likeFontSize: Math.max(18, 34 * scale),
-    gap: Math.max(16, 32 * scale),
-    actionGap: Math.max(20, 40 * scale)
-  }
-}
-
-function CommentImageExporter({ comment, language, translations: t, exportSettings }) {
+function CommentImageExporter({ comment, language, translations: t, exportSettings, isPro, onOpenPro }) {
   const exportRef = useRef(null)
-  const [isExporting, setIsExporting] = useState(false)
-  const [previewHeight, setPreviewHeight] = useState(exportSettings.height)
-  
-  const avatarData = !comment.avatar ? getDefaultAvatarData(comment.username) : null
-  
-  useEffect(() => {
-    if (exportRef.current) {
-      const updateHeight = () => {
-        const contentHeight = exportRef.current.scrollHeight
-        if (exportSettings.customSize) {
-           const fixedHeight = parseInt(exportSettings.height) || contentHeight
-           setPreviewHeight(fixedHeight)
-        } else {
-           setPreviewHeight(contentHeight)
-        }
-      }
-      updateHeight()
-      const timer = setTimeout(updateHeight, 50)
-      return () => clearTimeout(timer)
-    }
-  }, [comment, exportSettings])
-  
-  const handleExport = useCallback(async () => {
-    if (!exportRef.current || isExporting) return
-    setIsExporting(true)
-    
-    try {
-      const width = parseInt(exportSettings.width) || 1080
-      const height = exportSettings.customSize ? parseInt(exportSettings.height) : previewHeight
-      const pixelRatio = (exportSettings.customSize || exportSettings.format === 'svg') ? 1 : 2
+  const previewHeight = useAutoHeight(exportRef, exportSettings);
 
-      const options = {
-        width: width,
-        height: height,
-        backgroundColor: 'white',
-        quality: 1.0,
-        pixelRatio: pixelRatio,
-        cacheBust: true,
-        style: { transform: 'none', margin: 0 }
-      }
-      
-      let dataUrl;
-      let fileExtension;
-      
-      if (exportSettings.format === 'svg') {
-        dataUrl = await toSvg(exportRef.current, options)
-        fileExtension = 'svg'
-      } else {
-        dataUrl = await toPng(exportRef.current, options)
-        fileExtension = 'png'
-      }
-      
-      const link = document.createElement('a')
-      link.download = `tiktok-comment-${width}x${height}-${Date.now()}.${fileExtension}`
-      link.href = dataUrl
-      link.click()
-      
-    } catch (error) {
-      console.error('Export error:', error)
-      const errorMsg = language === 'uk' ? 'Помилка експорту' : (language === 'ru' ? 'Ошибка экспорта' : 'Export failed');
-      alert(errorMsg)
-    } finally {
-      setIsExporting(false)
-    }
-  }, [isExporting, previewHeight, language, exportSettings])
+  const { isExporting, handleExport, copyToClipboard } = useCommentExport({
+    exportRef, exportSettings, isPro, onOpenPro, language, previewHeight, translations: t
+  });
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '12-11'
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) return '12-11'
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${month}-${day}`
-  }
-  
-  if (!comment) return null
-  
-  const formattedLikes = formatLikeCount(comment.likes)
-  const styleHeight = (exportSettings.customSize || exportSettings.height !== 'auto') 
-      ? `${exportSettings.height}px` 
-      : 'auto';
+  if (!comment) return null;
 
-  const sizes = calculateSizes(exportSettings.width)
-  
+  const sizes = calculatePreviewSizes(exportSettings.width);
+  const isLocked = exportSettings.format === 'svg' && !isPro;
+  const styleHeight = (exportSettings.customSize || exportSettings.height !== 'auto') ? `${exportSettings.height}px` : 'auto';
+
   const exportContentStyle = {
     width: `${exportSettings.width}px`,
     height: styleHeight,
-    backgroundColor: 'white'
-  }
+    backgroundColor: exportSettings.isDark ? '#121212' : 'white' 
+  };
 
-  // Локалізація тексту "Відповісти"
-  const getReplyText = () => {
-    if (language === 'uk') return 'Відповісти';
-    if (language === 'ru') return 'Ответить';
-    if (language === 'pl') return 'Odpowiedz';
-    if (language === 'fr') return 'Répondre';
-    return 'Reply';
-  }
+  const formatDate = (dateString) => { 
+    if (!dateString) return '12-11';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '12-11';
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}-${day}`;
+  };
+
+  // Визначаємо текст кнопки "Reply"
+  const replyLabel = comment.replyLabelText || t.replyTextDefault || 'Reply';
 
   return (
     <div className={styles.exporterContainer}>
@@ -147,102 +110,65 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
         <h3>{t.preview}</h3>
         <div className={styles.exportSettingsInfo}>
           <p>
-            <strong>{exportSettings.width}px × {exportSettings.customSize ? exportSettings.height : previewHeight}px</strong>
-            {exportSettings.customSize && (
-              <span className={styles.customSizeBadge}>Custom</span>
-            )}
+            <strong>{exportSettings.format.toUpperCase()} • {exportSettings.width}px × {exportSettings.customSize ? exportSettings.height : previewHeight}px</strong>
+            {exportSettings.isDark && <span style={{marginLeft: 8}}>🌙 Dark</span>}
           </p>
         </div>
         
         <div className={styles.exportPreview}>
           <div className={styles.exportContent} ref={exportRef} style={exportContentStyle}>
-            <div className={styles.tiktokComment} style={{ padding: `${sizes.padding}px` }}>
-              <div className={styles.commentMain} style={{ gap: `${sizes.gap}px` }}>
-                <div className={styles.commentLeft}>
-                  <div className={styles.avatarContainer}>
-                    {comment.avatar ? (
-                      <img 
-                        src={comment.avatar} 
-                        alt="avatar"
-                        className={styles.commentAvatar}
-                        style={{ width: `${sizes.avatarSize}px`, height: `${sizes.avatarSize}px` }}
+            
+            {/* Основний контейнер */}
+            <div className={`${styles.tiktokComment} ${exportSettings.isDark ? styles.darkTheme : ''}`} 
+                 style={{ 
+                     padding: `${sizes.padding}px`, 
+                     flexDirection: 'column', // 🆕 Елементи йдуть зверху вниз
+                     alignItems: 'flex-start' 
+                 }}>
+              
+              {!isPro && <div className={styles.watermark} style={{fontSize: `${sizes.textFontSize * 0.5}px`}}>TikTok Comment Generator</div>}
+
+              {/* 1. Рендер основного коментаря */}
+              <SingleCommentRender 
+                data={comment} 
+                sizes={sizes} 
+                formatDate={formatDate} 
+                replyLabelText={replyLabel} 
+                isDark={exportSettings.isDark}
+              />
+
+              {/* 2. Рендер відповіді (якщо showReply === true) */}
+              {comment.showReply && comment.reply && (
+                  <div style={{ 
+                      width: '100%', 
+                      paddingLeft: `${sizes.avatarSize + sizes.gap}px` // 🆕 Зміщення вліво
+                  }}>
+                      <SingleCommentRender 
+                        data={comment.reply} 
+                        sizes={sizes} 
+                        formatDate={formatDate} 
+                        replyLabelText={replyLabel} 
+                        isDark={exportSettings.isDark}
+                        isNested={true}
                       />
-                    ) : (
-                      <div 
-                        className={styles.defaultAvatar} 
-                        style={{ 
-                          backgroundColor: avatarData.color,
-                          width: `${sizes.avatarSize}px`,
-                          height: `${sizes.avatarSize}px`,
-                          fontSize: `${sizes.avatarFontSize}px`
-                        }}
-                      >
-                        {avatarData.initial}
-                      </div>
-                    )}
                   </div>
-                </div>
-                
-                <div className={styles.commentRight}>
-                  <div className={styles.commentHeader}>
-                    <div className={styles.usernameContainer}>
-                      <div className={styles.commentUsername} style={{ fontSize: `${sizes.usernameFontSize}px` }}>
-                        {comment.username}
-                      </div>
-                      {comment.verified && (
-                        <span className={styles.verifiedBadge} style={{
-                            width: `${sizes.verifiedSize}px`, height: `${sizes.verifiedSize}px`, fontSize: `${sizes.verifiedFontSize}px`
-                          }}>✓</span>
-                      )}
-                    </div>
-                    <div className={styles.commentText} style={{ fontSize: `${sizes.textFontSize}px` }}>
-                      {comment.commentText}
-                    </div>
-                  </div>
-                  
-                  <div className={styles.commentFooter}>
-                    <div className={styles.footerLeft}>
-                      <div className={styles.commentDate} style={{ fontSize: `${sizes.dateFontSize}px` }}>
-                        {formatDate(comment.date)}
-                      </div>
-                      <div className={styles.commentReply} style={{ fontSize: `${sizes.dateFontSize}px` }}>
-                        {getReplyText()}
-                      </div>
-                    </div>
-                    
-                    <div className={styles.footerRight}>
-                      <div className={styles.actionRow} style={{ gap: `${sizes.actionGap}px` }}>
-                        <div className={styles.actionButton}>
-                          <IoMdHeartEmpty className={styles.heartIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
-                          {formattedLikes && (
-                            <span className={styles.likeCount} style={{ fontSize: `${sizes.likeFontSize}px` }}>
-                              {formattedLikes}
-                            </span>
-                          )}
-                        </div>
-                        <div className={styles.actionButton}>
-                          <BiDislike className={styles.dislikeIcon} style={{ fontSize: `${sizes.iconFontSize}px` }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
+
             </div>
           </div>
         </div>
       </div>
       
-      <div className={styles.controlsSection}>
-        <button 
-          onClick={handleExport}
-          className={styles.exportButton}
-          disabled={isExporting}
-        >
+      <div className={styles.controlsSection} style={{display: 'flex', gap: 10}}>
+        <button onClick={copyToClipboard} className={`${styles.exportButton} ${styles.copyButton}`} disabled={isExporting} style={{flex: 1, background: '#fff', color: '#333', border: '1px solid #ddd'}}>
+           <BiCopy /> {t.copy}
+        </button>
+
+        <button onClick={handleExport} className={styles.exportButton} disabled={isExporting} style={{ flex: 2, background: isLocked ? '#444' : undefined }}>
           {isExporting ? t.exporting : (
             <>
-              <span className={styles.downloadIcon}>↓</span>
-              {t.download}
+              {isLocked ? <FaLock /> : <span className={styles.downloadIcon}>↓</span>}
+              {isLocked ? t.unlockSvg : t.download}
             </>
           )}
         </button>
@@ -251,4 +177,4 @@ function CommentImageExporter({ comment, language, translations: t, exportSettin
   )
 }
 
-export default CommentImageExporter
+export default CommentImageExporter;

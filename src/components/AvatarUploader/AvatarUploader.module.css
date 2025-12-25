@@ -187,3 +187,46 @@
     height: 45px;
   }
 }
+.uploadOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.uploadBtn, .aiAvatarBtn {
+  width: 100%;
+  padding: 14px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.uploadBtn {
+  border: 2px dashed #ddd;
+  background: #f9f9f9;
+  color: #555;
+}
+
+.aiAvatarBtn {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(45deg, #FE2C55, #25F4EE) border-box;
+  color: #333;
+}
+
+.aiAvatarBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.aiAvatarBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

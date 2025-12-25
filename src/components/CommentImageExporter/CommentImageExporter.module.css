@@ -82,6 +82,56 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  transition: background-color 0.3s; /* Плавний перехід */
+}
+
+/* === 🌙 ТЕМНА ТЕМА === */
+.darkTheme {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+.darkTheme .commentUsername {
+  color: #f1f1f1 !important;
+}
+
+.darkTheme .commentText {
+  color: #ffffff !important;
+}
+
+.darkTheme .commentDate, 
+.darkTheme .commentReply {
+  color: #888888 !important;
+}
+
+/* 👇 ВИПРАВЛЕННЯ: Фарбуємо іконки та текст лайків */
+.darkTheme .actionButton,
+.darkTheme .likeCount,
+.darkTheme .heartIcon, 
+.darkTheme .dislikeIcon {
+  color: #888888 !important;
+}
+
+.darkTheme .watermark {
+  color: #ffffff !important;
+  opacity: 0.1 !important;
+}
+/* ===================== */
+
+/* Новий стиль для водяного знака */
+.watermark {
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  font-weight: 800;
+  color: #000;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .commentMain {
@@ -200,7 +250,6 @@
   transition: color 0.2s;
 }
 
-
 .heartIcon {
   color: rgba(22, 24, 35, 0.5);
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
@@ -253,6 +302,15 @@
   cursor: wait;
   transform: none;
   box-shadow: none;
+}
+
+.copyButton {
+  background: #E8FDF5;
+  color: #00C853;
+  border: 1px solid #00C853;
+}
+.copyButton:hover {
+  background: #d4fbe9;
 }
 
 .spinner {

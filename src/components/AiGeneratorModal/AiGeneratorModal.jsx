@@ -1,79 +1,23 @@
-import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { translations } from '../../utils/translations';
+import { useAiGenerator } from '../../hooks/useAiGenerator';
+import { translations } from '../../utils/translations'; // Для відображення текстів UI
 import styles from './AiGeneratorModal.module.css';
 
 function AiGeneratorModal({ isOpen, onClose, onApply, language }) {
-  const [settings, setSettings] = useState({
-    topic: '',
-    mood: 'positive',
-    length: 'short'
-  });
-  const [result, setResult] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    settings,
+    updateSetting,
+    result,
+    setResult,
+    isLoading,
+    handleGenerate,
+    handleAccept,
+    handleClose
+  } = useAiGenerator(onApply, onClose, language);
 
   if (!isOpen) return null;
 
   const t = translations[language];
-
-  const handleGenerate = async () => {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) {
-      alert("API Key не знайдено!");
-      return;
-    }
-
-    setIsLoading(true);
-
-    const currentLangConfig = translations[language];
-    
-    const promptText = `
-      Act as a TikTok user. Write a single comment.
-      Target Language: ${currentLangConfig.aiLangName}.
-      Topic: ${settings.topic || 'viral video'}.
-      Mood: ${settings.mood}.
-      Length: ${settings.length}.
-      Style Instruction: ${currentLangConfig.aiPromptStyle}
-      Constraint: Text only. No quotes.
-    `;
-
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }]
-          })
-        }
-      );
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error?.message || response.statusText);
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (text) setResult(text.trim());
-      else alert("Empty response.");
-
-    } catch (error) {
-      console.error("Gemini API Error:", error);
-      alert(`Error: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAccept = () => {
-    onApply(result);
-    onClose();
-    setResult('');
-  };
-
-  const handleClose = () => {
-    onClose();
-    setResult('');
-  };
 
   return createPortal(
     <div className={styles.overlay} onClick={handleClose}>
@@ -90,15 +34,20 @@ function AiGeneratorModal({ isOpen, onClose, onApply, language }) {
                 <label>{t.topic}</label>
                 <input 
                   value={settings.topic}
-                  onChange={e => setSettings({...settings, topic: e.target.value})}
+                  onChange={e => updateSetting('topic', e.target.value)}
                   placeholder={t.topicPlaceholder}
                   onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+                  disabled={isLoading}
                 />
               </div>
               <div className={styles.row}>
                 <div className={styles.formGroup}>
                   <label>{t.mood}</label>
-                  <select value={settings.mood} onChange={e => setSettings({...settings, mood: e.target.value})}>
+                  <select 
+                    value={settings.mood} 
+                    onChange={e => updateSetting('mood', e.target.value)}
+                    disabled={isLoading}
+                  >
                     <option value="positive">{t.moods.positive}</option>
                     <option value="funny">{t.moods.funny}</option>
                     <option value="shocked">{t.moods.shocked}</option>
@@ -108,7 +57,11 @@ function AiGeneratorModal({ isOpen, onClose, onApply, language }) {
                 </div>
                 <div className={styles.formGroup}>
                   <label>{t.length}</label>
-                  <select value={settings.length} onChange={e => setSettings({...settings, length: e.target.value})}>
+                  <select 
+                    value={settings.length} 
+                    onChange={e => updateSetting('length', e.target.value)}
+                    disabled={isLoading}
+                  >
                     <option value="short">{t.lengths.short}</option>
                     <option value="medium">{t.lengths.medium}</option>
                     <option value="long">{t.lengths.long}</option>
