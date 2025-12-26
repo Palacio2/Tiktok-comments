@@ -4,6 +4,9 @@ import AiGeneratorModal from '../AiGeneratorModal/AiGeneratorModal'
 import styles from './CommentForm.module.css'
 import { useCommentForm } from '../../hooks/useCommentForm'
 import { FormInput } from '../UI/FormElements'
+import { MdVerified } from "react-icons/md"; 
+// ✅ 1. Додаємо LuSun та LuMoon до імпорту
+import { LuCrown, LuCheck, LuX, LuKeyRound, LuArrowRight, LuSun, LuMoon } from "react-icons/lu";
 import { FaReply, FaTrash, FaCog, FaEye, FaLock } from 'react-icons/fa'
 
 const PRESET_SIZES = [
@@ -43,12 +46,15 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
     <div className={styles.fieldsGroup}>
       <FormInput label={t.username} name="username" value={data.username} onChange={(e) => handleInputChange(e, section)} />
 
-      {/* ✅ ОНОВЛЕНО: Класи замість інлайн-стилів для гарного вигляду */}
       <div className={styles.togglesRow}>
-        
-        {/* Верифікація */}
         <div className={styles.toggleItem}>
-          <label onClick={() => toggleVerified(section)}>{t.verified}</label>
+          <label 
+            onClick={() => toggleVerified(section)} 
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+          >
+            {t.verified} 
+            <MdVerified style={{ color: '#20d5ec', fontSize: '16px' }} />
+          </label>
           <div className={styles.switchWrapper}>
             <label className={styles.switch}>
               <input type="checkbox" checked={data.verified} onChange={() => toggleVerified(section)} />
@@ -58,7 +64,6 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
           </div>
         </div>
 
-        {/* Автор */}
         <div className={styles.toggleItem}>
           <label onClick={() => toggleCreator(section)}>{t.isCreator || 'Автор'}</label>
           <div className={styles.switchWrapper}>
@@ -68,7 +73,6 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
             </label>
           </div>
         </div>
-
       </div>
 
       <div className={styles.formRow}>
@@ -136,10 +140,27 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
           <div className={styles.exportOptions}>
             <div className={styles.optionRow}>
               <label>{t.mood}</label>
+              
+              {/* ✅ 2. Оновлена група кнопок з іконками */}
               <div className={styles.toggleGroup}>
-                <button type="button" className={!exportSettings.isDark ? styles.active : ''} onClick={() => updateExportSettings({ isDark: false })}>☀️</button>
-                <button type="button" className={exportSettings.isDark ? styles.active : ''} onClick={() => updateExportSettings({ isDark: true })}>🌙</button>
+                <button 
+                  type="button" 
+                  className={!exportSettings.isDark ? styles.active : ''} 
+                  onClick={() => updateExportSettings({ isDark: false })}
+                  title="Light Mode"
+                >
+                  <LuSun size={18} />
+                </button>
+                <button 
+                  type="button" 
+                  className={exportSettings.isDark ? styles.active : ''} 
+                  onClick={() => updateExportSettings({ isDark: true })}
+                  title="Dark Mode"
+                >
+                  <LuMoon size={18} />
+                </button>
               </div>
+
             </div>
 
             <div className={styles.optionRow}>

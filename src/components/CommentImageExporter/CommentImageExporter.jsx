@@ -43,7 +43,7 @@ const SingleComment = ({ data, sizes, replyLabel, t, isNested = false }) => {
 
             {data.isCreator && (
               <span className={styles.creatorBadge} style={{ fontSize: `${sizes.usernameFontSize}px` }}>
-                · {t?.creatorBadge || 'Автор'}
+                {t?.creatorBadge || 'Автор'}
               </span>
             )}
           </div>
@@ -60,9 +60,15 @@ const SingleComment = ({ data, sizes, replyLabel, t, isNested = false }) => {
           <div className={styles.footerRight}>
             <div className={styles.actionRow} style={{ gap: `${sizes.actionGap}px` }}>
               <div className={styles.actionButton}>
-                <IoMdHeartEmpty style={{ fontSize: `${sizes.iconFontSize}px` }} />
-                {formattedLikes && <span style={{ fontSize: `${sizes.likeFontSize}px` }}>{formattedLikes}</span>}
-              </div>
+  <IoMdHeartEmpty 
+    style={{ 
+      fontSize: `${sizes.iconFontSize}px`,
+      strokeWidth: "4",       // ⬅️ Товщина обводки (чим більше число, тим товще)
+      stroke: "currentColor"   // ⬅️ Колір обводки (бере поточний колір тексту)
+    }} 
+  />
+  {formattedLikes && <span style={{ fontSize: `${sizes.likeFontSize}px` }}>{formattedLikes}</span>}
+</div>
               <BiDislike style={{ fontSize: `${sizes.iconFontSize}px` }} />
             </div>
           </div>

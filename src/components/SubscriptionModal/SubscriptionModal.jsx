@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FaCrown, FaCheck, FaTimes, FaKey, FaArrowRight } from 'react-icons/fa';
+import { MdVerified } from "react-icons/md"; // Іконка верифікації
 import styles from './SubscriptionModal.module.css';
 
 function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, translations: t }) {
@@ -36,15 +37,11 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
     }
   };
 
-  // ✅ ВИПРАВЛЕНО: Відкриває саме Gmail у браузері
   const handleSupportClick = () => {
     const email = import.meta.env.VITE_SUPPORT_EMAIL || 'zaviiskyoleh@gmail.com';
     const subject = encodeURIComponent(t.supportSubject || 'Питання PRO');
     const body = encodeURIComponent(`${t.supportGreeting}\n\n${t.supportBody}\n\n`);
-    
-    // Формуємо посилання прямо на композер Gmail
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
-    
     window.open(gmailUrl, '_blank');
   };
 
@@ -62,12 +59,24 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
         </div>
 
         <div className={styles.features}>
-          {[t.proFeature1, t.proFeatureNoWatermark, t.proFeature3, t.proFeatureVerified, t.proFeatureCustom].map((feature, i) => (
-            <div key={i} className={styles.featureItem}>
-              <div className={styles.checkIcon}><FaCheck /></div>
-              <span>{feature}</span>
-            </div>
-          ))}
+          {[t.proFeature1, t.proFeatureNoWatermark, t.proFeature3, t.proFeatureVerified, t.proFeatureCustom].map((feature, i) => {
+            const isVerifiedItem = feature === t.proFeatureVerified;
+
+            return (
+              <div key={i} className={styles.featureItem}>
+                {/* 1. Зелена галочка завжди зліва */}
+                <div className={styles.checkIcon}><FaCheck /></div>
+                
+                {/* 2. Текст (якщо це верифікація - додаємо синю іконку перед текстом) */}
+                <span style={isVerifiedItem ? { display: 'flex', alignItems: 'center', gap: '6px' } : {}}>
+                  {isVerifiedItem && (
+                    <MdVerified style={{ color: '#20d5ec', fontSize: '18px', flexShrink: 0 }} />
+                  )}
+                  {feature}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         <button className={styles.buyBtn} onClick={onBuy}>

@@ -153,14 +153,14 @@
 
 /* МІТКА АВТОРА */
 .creatorBadge {
-  color: #fe2c55;
+  color: #5BAFB5;
   font-weight: 600;
   margin-left: 6px;
   white-space: nowrap;
 }
 
 .darkTheme .creatorBadge {
-  color: #ff3b5c; 
+  color: #5BAFB5; 
 }
 
 .commentText {
@@ -187,7 +187,7 @@
 
 .footerLeft {
   display: flex;
-  gap: 16px;
+  gap: 34px;
   font-weight: 400;
 }
 
