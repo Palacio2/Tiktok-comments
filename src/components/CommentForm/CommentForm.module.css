@@ -1,79 +1,173 @@
-/* CommentForm.module.css */
-.simpleForm {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
 .formContainer {
   width: 100%;
 }
 
-.formSection {
-  background: #FAFAFA;
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid #EDEDED;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section {
+  background: rgba(224, 224, 224, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 28px;
+  transition: all 0.3s ease;
+}
+
+.replySection {
+  border-left: 4px solid #ec4899;
+  padding-left: 32px;
 }
 
 .sectionTitle {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  color: #888;
-  margin: 0 0 18px 0;
   letter-spacing: 0.5px;
+  color: #64748b;
+  margin: 0 0 24px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.sectionTitle::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 16px;
-  background: linear-gradient(180deg, #FE2C55, #25F4EE);
-  border-radius: 2px;
+.fieldsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
 .formRow {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 18px;
-}
-
-.formRow:last-child {
-  margin-bottom: 0;
 }
 
 .formRow label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+/* Перемикачі */
+.togglesRow {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.toggleItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background 0.2s ease;
 }
 
-.formRow label::after {
-  content: ':';
-  color: #999;
+.toggleItem:last-child {
+  border-bottom: none;
 }
 
+.toggleItem:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.toggleItem label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  cursor: pointer;
+  flex: 1;
+}
+
+.switchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e2e8f0;
+  border-radius: 32px;
+  transition: 0.3s ease;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.proLock {
+  color: #fbbf24;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.proLock:hover {
+  opacity: 1;
+}
+
+/* Інпути */
 .formRow input,
 .formRow textarea,
 .formRow select {
   width: 100%;
-  padding: 12px 14px;
-  background: white;
-  border: 1px solid #E0E0E0;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #121212;
-  transition: all 0.2s;
-  font-family: inherit;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 16px;
+  font-size: 15px;
+  color: #111;
+  transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
@@ -81,240 +175,255 @@
 .formRow textarea:focus,
 .formRow select:focus {
   outline: none;
-  border-color: #25F4EE;
-  box-shadow: 0 0 0 3px rgba(37, 244, 238, 0.1);
-}
-
-.formRow textarea {
-  height: 100px;
-  min-height: 100px;
-  max-height: 200px;
-  resize: vertical;
-  line-height: 1.4;
-}
-
-.checkboxRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
+  border-color: #ec4899;
   background: white;
-  border: 1px solid #E0E0E0;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-bottom: 18px;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
 }
 
-.checkboxRow:hover {
-  border-color: #25F4EE;
-  background: #f8fdff;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  cursor: pointer;
-  margin: 0;
-}
-
-.checkboxLabel span {
-  font-weight: 600;
-  font-size: 14px;
-  color: #333;
-}
-
-.checkboxLabel input[type="checkbox"] {
-  width: 44px;
-  height: 24px;
-  border-radius: 24px;
-  background: #E5E5E5;
-  appearance: none;
-  position: relative;
-  cursor: pointer;
-  transition: 0.3s;
-  border: none;
-  outline: none;
-  flex-shrink: 0;
-}
-
-.checkboxLabel input[type="checkbox"]::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.checkboxLabel input[type="checkbox"]:checked {
-  background: linear-gradient(90deg, #FE2C55, #25F4EE);
-}
-
-.checkboxLabel input[type="checkbox"]:checked::after {
-  left: 22px;
-}
-
-/* Dimensions Inputs */
-.dimensionsRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 12px;
-  background: #fff;
-  border: 1px dashed #ccc;
-  border-radius: 10px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.dimensionsRow input {
-  flex: 1;
-  min-width: 0;
-  text-align: center;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
-}
-
-.dimensionsRow input:focus {
-  border-color: #25F4EE;
-  background: white;
-}
-
-.dimensionSeparator {
-  color: #999;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-/* Buttons */
-.formActions {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.submitBtn {
-  background: linear-gradient(90deg, #FE2C55, #FF0050);
-  color: white;
-  font-weight: 700;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 15px;
-  transition: all 0.2s;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(254, 44, 85, 0.2);
-}
-
-.submitBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(254, 44, 85, 0.3);
-}
-
-.resetBtn {
-  background: white;
-  border: 1px solid #ddd;
-  color: #666;
-  font-weight: 600;
-  border-radius: 12px;
-  padding: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.resetBtn:hover {
-  background: #f5f5f5;
-  color: #333;
-  border-color: #ccc;
-  transform: translateY(-1px);
-}
-
-/* AI Generator Button */
-.labelWithAi {
+.labelWithAiWrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-bottom: 8px;
 }
 
 .aiButton {
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  border: none;
-  border-radius: 20px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
   color: white;
-  padding: 6px 14px;
-  font-size: 11px;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
 .aiButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .formActions {
+.gridRowCompact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.replyToggle {
+  width: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  border: 2px dashed rgba(236, 72, 153, 0.3);
+  background: rgba(236, 72, 153, 0.05);
+  color: #ec4899;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.replyToggle:hover {
+  background: rgba(236, 72, 153, 0.1);
+  border-color: #ec4899;
+}
+
+.replyActive {
+  background: rgba(236, 72, 153, 0.15);
+  border-style: solid;
+}
+
+.exportOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.optionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optionRow label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.toggleGroup {
+  display: flex;
+  background: rgba(240, 240, 240, 0.6);
+  padding: 6px;
+  border-radius: 16px;
+  gap: 6px;
+}
+
+.toggleGroup button {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.toggleGroup button.active {
+  background: white;
+  color: #111;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.lockIcon {
+  margin-left: 6px;
+  opacity: 0.6;
+}
+
+.select {
+  padding: 14px 18px;
+  padding-right: 50px !important;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 16px;
+  font-size: 15px;
+  color: #111;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  transition: all 0.3s ease;
+}
+
+.select:focus {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
+}
+
+.customSizeRow {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr;
+  align-items: end;
+  gap: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 20px;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.dimension {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dimension span {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.dimension input {
+  width: 100%;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 15px;
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 14px;
+  background: white;
+}
+
+.separator {
+  font-size: 24px;
+  color: #cbd5e1;
+  font-weight: 300;
+  text-align: center;
+  padding-bottom: 6px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ✅ ОНОВЛЕНІ КНОПКИ (Actions) - тепер кольори як в Exporter */
+.actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.submitBtn, .resetBtn {
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+/* Кнопка "Створити" - тепер ЧОРНА (як Export Button) */
+.submitBtn {
+  background: #111;
+  color: white;
+}
+
+.submitBtn:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* Кнопка "Скинути" - тепер СІРА (як Copy Button) */
+.resetBtn {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.resetBtn:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 640px) {
+  .gridRowCompact,
+  .actions {
     grid-template-columns: 1fr;
   }
-  
-  .formSection {
-    padding: 16px;
-  }
-  
-  .sectionTitle {
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-  
-  .dimensionsRow {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .dimensionsRow input {
-    width: 100%;
-  }
-  
-  .dimensionSeparator {
-    transform: rotate(90deg);
-  }
-}
 
-@media (max-width: 480px) {
-  .simpleForm {
-    gap: 20px;
+  .customSizeRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    text-align: center;
   }
-  
-  .formRow {
-    margin-bottom: 16px;
+
+  .separator {
+    display: none;
   }
-  
-  .checkboxRow {
-    padding: 10px 14px;
+
+  .section {
+    padding: 20px;
   }
-  
-  .submitBtn,
-  .resetBtn {
-    padding: 12px;
-    font-size: 14px;
+
+  .replySection {
+    padding-left: 20px;
+    border-left-width: 3px;
   }
 }

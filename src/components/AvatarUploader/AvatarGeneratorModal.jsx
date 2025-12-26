@@ -15,8 +15,8 @@ function AvatarGeneratorModal({ isOpen, onClose, onApply, translations: t }) {
     <div className={styles.overlay} onClick={handleClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h3>{t?.aiAvatarTitle || '✨ AI Avatar'}</h3>
-          <button className={styles.closeBtn} onClick={handleClose}>×</button>
+          <h3>{t.aiAvatarTitle || '✨ AI Avatar Generator'}</h3>
+          <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">×</button>
         </div>
 
         <div className={styles.body}>
@@ -25,8 +25,8 @@ function AvatarGeneratorModal({ isOpen, onClose, onApply, translations: t }) {
               type="text" 
               value={promptText}
               onChange={(e) => setPromptText(e.target.value)}
-              placeholder={t?.aiAvatarPrompt || "Опишіть аватар..."}
-              onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+              placeholder={t.aiAvatarPrompt || "Опишіть бажаний аватар... (наприклад: 'молодий хлопець у стилі аніме')"}
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleGenerate()}
               disabled={isLoading}
               autoFocus
             />
@@ -34,8 +34,9 @@ function AvatarGeneratorModal({ isOpen, onClose, onApply, translations: t }) {
               className={styles.generateBtn} 
               onClick={handleGenerate}
               disabled={isLoading || !promptText.trim()}
+              aria-label="Generate"
             >
-              {isLoading ? '⏳' : '✨'}
+              {isLoading ? <span className={styles.spinner}></span> : '✨'}
             </button>
           </div>
 
@@ -43,26 +44,29 @@ function AvatarGeneratorModal({ isOpen, onClose, onApply, translations: t }) {
             {isLoading ? (
               <div className={styles.loadingState}>
                 <div className={styles.loader}></div>
-                <span className={styles.statusText}>{status}</span>
+                <span className={styles.statusText}>{status || t.generating || 'Генерація...'}</span>
               </div>
             ) : previewImage ? (
-              <img src={previewImage} alt="Preview" className={styles.previewImg} />
+              <img src={previewImage} alt="AI Generated Avatar" className={styles.previewImg} />
             ) : (
               <div className={styles.placeholder}>
                 <span>?</span>
+                <p>{t.aiAvatarPlaceholder || 'Введіть опис і натисніть ✨'}</p>
               </div>
             )}
           </div>
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={handleClose}>{t?.reset || 'Скасувати'}</button>
+          <button className={styles.cancelBtn} onClick={handleClose}>
+            {t.cancel || 'Скасувати'}
+          </button>
           <button 
             className={styles.applyBtn} 
             onClick={handleApply}
-            disabled={!previewImage}
+            disabled={!previewImage || isLoading}
           >
-            {t?.apply || 'Застосувати'}
+            {t.apply || 'Застосувати'}
           </button>
         </div>
       </div>

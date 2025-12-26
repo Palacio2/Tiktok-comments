@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { loadComments, saveComment, clearComments as clearStorage } from '../utils/storage';
 import { translations } from '../utils/translations';
-import { supabase } from '../utils/supabaseClient'; // 🆕 Імпорт клієнта
+import { supabase } from '../utils/supabaseClient';
 
 // === Хук для Мови ===
 export const useLanguage = () => {
@@ -19,35 +19,35 @@ export const useLanguage = () => {
   const currentLangObj = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
   const t = translations[language];
 
-  const toggleLangMenu = () => setIsLangMenuOpen(!isLangMenuOpen);
-  const selectLanguage = (code) => {
+  const toggleLangMenu = useCallback(() => setIsLangMenuOpen(prev => !prev), []);
+  const selectLanguage = useCallback((code) => {
     setLanguage(code);
     setIsLangMenuOpen(false);
-  };
+  }, []);
 
   return { language, t, isLangMenuOpen, currentLangObj, LANGUAGES, toggleLangMenu, selectLanguage };
 };
 
-// === Хук для PRO (Оновлений під Supabase) ===
+// === Хук для PRO (З ТАЙМЕРОМ) ===
 export const usePro = () => {
   const [isPro, setIsPro] = useState(() => localStorage.getItem('isProUser') === 'true');
+  const [expirationDate, setExpirationDate] = useState(() => localStorage.getItem('proExpirationDate'));
   const [isSubModalOpen, setIsSubModalOpen] = useState(false);
-  const [isValidating, setIsValidating] = useState(false); // 🆕 Стейт завантаження
+  const [isValidating, setIsValidating] = useState(false);
 
-  const handleBuyPro = () => {
-    // Тут буде ваше посилання на Stripe
-    window.open('https://buy.stripe.com/test_cNifZg6We0radiraeU9sk00', '_blank');
-  };
+  const handleBuyPro = useCallback(() => {
+    const stripeUrl = import.meta.env.VITE_STRIPE_URL || '#';
+    window.open(stripeUrl, '_blank');
+  }, []);
 
-  // Функція активації через Supabase
-  const activatePro = async (code) => {
+  const activatePro = useCallback(async (code) => {
     setIsValidating(true);
     const cleanCode = code.trim().toUpperCase();
 
     try {
-      // Викликаємо SQL функцію 'check_license'
+      // ✅ Викликаємо нову SQL функцію, яка повертає ДАТУ
       const { data, error } = await supabase
-        .rpc('check_license', { lookup_code: cleanCode });
+        .rpc('check_license_date', { lookup_code: cleanCode });
 
       if (error) {
         console.error('Supabase error:', error);
@@ -55,15 +55,16 @@ export const usePro = () => {
         return false;
       }
 
-      // Якщо функція повернула true (код знайдено)
-      if (data === true) {
+      // Якщо data != null, значить код валідний і ми отримали дату
+      if (data) {
         setIsPro(true);
+        setExpirationDate(data);
         localStorage.setItem('isProUser', 'true');
+        localStorage.setItem('proExpirationDate', data);
         setIsSubModalOpen(false);
         setIsValidating(false);
         return true; 
       } else {
-        // Код не знайдено
         setIsValidating(false);
         return false;
       }
@@ -72,9 +73,23 @@ export const usePro = () => {
       setIsValidating(false);
       return false;
     }
-  };
+  }, []);
 
-  return { isPro, isSubModalOpen, setIsSubModalOpen, handleBuyPro, activatePro, isValidating };
+  // Перевірка терміну дії при запуску
+  useEffect(() => {
+    if (expirationDate) {
+      const now = new Date();
+      const end = new Date(expirationDate);
+      if (now > end) {
+        setIsPro(false);
+        setExpirationDate(null);
+        localStorage.removeItem('isProUser');
+        localStorage.removeItem('proExpirationDate');
+      }
+    }
+  }, [expirationDate]);
+
+  return { isPro, expirationDate, isSubModalOpen, setIsSubModalOpen, handleBuyPro, activatePro, isValidating };
 };
 
 // === Хук для Темної Теми ===
@@ -86,9 +101,9 @@ export const useTheme = () => {
     localStorage.setItem('appTheme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  }, []);
 
   return { theme, toggleTheme };
 };
@@ -110,7 +125,7 @@ export const useHistory = () => {
     setComments(updatedComments);
   }, []);
 
-  const clearHistory = (t, language) => {
+  const clearHistory = useCallback((t, language) => {
     if (comments.length === 0) return;
     const confirmMsg = language === 'uk' ? 'Видалити історію?' : 'Clear history?';
     if (window.confirm(confirmMsg)) {
@@ -118,7 +133,7 @@ export const useHistory = () => {
       setComments([]);
       setCurrentComment(null);
     }
-  };
+  }, [comments.length]);
 
   return { comments, currentComment, handleGenerateComment, clearHistory };
 };

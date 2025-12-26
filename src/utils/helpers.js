@@ -1,10 +1,8 @@
 export const validateCommentData = (data) => {
   const errors = {}
-  
   if (!data.username?.trim()) errors.username = "Введіть ім'я користувача"
   if (!data.commentText?.trim()) errors.commentText = "Введіть текст коментаря"
   if (data.likes < 0) errors.likes = "Кількість лайків не може бути від'ємною"
-  
   return { isValid: Object.keys(errors).length === 0, errors }
 }
 
@@ -25,7 +23,6 @@ export const getDefaultAvatarData = (username) => {
   return { color, initial }
 }
 
-// 👇 Перенесено з CommentImageExporter.jsx
 export const formatLikeCount = (count) => {
   if (!count || count === 0) return null
   if (count < 1000) return count.toString()
@@ -33,8 +30,8 @@ export const formatLikeCount = (count) => {
   return (count / 1000).toFixed(count % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k'
 }
 
-// 👇 Перенесено з AvatarGeneratorModal.jsx
-export const toBase64 = async (url) => {
+// ✅ ПОВЕРНУЛИ СТАРУ ВЕРСІЮ (Чекає до переможного)
+export const urlToBase64 = async (url) => {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -49,7 +46,6 @@ export const toBase64 = async (url) => {
   }
 };
 
-// 👇 Перенесено логіку розрахунків розмірів (можна також в окремий файл stylesUtils.js)
 export const calculatePreviewSizes = (baseWidth) => {
   const scale = baseWidth / 1080
   return {
@@ -67,3 +63,11 @@ export const calculatePreviewSizes = (baseWidth) => {
     actionGap: Math.max(20, 40 * scale)
   }
 }
+
+export const formatCommentDate = (dateString) => { 
+  if (!dateString) return '12-11';
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) 
+    ? '12-11' 
+    : `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};

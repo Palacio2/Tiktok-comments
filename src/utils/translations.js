@@ -10,6 +10,9 @@ export const translations = {
     replyLabel: 'Текст відповіді:',
     replyTextDefault: 'Відповісти',
     aiBtn: '✨ AI Генератор',
+    verified: 'Верифікація',
+    isCreator: 'Мітка "Автор"',
+    creatorBadge: 'Автор',
     likes: 'Лайки:',
     date: 'Дата:',
     export: 'Експорт',
@@ -21,13 +24,11 @@ export const translations = {
     download: 'Завантажити',
     copy: 'Копіювати',
     copied: '✅ Скопійовано!',
-    darkMode: '🌙 Темна тема',
     exporting: 'Експорт...',
-    // 🆕 Ключі для відповіді (Reply Thread)
+    emptyState: '👈 Створи свій смішний коментар!',
     addReplyThread: '💬 Додати гілку відповіді',
     removeReplyThread: '❌ Видалити відповідь',
     replySection: 'Налаштування відповіді',
-    // 🆕 Ключі для AI
     aiTitle: '✨ AI Генератор',
     topic: 'Тема / Контекст:',
     topicPlaceholder: 'Напр.: смішне відео з котом',
@@ -38,10 +39,11 @@ export const translations = {
     apply: '✅ Застосувати',
     aiAvatarTitle: '✨ AI Аватар',
     aiAvatarPrompt: 'Опишіть аватар (англійською краще):',
-    upload: 'Завантажити фото',
+    aiAvatarPlaceholder: 'Введіть опис і натисніть ✨',
+    aiAvatarBtn: 'AI Аватар',
+    removeAvatar: 'Видалити аватар',
     generating: 'Генерую...',
-    emptyState: '👈 Створи свій смішний коментар!', 
-    // 🆕 Ключі для PRO та Активації
+    cancel: 'Скасувати',
     proTitle: '👑 PRO Версія',
     proDesc: 'Розблокуйте всі можливості генератора!',
     proFeature1: '📥 Експорт у вектор (SVG)',
@@ -50,26 +52,22 @@ export const translations = {
     proFeatureVerified: '🔹 Верифікація синя галочка',
     proFeatureCustom: '📏 Кастомний розмір коментаря',
     buyPro: 'Оформити за $1.99',
-    restore: 'Відновити покупки',
-    haveCode: 'Маєте код доступу?', // 🆕
-    codePlaceholder: 'Введіть код (напр. PRO2025)', // 🆕
-    activate: 'Активувати', // 🆕
-    codeSuccess: 'PRO версію успішно активовано! 🎉', // 🆕
-    codeError: 'Невірний код або термін дії вийшов.', // 🆕
-    proActive: 'PRO Активний ✅',
-    onlyPro: 'Тільки для PRO',
-    unlockSvg: 'Розблокувати SVG',
-    faqTitle: '🙋 Питання та відповіді',
-    updatesTitle: '🆕 Останні оновлення',
-    faq: [
-      { q: 'Як прибрати водяний знак?', a: 'Придбайте PRO версію, щоб прибрати напис.' },
-      { q: 'Як працює AI?', a: 'AI генерує унікальні тексти та аватари на основі вашого опису.' },
-      { q: 'Як зберегти у високій якості?', a: 'Використовуйте формат SVG або стандартний пресет 1080px.' }
-    ],
-    updates: [
-      { date: '25.12.2025', text: 'Додано темну тему, копіювання в буфер та редагування відповідей.' },
-      { date: '20.12.2025', text: 'Запуск AI генератора текстів та аватарок.' }
-    ],
+    haveCode: 'Маєте код доступу?',
+    codePlaceholder: 'Введіть код (напр. PRO2025)',
+    activate: 'Активувати',
+    codeSuccess: 'PRO версію успішно активовано! 🎉',
+    codeError: 'Невірний код або термін дії вийшов.',
+    supportButton: 'Є питання? Напишіть нам на Gmail →',
+    supportSubject: 'Питання щодо PRO-версії — TikTok Comment Generator',
+    supportGreeting: 'Привіт, команда!',
+    supportBody: 'В мене є питання щодо PRO-версії (активація, відновлення покупки, тощо).',
+    supportQuestion: 'Опишіть своє питання тут:',
+    supportThanks: 'Дякую за допомогу! 😊',
+    proActive: 'активний',
+    proExpired: 'закінчилась',
+    days: 'дн.',
+    hours: 'год.',
+    minutes: 'хв.',
     moods: {
       positive: '😍 Фанат',
       funny: '😂 Смішно',
@@ -85,6 +83,7 @@ export const translations = {
     aiLangName: 'Ukrainian',
     aiPromptStyle: 'Write in informal Ukrainian (Internet slang/Surzhyk). Use lowercase mostly.'
   },
+
   en: {
     appTitle: 'TikTok Comment Generator',
     subtitle: 'Create realistic comment screenshots',
@@ -103,17 +102,18 @@ export const translations = {
     create: 'Create',
     reset: 'Reset',
     clearHistory: 'Clear History',
+    verified: 'Verified',
+    isCreator: 'Creator Badge',
+    creatorBadge: 'Creator',
     preview: 'Preview',
     download: 'Download',
     copy: 'Copy Image',
     copied: '✅ Copied!',
-    darkMode: '🌙 Dark Mode',
     exporting: 'Exporting...',
-    // 🆕 Reply Thread Keys
+    emptyState: '👈 Create your funny comment!',
     addReplyThread: '💬 Add Reply Thread',
     removeReplyThread: '❌ Remove Reply',
     replySection: 'Reply Settings',
-    // AI
     aiTitle: '✨ AI Generator',
     topic: 'Topic / Context:',
     topicPlaceholder: 'Ex: funny cat video',
@@ -124,10 +124,11 @@ export const translations = {
     apply: '✅ Use this',
     aiAvatarTitle: '✨ AI Avatar',
     aiAvatarPrompt: 'Describe avatar (English is better):',
-    upload: 'Upload Photo',
+    aiAvatarPlaceholder: 'Enter description and press ✨',
+    aiAvatarBtn: 'AI Avatar',
+    removeAvatar: 'Remove avatar',
     generating: 'Generating...',
-    emptyState: '👈 Create your funny comment!',
-    // PRO & Activation
+    cancel: 'Cancel',
     proTitle: '👑 PRO Version',
     proDesc: 'Unlock the full power of the generator!',
     proFeature1: '📥 Vector Export (SVG)',
@@ -136,25 +137,22 @@ export const translations = {
     proFeatureVerified: '🔹 Verified Blue Badge',
     proFeatureCustom: '📏 Custom Comment Size',
     buyPro: 'Get PRO for $1.99',
-    restore: 'Restore Purchases',
-    haveCode: 'Have an access code?', // 🆕
-    codePlaceholder: 'Enter code (e.g. PRO2025)', // 🆕
-    activate: 'Activate', // 🆕
-    codeSuccess: 'PRO version activated! 🎉', // 🆕
-    codeError: 'Invalid or expired code.', // 🆕
-    proActive: 'PRO Active ✅',
-    onlyPro: 'PRO Only',
-    unlockSvg: 'Unlock SVG',
-    faqTitle: '🙋 FAQ',
-    updatesTitle: '🆕 Latest Updates',
-    faq: [
-      { q: 'How to remove watermark?', a: 'Get PRO version to remove it.' },
-      { q: 'Is it free?', a: 'Basic features are free. AI and SVG are PRO.' }
-    ],
-    updates: [
-      { date: '25.12.2025', text: 'Dark mode, Clipboard copy & Reply editing added.' },
-      { date: '20.12.2025', text: 'AI Generator launch.' }
-    ],
+    haveCode: 'Have an access code?',
+    codePlaceholder: 'Enter code (e.g. PRO2025)',
+    activate: 'Activate',
+    codeSuccess: 'PRO version activated! 🎉',
+    codeError: 'Invalid or expired code.',
+    supportButton: 'Have a question? Write to us on Gmail →',
+    supportSubject: 'Question about PRO version — TikTok Comment Generator',
+    supportGreeting: 'Hello team!',
+    supportBody: 'I have a question about the PRO version (activation, purchase recovery, etc.).',
+    supportQuestion: 'Describe your question here:',
+    supportThanks: 'Thanks for your help! 😊',
+    proActive: 'active for',
+    proExpired: 'expired',
+    days: 'days',
+    hours: 'hrs',
+    minutes: 'min',
     moods: {
       positive: '😍 Fan',
       funny: '😂 Funny',
@@ -170,6 +168,7 @@ export const translations = {
     aiLangName: 'English',
     aiPromptStyle: 'Write in informal English (slang, abbreviations like rn, fr, ngl). Use lowercase.'
   },
+
   pl: {
     appTitle: 'Generator Komentarzy TikTok',
     subtitle: 'Twórz realistyczne zrzuty ekranu komentarzy',
@@ -186,19 +185,20 @@ export const translations = {
     export: 'Eksport',
     size: 'Rozmiar:',
     create: 'Utwórz',
+    verified: 'Weryfikacja',
+    isCreator: 'Odznaka Twórcy',
+    creatorBadge: 'Twórca',
     reset: 'Resetuj',
     clearHistory: 'Wyczyść historię',
     preview: 'Podgląd',
     download: 'Pobierz',
     copy: 'Kopiuj',
     copied: '✅ Skopiowano!',
-    darkMode: '🌙 Ciemny motyw',
     exporting: 'Eksportowanie...',
-    // 🆕 Reply Keys
+    emptyState: '👈 Stwórz swój zabawny komentarz!',
     addReplyThread: '💬 Dodaj wątek odpowiedzi',
     removeReplyThread: '❌ Usuń odpowiedź',
     replySection: 'Ustawienia odpowiedzi',
-    // AI
     aiTitle: '✨ Generator AI',
     topic: 'Temat / Kontekst:',
     topicPlaceholder: 'Np.: zabawny film z kotem',
@@ -208,11 +208,12 @@ export const translations = {
     regenerate: '🔄 Generuj ponownie',
     apply: '✅ Użyj tego',
     aiAvatarTitle: '✨ Awatar AI',
-    aiAvatarPrompt: 'Opisz awatar (najlepiej po angielsku):',
-    upload: 'Prześlij zdjęcie',
-    generating: 'Generowanie...',
-    emptyState: '👈 Stwórz swój zabawny komentarz!',
-    // PRO & Activation
+    aiAvatarPrompt: 'Opisz awatar (lepiej po angielsku):',
+    aiAvatarPlaceholder: 'Wpisz opis i naciśnij ✨',
+    aiAvatarBtn: 'Awatar AI',
+    removeAvatar: 'Usuń awatar',
+    generating: 'Generuję...',
+    cancel: 'Anuluj',
     proTitle: '👑 Wersja PRO',
     proDesc: 'Odblokuj pełną moc generatora!',
     proFeature1: '📥 Eksport wektorowy (SVG)',
@@ -221,23 +222,22 @@ export const translations = {
     proFeatureVerified: '🔹 Weryfikacja niebieski znaczek',
     proFeatureCustom: '📏 Niestandardowy rozmiar komentarza',
     buyPro: 'Kup PRO za $1.99',
-    restore: 'Przywróć zakupy',
-    haveCode: 'Masz kod dostępu?', // 🆕
-    codePlaceholder: 'Wpisz kod...', // 🆕
-    activate: 'Aktywuj', // 🆕
-    codeSuccess: 'Wersja PRO aktywna!', // 🆕
-    codeError: 'Nieprawidłowy kod.', // 🆕
-    proActive: 'PRO Aktywne ✅',
-    onlyPro: 'Tylko dla PRO',
-    unlockSvg: 'Odblokuj SVG',
-    faqTitle: '🙋 FAQ',
-    updatesTitle: '🆕 Aktualizacje',
-    faq: [
-      { q: 'Jak usunąć znak wodny?', a: 'Kup wersję PRO.' }
-    ],
-    updates: [
-      { date: '25.12.2025', text: 'Dodano tryb ciemny i kopiowanie.' }
-    ],
+    haveCode: 'Masz kod dostępu?',
+    codePlaceholder: 'Wpisz kod...',
+    activate: 'Aktywuj',
+    codeSuccess: 'Wersja PRO aktywna!',
+    codeError: 'Nieprawidłowy kod.',
+    supportButton: 'Masz pytanie? Napisz do nas na Gmail →',
+    supportSubject: 'Pytanie dotyczące wersji PRO — TikTok Comment Generator',
+    supportGreeting: 'Cześć, zespół!',
+    supportBody: 'Mam pytanie dotyczące wersji PRO (aktywacja, przywrócenie zakupu itp.).',
+    supportQuestion: 'Opisz swoje pytanie tutaj:',
+    supportThanks: 'Dziękuję za pomoc! 😊',
+    proActive: 'aktywna przez',
+    proExpired: 'wygasła',
+    days: 'dni',
+    hours: 'godz.',
+    minutes: 'min',
     moods: {
       positive: '😍 Fan',
       funny: '😂 Zabawny',
@@ -253,6 +253,7 @@ export const translations = {
     aiLangName: 'Polish',
     aiPromptStyle: 'Write in informal Polish (internet slang). Use lowercase mostly.'
   },
+
   fr: {
     appTitle: 'Générateur de Commentaires',
     subtitle: 'Créez des captures d\'écran réalistes',
@@ -274,14 +275,15 @@ export const translations = {
     preview: 'Aperçu',
     download: 'Télécharger',
     copy: 'Copier',
+    verified: 'Vérifié',
+    isCreator: 'Badge Créateur',
+    creatorBadge: 'Créateur',
     copied: '✅ Copié !',
-    darkMode: '🌙 Mode sombre',
     exporting: 'Exportation...',
-    // 🆕 Reply Keys
+    emptyState: '👈 Créez votre commentaire drôle !',
     addReplyThread: '💬 Ajouter une réponse',
     removeReplyThread: '❌ Supprimer la réponse',
     replySection: 'Paramètres de réponse',
-    // AI
     aiTitle: '✨ Générateur IA',
     topic: 'Sujet / Contexte:',
     topicPlaceholder: 'Ex: vidéo de chat drôle',
@@ -291,11 +293,12 @@ export const translations = {
     regenerate: '🔄 Régénérer',
     apply: '✅ Utiliser',
     aiAvatarTitle: '✨ Avatar IA',
-    aiAvatarPrompt: 'Décrivez l\'avatar (en anglais de préférence):',
-    upload: 'Télécharger une photo',
+    aiAvatarPrompt: 'Décrivez l\'avatar (anglais préféré):',
+    aiAvatarPlaceholder: 'Entrez la description et appuyez sur ✨',
+    aiAvatarBtn: 'Avatar IA',
+    removeAvatar: 'Supprimer l\'avatar',
     generating: 'Génération...',
-    emptyState: '👈 Créez votre commentaire drôle !',
-    // PRO & Activation
+    cancel: 'Annuler',
     proTitle: '👑 Version PRO',
     proDesc: 'Débloquez toute la puissance du générateur !',
     proFeature1: '📥 Export vectoriel (SVG)',
@@ -304,23 +307,22 @@ export const translations = {
     proFeatureVerified: '🔹 Badge de vérification bleu',
     proFeatureCustom: '📏 Taille de commentaire personnalisée',
     buyPro: 'Obtenir PRO pour $1.99',
-    restore: 'Restaurer les achats',
-    haveCode: 'Avez-vous un code ?', // 🆕
-    codePlaceholder: 'Entrez le code...', // 🆕
-    activate: 'Activer', // 🆕
-    codeSuccess: 'Version PRO activée !', // 🆕
-    codeError: 'Code invalide.', // 🆕
-    proActive: 'PRO Actif ✅',
-    onlyPro: 'PRO uniquement',
-    unlockSvg: 'Débloquer SVG',
-    faqTitle: '🙋 FAQ',
-    updatesTitle: '🆕 Mises à jour',
-    faq: [
-      { q: 'Comment retirer le filigrane ?', a: 'Passez à la version PRO.' }
-    ],
-    updates: [
-      { date: '25.12.2025', text: 'Mode sombre et copie ajoutés.' }
-    ],
+    haveCode: 'Avez-vous un code ?',
+    codePlaceholder: 'Entrez le code...',
+    activate: 'Activer',
+    codeSuccess: 'Version PRO activée !',
+    codeError: 'Code invalide.',
+    supportButton: 'Une question ? Écrivez-nous sur Gmail →',
+    supportSubject: 'Question concernant la version PRO — TikTok Comment Generator',
+    supportGreeting: 'Bonjour l’équipe !',
+    supportBody: 'J’ai une question concernant la version PRO (activation, récupération d’achat, etc.).',
+    supportQuestion: 'Décrivez votre question ici :',
+    supportThanks: 'Merci pour votre aide ! 😊',
+    proActive: 'actif pendant',
+    proExpired: 'expiré',
+    days: 'jours',
+    hours: 'h',
+    minutes: 'min',
     moods: {
       positive: '😍 Fan',
       funny: '😂 Drôle',
@@ -336,6 +338,7 @@ export const translations = {
     aiLangName: 'French',
     aiPromptStyle: 'Write in informal French (internet slang, verlan). Use lowercase mostly.'
   },
+
   ru: {
     appTitle: 'TikTok Comment Generator',
     subtitle: 'Создавайте реалистичные скриншоты комментариев',
@@ -358,27 +361,29 @@ export const translations = {
     download: 'Скачать',
     copy: 'Копировать',
     copied: '✅ Скопировано!',
-    darkMode: '🌙 Темная тема',
     exporting: 'Экспорт...',
-    // 🆕 Reply Keys
+    emptyState: '👈 Создай свой смешной комментарий!',
     addReplyThread: '💬 Добавить ветку ответа',
     removeReplyThread: '❌ Удалить ответ',
     replySection: 'Настройки ответа',
-    // AI
     aiTitle: '✨ AI Генератор',
     topic: 'Тема / Контекст:',
     topicPlaceholder: 'Напр.: смешное видео с котом',
     mood: 'Настроение:',
     length: 'Длина:',
     generate: 'Сгенерировать',
+    verified: 'Верификация',
+    isCreator: 'Метка "Автор"',
+    creatorBadge: 'Автор',
     regenerate: '🔄 Другой вариант',
     apply: '✅ Применить',
     aiAvatarTitle: '✨ AI Аватар',
-    aiAvatarPrompt: 'Опишите аватар (лучше по-английски):',
-    upload: 'Загрузить фото',
+    aiAvatarPrompt: 'Опишите аватар (лучше на английском):',
+    aiAvatarPlaceholder: 'Введите описание и нажмите ✨',
+    aiAvatarBtn: 'AI Аватар',
+    removeAvatar: 'Удалить аватар',
     generating: 'Генерирую...',
-    emptyState: '👈 Создай свой смешной комментарий!',
-    // PRO & Activation
+    cancel: 'Отмена',
     proTitle: '👑 PRO Версия',
     proDesc: 'Разблокируйте все возможности генератора!',
     proFeature1: '📥 Экспорт в вектор (SVG)',
@@ -387,24 +392,22 @@ export const translations = {
     proFeatureVerified: '🔹 Верификация синяя галочка',
     proFeatureCustom: '📏 Кастомный размер комментария',
     buyPro: 'Оформить за $1.99',
-    restore: 'Восстановить покупки',
-    haveCode: 'Есть код доступа?', // 🆕
-    codePlaceholder: 'Введите код...', // 🆕
-    activate: 'Активировать', // 🆕
-    codeSuccess: 'PRO версия активирована!', // 🆕
-    codeError: 'Неверный или просроченный код.', // 🆕
-    proActive: 'PRO Активен ✅',
-    onlyPro: 'Только для PRO',
-    unlockSvg: 'Разблокировать SVG',
-    faqTitle: '🙋 FAQ',
-    updatesTitle: '🆕 Обновления',
-    faq: [
-      { q: 'Как убрать водяной знак?', a: 'Купите PRO версию.' },
-      { q: 'Как скачать в SVG?', a: 'Функция доступна в PRO.' }
-    ],
-    updates: [
-      { date: '25.12.2025', text: 'Добавлена темная тема и копирование.' }
-    ],
+    haveCode: 'Есть код доступа?',
+    codePlaceholder: 'Введите код...',
+    activate: 'Активировать',
+    codeSuccess: 'PRO версия активирована!',
+    codeError: 'Неверный или просроченный код.',
+    supportButton: 'Есть вопрос? Напишите нам на Gmail →',
+    supportSubject: 'Вопрос по PRO-версии — TikTok Comment Generator',
+    supportGreeting: 'Привет, команда!',
+    supportBody: 'У меня вопрос по PRO-версии (активация, восстановление покупки и т.д.).',
+    supportQuestion: 'Опишите ваш вопрос здесь:',
+    supportThanks: 'Спасибо за помощь! 😊',
+    proActive: 'активен ещё',
+    proExpired: 'закончилась',
+    days: 'дн.',
+    hours: 'ч.',
+    minutes: 'мин',
     moods: {
       positive: '😍 Фанат',
       funny: '😂 Смешно',

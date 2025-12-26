@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { FaCrown, FaCheck, FaTimes, FaKey, FaArrowRight } from 'react-icons/fa'; // Додав FaArrowRight
+import { FaCrown, FaCheck, FaTimes, FaKey, FaArrowRight } from 'react-icons/fa';
 import styles from './SubscriptionModal.module.css';
 
 function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, translations: t }) {
   const [accessCode, setAccessCode] = useState('');
-  // Стейт для статусу: { type: 'success' | 'error', text: '' }
   const [status, setStatus] = useState(null);
 
-  // Скидання при відкритті
   useEffect(() => {
     if (isOpen) {
       setAccessCode('');
@@ -21,24 +19,33 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
   const handleActivateClick = async () => {
     if (!accessCode.trim()) return;
     
-    setStatus(null); // Очистити попередній статус
-
+    setStatus(null);
     const success = await onActivate(accessCode);
     
     if (success) {
-      setStatus({ type: 'success', text: t.codeSuccess || 'Success! PRO Activated' });
+      setStatus({ type: 'success', text: t.codeSuccess || 'Успіх! PRO активовано 🎉' });
       setAccessCode('');
-      // Можна додати закриття через тайм-аут, якщо хочете
     } else {
-      setStatus({ type: 'error', text: t.codeError || 'Invalid code. Try again.' });
+      setStatus({ type: 'error', text: t.codeError || 'Невірний код. Спробуйте ще раз.' });
     }
   };
 
-  // Активація по натисканню Enter
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && accessCode.trim() && !isValidating) {
       handleActivateClick();
     }
+  };
+
+  // ✅ ВИПРАВЛЕНО: Відкриває саме Gmail у браузері
+  const handleSupportClick = () => {
+    const email = import.meta.env.VITE_SUPPORT_EMAIL || 'zaviiskyoleh@gmail.com';
+    const subject = encodeURIComponent(t.supportSubject || 'Питання PRO');
+    const body = encodeURIComponent(`${t.supportGreeting}\n\n${t.supportBody}\n\n`);
+    
+    // Формуємо посилання прямо на композер Gmail
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+    
+    window.open(gmailUrl, '_blank');
   };
 
   return createPortal(
@@ -55,61 +62,55 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
         </div>
 
         <div className={styles.features}>
-          <div className={styles.featureItem}><div className={styles.checkIcon}><FaCheck /></div><span>{t.proFeature1}</span></div>
-          <div className={styles.featureItem}><div className={styles.checkIcon}><FaCheck /></div><span>{t.proFeatureNoWatermark}</span></div>
-          <div className={styles.featureItem}><div className={styles.checkIcon}><FaCheck /></div><span>{t.proFeature3}</span></div>
-          <div className={styles.featureItem}><div className={styles.checkIcon}><FaCheck /></div><span>{t.proFeatureVerified}</span></div>
-          <div className={styles.featureItem}><div className={styles.checkIcon}><FaCheck /></div><span>{t.proFeatureCustom}</span></div>
+          {[t.proFeature1, t.proFeatureNoWatermark, t.proFeature3, t.proFeatureVerified, t.proFeatureCustom].map((feature, i) => (
+            <div key={i} className={styles.featureItem}>
+              <div className={styles.checkIcon}><FaCheck /></div>
+              <span>{feature}</span>
+            </div>
+          ))}
         </div>
 
-        <button className={styles.buyBtn} onClick={onBuy}>{t.buyPro}</button>
+        <button className={styles.buyBtn} onClick={onBuy}>
+          {t.buyPro}
+        </button>
 
         <div className={styles.activationSection}>
-            <p className={styles.activationTitle}>{t.haveCode}</p>
-            
-            <div className={styles.inputGroup}>
-                <div className={styles.inputWrapper}>
-                  {/* Інпут з динамічним класом для помилки */}
-                  <input 
-                      type="text" 
-                      placeholder={t.codePlaceholder || "Enter code..."}
-                      value={accessCode}
-                      onChange={(e) => {
-                        setAccessCode(e.target.value);
-                        if (status) setStatus(null); // Приховуємо помилку при вводі
-                      }}
-                      onKeyDown={handleKeyDown}
-                      className={`${styles.codeInput} ${status?.type === 'error' ? styles.inputError : ''}`}
-                      disabled={isValidating}
-                  />
-                  <FaKey className={styles.keyIcon} />
-                </div>
-                
-                <button 
-                    onClick={handleActivateClick}
-                    className={styles.activateBtn}
-                    disabled={!accessCode.trim() || isValidating}
-                >
-                    {isValidating ? (
-                      '...' 
-                    ) : (
-                      <>
-                        {t.activate} <FaArrowRight />
-                      </>
-                    )}
-                </button>
+          <p className={styles.activationTitle}>{t.haveCode}</p>
+          <div className={styles.inputGroup}>
+            <div className={styles.inputWrapper}>
+              <input 
+                type="text" 
+                placeholder={t.codePlaceholder}
+                value={accessCode}
+                onChange={(e) => { 
+                  setAccessCode(e.target.value.toUpperCase()); 
+                  if(status) setStatus(null); 
+                }}
+                onKeyDown={handleKeyDown}
+                className={`${styles.codeInput} ${status?.type === 'error' ? styles.inputError : ''}`}
+                disabled={isValidating}
+              />
+              <FaKey className={styles.keyIcon} />
             </div>
-
-            {/* Блок повідомлення про статус (замість alert) */}
-            {status && (
-              <div className={`${styles.statusMessage} ${status.type === 'success' ? styles.success : styles.error}`}>
-                {status.type === 'success' ? '🎉' : '⚠️'} {status.text}
-              </div>
-            )}
+            
+            <button 
+              onClick={handleActivateClick} 
+              className={styles.activateBtn} 
+              disabled={!accessCode.trim() || isValidating}
+            >
+              {isValidating ? <span className={styles.spinner}></span> : <><FaArrowRight /></>}
+            </button>
+          </div>
+          
+          {status && (
+            <div className={`${styles.statusMessage} ${styles[status.type]}`}>
+              {status.type === 'success' ? '🎉' : '⚠️'} {status.text}
+            </div>
+          )}
         </div>
         
-        <button className={styles.restoreBtn} onClick={() => alert('Please contact support to restore purchase.')}>
-          {t.restore}
+        <button className={styles.restoreBtn} onClick={handleSupportClick}>
+          {t.supportButton}
         </button>
       </div>
     </div>,

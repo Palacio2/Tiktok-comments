@@ -2,21 +2,23 @@ import { useState } from 'react'
 import AvatarGeneratorModal from './AvatarGeneratorModal'
 import styles from './AvatarUploader.module.css'
 import { FaLock } from 'react-icons/fa'
-import { useFileUploader } from '../../hooks/useFileUploader' // Імпорт хука
+import { useFileUploader } from '../../hooks/useFileUploader'
 
 function AvatarUploader({ onAvatarSelect, currentAvatar, t, language, isPro, onOpenPro }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   
-  // Використовуємо хук для файлів
   const { fileInputRef, handlePick, handleFileChange } = useFileUploader(onAvatarSelect);
 
   const handleAiClick = () => {
-    if (isPro) setIsModalOpen(true);
-    else onOpenPro();
+    if (isPro) {
+      setIsModalOpen(true);
+    } else {
+      onOpenPro();
+    }
   };
 
   return (
-    <div className={styles.simpleUploader}>
+    <div className={styles.uploader}>
       <AvatarGeneratorModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -25,29 +27,46 @@ function AvatarUploader({ onAvatarSelect, currentAvatar, t, language, isPro, onO
       />
 
       {currentAvatar ? (
-        <div className={styles.avatarPreview}>
+        <div className={styles.preview}>
           <img src={currentAvatar} alt="Avatar" className={styles.avatarImg} />
-          <button type="button" className={styles.removeBtn} onClick={() => onAvatarSelect(null)}>✕</button>
+          <button 
+            type="button" 
+            className={styles.removeBtn} 
+            onClick={() => onAvatarSelect(null)}
+            aria-label={t.removeAvatar || "Remove avatar"}
+          >
+            ✕
+          </button>
         </div>
       ) : (
-        <div className={styles.uploadOptions}>
-          <button type="button" className={styles.uploadBtn} onClick={handlePick}>
-            {t.upload || "Файл"}
+        <div className={styles.options}>
+          <button 
+            type="button" 
+            className={styles.uploadBtn} 
+            onClick={handlePick}
+          >
+            📁 {t.upload || 'Завантажити'}
           </button>
           
           <button 
             type="button" 
-            className={styles.aiAvatarBtn} 
+            className={`${styles.aiBtn} ${!isPro ? styles.locked : ''}`} 
             onClick={handleAiClick}
-            style={!isPro ? { background: '#f5f5f5', color: '#666', borderColor: '#ddd' } : {}}
           >
-             {isPro ? '✨ AI Avatar' : (
-               <>AI Avatar <FaLock style={{marginLeft: 5, fontSize: 12}} /></>
-             )}
+            ✨ {t.aiAvatarBtn || 'AI Avatar'}
+            {!isPro && <FaLock className={styles.lockIcon} />}
           </button>
         </div>
       )}
-      <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className={styles.fileInput} />
+      
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        accept="image/*" 
+        className={styles.fileInput} 
+        aria-label={t.upload || "Upload avatar"}
+      />
     </div>
   )
 }

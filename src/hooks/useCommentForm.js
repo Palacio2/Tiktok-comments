@@ -1,132 +1,120 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { validateCommentData } from '../utils/helpers';
 
 export const useCommentForm = (onGenerate, isPro, onOpenPro) => {
   const [formData, setFormData] = useState({
-    // Основний коментар
-    username: 'user123',
-    commentText: 'TikTok Comment Generator! 🔥',
-    likes: 120,
-    avatar: null,
+    username: 'tiktok_user', // Можна теж змінити на щось нейтральне
     verified: false,
-    date: '',
-    replyLabelText: '', // Текст кнопки "Reply" (маленький сірий)
-
-    // 🆕 Вкладена відповідь
-    showReply: false, 
+    isCreator: false,
+    avatar: null,
+    // 👇 ЗМІНА 1: Текст головного коментаря
+    commentText: 'TikTok Comment Generator', 
+    likes: 1200,
+    date: new Date().toISOString().split('T')[0],
+    showReply: false,
     reply: {
-      username: 'author_reply',
-      commentText: 'Thanks for generated comment! 🤝',
-      likes: 5,
-      avatar: null, // Тут буде аватар відповіді
-      verified: true,
-      date: ''
+      username: 'reply_user',
+      verified: false,
+      isCreator: false,
+      avatar: null,
+      // 👇 ЗМІНА 2: Текст відповіді
+      commentText: 'TikTok Comment Generator', 
+      likes: 50,
+      date: new Date().toISOString().split('T')[0]
     }
   });
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [activeAiField, setActiveAiField] = useState('main'); // 'main' або 'reply'
+  const [activeSection, setActiveSection] = useState('main');
 
-  // Обробник для основного коментаря
-  const handleInputChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    if (name === 'verified' && !isPro) return;
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : (name === 'likes' ? parseInt(value) || 0 : value)
-    }));
-  }, [isPro]);
-
-  // 🆕 Обробник для вкладеної відповіді
-  const handleReplyChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    if (name === 'verified' && !isPro) return;
-
-    setFormData(prev => ({
-      ...prev,
-      reply: {
-        ...prev.reply,
-        [name]: type === 'checkbox' ? checked : (name === 'likes' ? parseInt(value) || 0 : value)
-      }
-    }));
-  }, [isPro]);
-
-  // Перемикання відображення відповіді
-  const toggleReplySection = useCallback(() => {
-    setFormData(prev => ({ ...prev, showReply: !prev.showReply }));
-  }, []);
-
-  const setAvatar = useCallback((img) => {
-    setFormData(prev => ({ ...prev, avatar: img }));
-  }, []);
-
-  // 🆕 Сеттер для аватара відповіді
-  const setReplyAvatar = useCallback((img) => {
-    setFormData(prev => ({ ...prev, reply: { ...prev.reply, avatar: img } }));
-  }, []);
-
-  const handleAiApply = useCallback((text) => {
+  const handleInputChange = (e, section = 'main') => {
+    const { name, value } = e.target;
     setFormData(prev => {
-      if (activeAiField === 'reply') {
-        return { ...prev, reply: { ...prev.reply, commentText: text } };
-      }
-      return { ...prev, commentText: text };
+      if (section === 'main') return { ...prev, [name]: value };
+      return { ...prev, reply: { ...prev.reply, [name]: value } };
     });
-  }, [activeAiField]);
+  };
 
-  const handleAiTextClick = useCallback((field = 'main') => {
-    if (isPro) {
-      setActiveAiField(field);
-      setIsAiModalOpen(true);
-    } else {
+  const toggleVerified = (section = 'main') => {
+    if (!isPro) {
       onOpenPro();
+      return;
     }
-  }, [isPro, onOpenPro]);
+    setFormData(prev => {
+      if (section === 'main') return { ...prev, verified: !prev.verified };
+      return { ...prev, reply: { ...prev.reply, verified: !prev.reply.verified } };
+    });
+  };
 
-  const handleSubmit = useCallback((e) => {
+  const toggleCreator = (section = 'main') => {
+    setFormData(prev => {
+      if (section === 'main') return { ...prev, isCreator: !prev.isCreator };
+      return { ...prev, reply: { ...prev.reply, isCreator: !prev.reply.isCreator } };
+    });
+  };
+
+  const toggleReplySection = () => {
+    setFormData(prev => ({ ...prev, showReply: !prev.showReply }));
+  };
+
+  const setAvatar = (img, section = 'main') => {
+    setFormData(prev => {
+      if (section === 'main') return { ...prev, avatar: img };
+      return { ...prev, reply: { ...prev.reply, avatar: img } };
+    });
+  };
+
+  const handleAiApply = (text) => {
+    setFormData(prev => {
+      if (activeSection === 'main') return { ...prev, commentText: text };
+      return { ...prev, reply: { ...prev.reply, commentText: text } };
+    });
+    setIsAiModalOpen(false);
+  };
+
+  const handleAiTextClick = (section) => {
+    setActiveSection(section);
+    setIsAiModalOpen(true);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const validation = validateCommentData(formData);
-    if (!validation.isValid) {
-      alert(Object.values(validation.errors).join('\n'));
+    const { isValid, errors } = validateCommentData(formData);
+    if (!isValid) {
+      alert(Object.values(errors)[0]);
       return;
     }
     onGenerate(formData);
-  }, [formData, onGenerate]);
+  };
 
-  const handleResetForm = useCallback(() => {
+  const handleResetForm = () => {
     setFormData({
-      username: 'user123',
-      commentText: '',
-      likes: 0,
-      avatar: null,
-      verified: false,
-      date: '',
-      replyLabelText: '',
+      username: 'tiktok_user', 
+      verified: false, 
+      isCreator: false, 
+      avatar: null, 
+      // 👇 ЗМІНА 3: Скидання до дефолтного тексту
+      commentText: 'TikTok Comment Generator', 
+      likes: 0, 
+      date: new Date().toISOString().split('T')[0], 
       showReply: false,
-      reply: {
-        username: 'reply_user',
-        commentText: '',
-        likes: 0,
-        avatar: null,
-        verified: false,
-        date: ''
+      reply: { 
+        username: 'reply_user', 
+        verified: false, 
+        isCreator: false, 
+        avatar: null, 
+        // 👇 ЗМІНА 4: Скидання до дефолтного тексту відповіді
+        commentText: 'TikTok Comment Generator', 
+        likes: 0, 
+        date: new Date().toISOString().split('T')[0] 
       }
     });
-  }, []);
+  };
 
-  return {
-    formData,
-    isAiModalOpen,
-    setIsAiModalOpen,
-    handleInputChange,
-    handleReplyChange, // 🆕
-    toggleReplySection, // 🆕
-    setAvatar,
-    setReplyAvatar, // 🆕
-    handleAiApply,
-    handleAiTextClick,
-    handleSubmit,
-    handleResetForm
+  return { 
+    formData, isAiModalOpen, setIsAiModalOpen, 
+    handleInputChange, toggleVerified, toggleCreator, toggleReplySection,
+    setAvatar, handleAiApply, handleAiTextClick, 
+    handleSubmit, handleResetForm 
   };
 };

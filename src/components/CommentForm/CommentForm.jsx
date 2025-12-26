@@ -1,184 +1,189 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import AvatarUploader from '../AvatarUploader/AvatarUploader'
 import AiGeneratorModal from '../AiGeneratorModal/AiGeneratorModal'
 import styles from './CommentForm.module.css'
 import { useCommentForm } from '../../hooks/useCommentForm'
-import { FormInput, ProCheckbox, AiLabelButton } from '../UI/FormElements'
-import { FaReply, FaTrash, FaLock } from 'react-icons/fa'
+import { FormInput } from '../UI/FormElements'
+import { FaReply, FaTrash, FaCog, FaEye, FaLock } from 'react-icons/fa'
+
+const PRESET_SIZES = [
+  { width: 1080, height: 'auto', labelKey: 'Standard (1080×auto)' },
+  { width: 1200, height: 'auto', labelKey: 'Social Media (1200×auto)' },
+  { width: 'custom', height: 'custom', labelKey: 'custom' } 
+];
 
 function CommentForm({ onGenerate, language, translations: t, exportSettings, updateExportSettings, isPro, onOpenPro }) {
   const { 
     formData, isAiModalOpen, setIsAiModalOpen, 
-    handleInputChange, handleReplyChange, toggleReplySection,
-    setAvatar, setReplyAvatar,
-    handleAiApply, handleAiTextClick, 
+    handleInputChange, toggleVerified, toggleCreator, toggleReplySection,
+    setAvatar, handleAiApply, handleAiTextClick, 
     handleSubmit, handleResetForm 
   } = useCommentForm(onGenerate, isPro, onOpenPro);
 
-  const [tempCustomWidth, setTempCustomWidth] = useState(1080)
-  const [tempCustomHeight, setTempCustomHeight] = useState(600)
-
-  const presetSizes = [
-    { width: 1080, height: 'auto', label: 'Standard (1080×auto)' },
-    { width: 1200, height: 'auto', label: 'Social Media (1200×auto)' },
-    { width: 'custom', height: 'custom', label: 'Custom Size' }
-  ]
-
-  const handleExportSettingsChange = useCallback((e) => {
-    const { name, value } = e.target;
-    if (name === 'presetSize') {
-      const selectedSize = presetSizes.find(size => `${size.width}×${size.height}` === value);
-      if (selectedSize) {
-        if (selectedSize.width === 'custom') {
-          if (!isPro) { onOpenPro(); return; }
-          updateExportSettings({ width: tempCustomWidth, height: tempCustomHeight, customSize: true });
-        } else {
-          updateExportSettings({ width: selectedSize.width, height: selectedSize.height, customSize: false });
-        }
-      }
-    } else if (name === 'customWidth') {
-        const val = parseInt(value) || 100;
-        setTempCustomWidth(val);
-        if (exportSettings.customSize) updateExportSettings({ width: val, customSize: true });
-    } else if (name === 'customHeight') {
-        const val = parseInt(value) || 100;
-        setTempCustomHeight(val);
-        if (exportSettings.customSize) updateExportSettings({ height: val, customSize: true });
+  const handleSizeChange = useCallback((e) => {
+    const value = e.target.value;
+    const selected = PRESET_SIZES.find(s => `${s.width}×${s.height}` === value);
+    
+    if (selected?.width === 'custom') {
+      if (!isPro) return onOpenPro();
+      updateExportSettings({ width: 1080, height: 600, customSize: true });
+    } else if (selected) {
+      updateExportSettings({ width: selected.width, height: selected.height, customSize: false });
     }
-  }, [updateExportSettings, presetSizes, exportSettings.customSize, tempCustomWidth, tempCustomHeight, isPro, onOpenPro]);
+  }, [updateExportSettings, isPro, onOpenPro]);
 
-  const getCurrentPresetValue = () => exportSettings.customSize ? 'custom×custom' : `${exportSettings.width}×${exportSettings.height}`;
+  const handleCustomDimensionChange = (e) => {
+    const { name, value } = e.target;
+    const numValue = parseInt(value) || 0;
+    const field = name === 'customWidth' ? 'width' : 'height';
+    updateExportSettings({ [field]: numValue, customSize: true });
+  };
 
-  // Допоміжна функція для рендеру полів (використовується для основного коментаря та відповіді)
-  const renderFields = (data, handler, avatarHandler, isReply = false) => (
-    <>
-      <FormInput label={t.username} name="username" value={data.username} onChange={handler} />
-      
-      <ProCheckbox 
-        label={t.verified} name="verified" checked={data.verified} 
-        onChange={handler} isPro={isPro} onLockClick={onOpenPro} 
-      />
-      
+  const renderCommentFields = (data, section = 'main') => (
+    <div className={styles.fieldsGroup}>
+      <FormInput label={t.username} name="username" value={data.username} onChange={(e) => handleInputChange(e, section)} />
+
+      {/* ✅ ОНОВЛЕНО: Класи замість інлайн-стилів для гарного вигляду */}
+      <div className={styles.togglesRow}>
+        
+        {/* Верифікація */}
+        <div className={styles.toggleItem}>
+          <label onClick={() => toggleVerified(section)}>{t.verified}</label>
+          <div className={styles.switchWrapper}>
+            <label className={styles.switch}>
+              <input type="checkbox" checked={data.verified} onChange={() => toggleVerified(section)} />
+              <span className={styles.slider}></span>
+            </label>
+            {!isPro && <FaLock className={styles.proLock} onClick={onOpenPro} />}
+          </div>
+        </div>
+
+        {/* Автор */}
+        <div className={styles.toggleItem}>
+          <label onClick={() => toggleCreator(section)}>{t.isCreator || 'Автор'}</label>
+          <div className={styles.switchWrapper}>
+            <label className={styles.switch}>
+              <input type="checkbox" checked={data.isCreator} onChange={() => toggleCreator(section)} />
+              <span className={styles.slider}></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
       <div className={styles.formRow}>
         <label>{t.avatar}</label>
         <AvatarUploader 
-          onAvatarSelect={avatarHandler} currentAvatar={data.avatar}
-          language={language} t={t} isPro={isPro} onOpenPro={onOpenPro}
+          onAvatarSelect={(img) => setAvatar(img, section)} 
+          currentAvatar={data.avatar} 
+          t={t} 
+          isPro={isPro} 
+          onOpenPro={onOpenPro} 
         />
       </div>
 
       <div className={styles.formRow}>
-        <AiLabelButton 
-            label={t.text} 
-            buttonText={t.aiBtn} 
-            onClick={() => handleAiTextClick(isReply ? 'reply' : 'main')} 
-            isPro={isPro} 
+        <div className={styles.labelWithAiWrapper}>
+          <label>{t.text}</label>
+          <button type="button" className={styles.aiButton} onClick={() => handleAiTextClick(section)}>
+            {t.aiBtn}
+          </button>
+        </div>
+        <textarea 
+          name="commentText" 
+          value={data.commentText} 
+          onChange={(e) => handleInputChange(e, section)} 
+          rows="4" 
+          placeholder={t.textPlaceholder || "..."} 
         />
-        <textarea name="commentText" value={data.commentText} onChange={handler} rows="3"/>
       </div>
-      
-      <div style={{display: 'flex', gap: 10}}>
-        <FormInput label={t.likes} name="likes" type="number" value={data.likes} onChange={handler} />
-        <FormInput label={t.date} name="date" type="date" value={data.date} onChange={handler} />
+
+      <div className={styles.gridRowCompact}>
+        <FormInput label={t.likes} name="likes" type="number" value={data.likes} onChange={(e) => handleInputChange(e, section)} />
+        <FormInput label={t.date} name="date" type="date" value={data.date} onChange={(e) => handleInputChange(e, section)} />
       </div>
-    </>
+    </div>
   );
 
   return (
     <div className={styles.formContainer}>
-      <AiGeneratorModal 
-        isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} 
-        onApply={handleAiApply} language={language}
-      />
+      <AiGeneratorModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} onApply={handleAiApply} language={language} />
+      
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}><FaEye /> {t.info}</h3>
+          {renderCommentFields(formData, 'main')}
+        </section>
 
-      <form className={styles.simpleForm} onSubmit={handleSubmit}>
-        
-        {/* === СЕКЦІЯ 1: ОСНОВНИЙ КОМЕНТАР === */}
-        <div className={styles.formSection}>
-          <h3 className={styles.sectionTitle}>{t.info}</h3>
-          {renderFields(formData, handleInputChange, setAvatar, false)}
-          {/* ❌ Поле 'replyLabelText' видалено звідси */}
-        </div>
-
-        {/* === КНОПКА ДОДАТИ ВІДПОВІДЬ === */}
         <button 
-            type="button" 
-            onClick={toggleReplySection}
-            style={{
-                width: '100%', padding: '14px', borderRadius: '12px', 
-                border: '2px dashed #ddd',
-                background: formData.showReply ? '#fff0f2' : 'white',
-                color: formData.showReply ? '#FE2C55' : '#555',
-                fontWeight: 'bold', cursor: 'pointer', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                transition: 'all 0.2s'
-            }}
+          type="button" 
+          className={`${styles.replyToggle} ${formData.showReply ? styles.replyActive : ''}`} 
+          onClick={toggleReplySection}
         >
-            {formData.showReply ? <><FaTrash /> {t.removeReplyThread || 'Remove Reply'}</> : <><FaReply /> {t.addReplyThread || 'Add Reply Thread'}</>}
+          {formData.showReply ? <><FaTrash /> {t.removeReplyThread}</> : <><FaReply /> {t.addReplyThread}</>}
         </button>
 
-        {/* === СЕКЦІЯ 2: ВІДПОВІДЬ (ВКЛАДЕНИЙ КОМЕНТАР) === */}
         {formData.showReply && (
-            <div className={styles.formSection} style={{ borderLeft: '4px solid #FE2C55', background: '#fffcfc' }}>
-                <h3 className={styles.sectionTitle} style={{color: '#FE2C55'}}>{t.replySection || 'Reply Info'}</h3>
-                {renderFields(formData.reply, handleReplyChange, setReplyAvatar, true)}
-            </div>
+          <section className={`${styles.section} ${styles.replySection}`}>
+            <h3 className={styles.sectionTitle}>{t.replySection}</h3>
+            {renderCommentFields(formData.reply, 'reply')}
+          </section>
         )}
 
-        {/* === ЕКСПОРТ === */}
-        <div className={styles.formSection}>
-          <h3 className={styles.sectionTitle}>{t.export}</h3>
-          
-          <div className={styles.formRow}>
-            <label>{t.mood || 'Theme'}</label>
-            <div style={{display: 'flex', gap: 10}}>
-                <button type="button" 
-                  onClick={() => updateExportSettings({ isDark: false })}
-                  style={{flex:1, padding: 10, borderRadius: 8, border: !exportSettings.isDark ? '2px solid #25F4EE' : '1px solid #ddd', background: 'white', cursor: 'pointer'}}
-                >☀️ Light</button>
-                <button type="button" 
-                  onClick={() => updateExportSettings({ isDark: true })}
-                  style={{flex:1, padding: 10, borderRadius: 8, border: exportSettings.isDark ? '2px solid #25F4EE' : '1px solid #ddd', background: '#333', color: 'white', cursor: 'pointer'}}
-                >🌙 Dark</button>
-            </div>
-          </div>
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}><FaCog /> {t.export}</h3>
 
-          <div className={styles.formRow}>
-            <label>Format</label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button 
-                type="button"
-                onClick={() => updateExportSettings({ format: 'png' })}
-                style={{ flex: 1, padding: '10px', borderRadius: '10px', border: exportSettings.format === 'png' ? '2px solid #25F4EE' : '1px solid #ddd', background: exportSettings.format === 'png' ? '#f0fffe' : 'white', fontWeight: '600', cursor: 'pointer' }}
-              >PNG</button>
-              <button 
-                type="button"
-                onClick={() => !isPro ? onOpenPro() : updateExportSettings({ format: 'svg' })}
-                style={{ flex: 1, padding: '10px', borderRadius: '10px', border: exportSettings.format === 'svg' ? '2px solid #FE2C55' : '1px solid #ddd', background: !isPro ? '#f5f5f5' : (exportSettings.format === 'svg' ? '#fff0f2' : 'white'), color: !isPro ? '#666' : 'inherit', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              >SVG {!isPro && <FaLock size={12} />}</button>
+          <div className={styles.exportOptions}>
+            <div className={styles.optionRow}>
+              <label>{t.mood}</label>
+              <div className={styles.toggleGroup}>
+                <button type="button" className={!exportSettings.isDark ? styles.active : ''} onClick={() => updateExportSettings({ isDark: false })}>☀️</button>
+                <button type="button" className={exportSettings.isDark ? styles.active : ''} onClick={() => updateExportSettings({ isDark: true })}>🌙</button>
+              </div>
             </div>
-          </div>
 
-          <div className={styles.formRow}>
-            <label>{t.size}</label>
-            <select name="presetSize" value={getCurrentPresetValue()} onChange={handleExportSettingsChange} className={styles.selectInput}>
-              {presetSizes.map(size => (
-                <option key={`${size.width}×${size.height}`} value={`${size.width}×${size.height}`}>
-                  {size.label} {size.width === 'custom' && !isPro ? `(${t.onlyPro || 'PRO'})` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-          {(exportSettings.customSize || getCurrentPresetValue() === 'custom×custom') && (
-            <div className={styles.dimensionsRow}>
-              <input type="number" name="customWidth" value={exportSettings.customSize ? exportSettings.width : tempCustomWidth} onChange={handleExportSettingsChange} />
-              <span className={styles.dimensionSeparator}>×</span>
-              <input type="number" name="customHeight" value={exportSettings.customSize ? exportSettings.height : tempCustomHeight} onChange={handleExportSettingsChange} />
+            <div className={styles.optionRow}>
+              <label>Format</label>
+              <div className={styles.toggleGroup}>
+                <button type="button" className={exportSettings.format === 'png' ? styles.active : ''} onClick={() => updateExportSettings({ format: 'png' })}>PNG</button>
+                <button type="button" className={exportSettings.format === 'svg' ? styles.active : ''} onClick={() => !isPro ? onOpenPro() : updateExportSettings({ format: 'svg' })}>
+                  SVG {!isPro && <FaLock className={styles.lockIcon} />}
+                </button>
+              </div>
             </div>
-          )}
-        </div>
-        
-        <div className={styles.formActions}>
+
+            <div className={styles.optionRow}>
+              <label>{t.size}</label>
+              <select 
+                className={styles.select} 
+                value={exportSettings.customSize ? 'custom×custom' : `${exportSettings.width}×${exportSettings.height}`} 
+                onChange={handleSizeChange}
+              >
+                {PRESET_SIZES.map(size => (
+                  <option key={`${size.width}×${size.height}`} value={`${size.width}×${size.height}`}>
+                    {size.labelKey === 'custom' ? `📐 ${t.proFeatureCustom || 'Custom'}` : size.labelKey}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {exportSettings.customSize && (
+              <div className={styles.customSizeRow}>
+                <div className={styles.dimension}>
+                  <span>W</span>
+                  <input type="number" name="customWidth" value={exportSettings.width} onChange={handleCustomDimensionChange} min="100"/>
+                </div>
+                <span className={styles.separator}>×</span>
+                <div className={styles.dimension}>
+                  <span>H</span>
+                  <input type="number" name="customHeight" value={exportSettings.height} onChange={handleCustomDimensionChange} min="100"/>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className={styles.actions}>
           <button type="submit" className={styles.submitBtn}>{t.create}</button>
           <button type="button" className={styles.resetBtn} onClick={handleResetForm}>{t.reset}</button>
         </div>

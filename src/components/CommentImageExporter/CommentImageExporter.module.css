@@ -1,158 +1,111 @@
 .exporterContainer {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 24px;
   width: 100%;
 }
 
-.previewSection h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--text-main);
+.previewSection {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.exportSettingsInfo {
-  margin-bottom: 20px;
-  padding: 14px 16px;
-  background: linear-gradient(90deg, rgba(37, 244, 238, 0.05), rgba(254, 44, 85, 0.05));
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--tiktok-pink);
-}
-
-.exportSettingsInfo p {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+.previewTitle {
   font-size: 14px;
-}
-
-.separator {
-  color: var(--text-secondary);
-  margin: 0 8px;
-}
-
-.customSizeBadge {
-  margin-left: auto;
-  padding: 4px 10px;
-  background: linear-gradient(90deg, var(--tiktok-pink), #FF6B6B);
-  color: white;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
   font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
   letter-spacing: 0.5px;
 }
 
-.exportPreview {
+/* ✅ ОНОВЛЕНО: Фон та скрол */
+.previewWrapper {
   width: 100%;
-  background: #E5E5E5;
-  padding: 20px;
-  border-radius: var(--radius-md);
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
-  max-width: 100%;
+  background: #e2e8f0;
+  border-radius: 24px; /* Більше заокруглення */
+  padding: 40px;
+  border: 1px solid #cbd5e1;
+  position: relative;
+  
+  /* Фоновий патерн (шахівниця) */
+  background-image: 
+    linear-gradient(45deg, #cbd5e1 25%, transparent 25%), 
+    linear-gradient(-45deg, #cbd5e1 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #cbd5e1 75%), 
+    linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+
+  /* Важливо для мобільного: якщо картинка широка, з'явиться скрол всередині цього блоку */
+  overflow: auto; 
   box-sizing: border-box;
-  min-height: 400px;
 }
 
+/* Саме полотно, що експортується */
 .exportContent {
-  background: white;
   position: relative;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  min-width: 200px;
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tiktokComment {
   background: white;
-  width: 100%;
+  box-shadow: 0 20px 50px -12px rgba(0,0,0,0.25); /* Глибша тінь */
   box-sizing: border-box;
-  height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  position: relative;
-  transition: background-color 0.3s; /* Плавний перехід */
+  flex-shrink: 0; /* Щоб не стискалось менше ніж треба */
+  transition: background 0.3s ease;
 }
 
-/* === 🌙 ТЕМНА ТЕМА === */
-.darkTheme {
-  background-color: #121212 !important;
-  color: #e0e0e0 !important;
+.exportContent.darkTheme {
+  background: #121212;
+  color: #efefef;
 }
 
-.darkTheme .commentUsername {
-  color: #f1f1f1 !important;
-}
-
-.darkTheme .commentText {
-  color: #ffffff !important;
-}
-
-.darkTheme .commentDate, 
-.darkTheme .commentReply {
-  color: #888888 !important;
-}
-
-/* 👇 ВИПРАВЛЕННЯ: Фарбуємо іконки та текст лайків */
-.darkTheme .actionButton,
-.darkTheme .likeCount,
-.darkTheme .heartIcon, 
-.darkTheme .dislikeIcon {
-  color: #888888 !important;
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 40px;
+  font-weight: 900;
+  color: rgba(0,0,0,0.04);
+  pointer-events: none;
+  white-space: nowrap;
+  text-transform: uppercase;
+  z-index: 0;
 }
 
 .darkTheme .watermark {
-  color: #ffffff !important;
-  opacity: 0.1 !important;
-}
-/* ===================== */
-
-/* Новий стиль для водяного знака */
-.watermark {
-  position: absolute;
-  bottom: 12px;
-  right: 20px;
-  font-weight: 800;
-  color: #000;
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
-  z-index: 10;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color: rgba(255,255,255,0.05);
 }
 
+.commentsWrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Окремий коментар */
 .commentMain {
   display: flex;
   align-items: flex-start;
-  height: 100%;
-  width: 100%;
 }
 
-.avatarContainer {
+.commentLeft {
   flex-shrink: 0;
 }
 
-.commentAvatar,
-.defaultAvatar {
+.commentAvatar {
   border-radius: 50%;
   object-fit: cover;
-  display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .defaultAvatar {
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,72 +117,83 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
+  gap: 4px;
 }
 
 .commentHeader {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
 }
 
 .usernameContainer {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
 }
 
 .commentUsername {
-  font-weight: 700;
+  font-weight: 600;
   color: #161823;
-  line-height: 1;
-  word-break: break-word;
+}
+
+.darkTheme .commentUsername {
+  color: #efefef;
 }
 
 .verifiedBadge {
-  background: linear-gradient(45deg, #20D5EC, #25F4EE);
+  background: #20d5ec;
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(32, 213, 236, 0.3);
+}
+
+/* МІТКА АВТОРА */
+.creatorBadge {
+  color: #fe2c55;
+  font-weight: 600;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.darkTheme .creatorBadge {
+  color: #ff3b5c; 
 }
 
 .commentText {
   color: #161823;
   line-height: 1.3;
-  white-space: pre-wrap;
-  font-weight: 400;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  word-break: break-word; /* Щоб довгі слова переносились */
+}
+
+.darkTheme .commentText {
+  color: #efefef;
 }
 
 .commentFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: auto;
+  margin-top: 4px;
+  color: rgba(22, 24, 35, 0.5);
+}
+
+.darkTheme .commentFooter {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .footerLeft {
   display: flex;
-  align-items: center;
-  gap: 30px;
-}
-
-.commentDate, .commentReply {
-  color: rgba(22, 24, 35, 0.5);
+  gap: 16px;
   font-weight: 400;
-  white-space: nowrap;
 }
 
 .commentReply {
   font-weight: 600;
-  color: rgba(22, 24, 35, 0.5);
+  cursor: pointer;
 }
 
 .footerRight {
@@ -245,192 +209,119 @@
 .actionButton {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(22, 24, 35, 0.5);
-  transition: color 0.2s;
+  gap: 4px;
 }
 
-.heartIcon {
-  color: rgba(22, 24, 35, 0.5);
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
-  flex-shrink: 0;
-  transition: color 0.2s;
-}
-
-.likeCount {
-  font-weight: 400;
-}
-
-.dislikeIcon {
-  transform: translateY(2px);
-  flex-shrink: 0;
-}
-
+/* Кнопки керування */
 .controlsSection {
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
 }
 
-.exportButton {
-  width: 100%;
-  color: white;
-  height: 56px;
+.copyButton, .exportButton {
   border: none;
-  border-radius: var(--radius-md);
-  font-size: 16px;
+  padding: 16px;
+  border-radius: 16px; /* Трохи більш круглі */
   font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: var(--transition);
-  background: linear-gradient(90deg, var(--tiktok-pink), #FF0050);
-  box-shadow: 0 4px 15px rgba(254, 44, 85, 0.25);
-}
-
-.exportButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(254, 44, 85, 0.35);
-}
-
-.exportButton:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.exportButton:disabled {
-  opacity: 0.7;
-  cursor: wait;
-  transform: none;
-  box-shadow: none;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .copyButton {
-  background: #E8FDF5;
-  color: #00C853;
-  border: 1px solid #00C853;
-}
-.copyButton:hover {
-  background: #d4fbe9;
+  background: #f1f5f9;
+  color: #475569;
 }
 
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.copyButton:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.copyButton:active {
+  transform: translateY(0);
+}
+
+.exportButton {
+  background: #111;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.exportButton:hover {
+  background: #222;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.exportButton:active {
+  transform: translateY(0);
+}
+
+.exportButton:disabled, .copyButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none !important;
+}
+
+.locked {
+  background: #fbbf24;
+  color: #78350f;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+
+.locked:hover {
+  background: #fcd34d;
 }
 
 .downloadIcon {
-  font-size: 20px;
-  font-weight: bold;
+  font-weight: 900;
 }
 
-.exportInfo {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f9f9f9;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  border: 1px solid #eee;
-}
+/* ========================================= */
+/* 📱 Мобільна Адаптація (найголовніше)     */
+/* ========================================= */
 
-.exportInfo p {
-  margin: 8px 0;
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Tablet Responsive */
-@media (max-width: 768px) {
-  .exporterContainer {
-    gap: 20px;
+@media (max-width: 640px) {
+  /* Змінюємо порядок кнопок: Download стає головною і широкою */
+  .controlsSection {
+    grid-template-columns: 1fr; /* Одна колонка */
+    gap: 12px;
   }
   
-  .exportPreview {
-    padding: 15px;
-    min-height: 350px;
-  }
-  
-  .exportSettingsInfo p {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  
-  .customSizeBadge {
-    margin-left: 0;
-  }
-  
-  .commentMain {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  
-  .avatarContainer {
-    align-self: flex-start;
-  }
-  
-  .commentFooter {
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .footerLeft {
-    order: 2;
-    width: 100%;
-    justify-content: flex-start;
-    gap: 20px;
-  }
-  
-  .footerRight {
-    order: 1;
-  }
-  
-  .exportButton {
-    height: 52px;
-    font-size: 15px;
-  }
-}
-
-/* Mobile Responsive */
-@media (max-width: 480px) {
-  .previewSection h3 {
+  /* Робимо кнопки вищими для пальця */
+  .copyButton, .exportButton {
+    padding: 18px; 
     font-size: 16px;
+    width: 100%;
+  }
+
+  /* Щоб кнопка "Скачати" була першою візуально (через order), 
+     або залишити як є - копіювати зверху, скачати знизу. 
+     Зазвичай головна дія знизу, тому залишаємо як є (exportButton йде другим в HTML) 
+  */
+
+  /* Зменшуємо відступи прев'ю, щоб влізло більше контенту */
+  .previewWrapper {
+    padding: 20px;
+    border-radius: 20px;
+    /* Вирівнювання: якщо контент ширший за екран - рівняємо по лівому краю для скролу */
+    justify-content: flex-start; 
+  }
+
+  /* Зменшуємо водяний знак, щоб не перекривав все */
+  .watermark {
+    font-size: 24px;
   }
   
-  .exportSettingsInfo {
-    padding: 12px;
-    font-size: 13px;
-  }
-  
-  .exportPreview {
-    padding: 12px;
-    min-height: 300px;
-  }
-  
-  .exportButton {
-    height: 48px;
-    font-size: 14px;
-  }
-  
-  .footerLeft {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  
-  .actionRow {
-    gap: 15px;
+  /* Додатково: якщо це SVG прев'ю */
+  .exportContent {
+    /* На мобільному не дозволяємо стискати менше ніж 320px, інакше все попливе */
+    min-width: 300px; 
   }
 }

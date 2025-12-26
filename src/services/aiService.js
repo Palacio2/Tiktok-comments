@@ -1,10 +1,12 @@
+import { urlToBase64 } from '../utils/helpers'; // Якщо знадобиться тут
+
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 /**
  * Генерує текст коментаря за допомогою Gemini
  */
 export const generateComment = async (params, languageConfig) => {
-  if (!API_KEY) throw new Error("API Key не знайдено!");
+  if (!API_KEY) throw new Error("API Key не знайдено! Перевірте .env файл.");
 
   const promptText = `
     Act as a TikTok user. Write a single comment.
@@ -37,7 +39,7 @@ export const generateComment = async (params, languageConfig) => {
 };
 
 /**
- * Покращує промпт для аватара за допомогою Gemini (переклад + деталізація)
+ * Покращує промпт для аватара за допомогою Gemini
  */
 export const enhanceAvatarPrompt = async (userText) => {
   if (!API_KEY) return userText;
@@ -81,23 +83,4 @@ export const generateAvatarUrl = (enhancedPrompt) => {
   const seed = Math.floor(Math.random() * 10000);
   const safePrompt = encodeURIComponent(`${enhancedPrompt}, white background, centered, avatar, high quality`);
   return `https://image.pollinations.ai/prompt/${safePrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
-};
-
-/**
- * Конвертує URL картинки в Base64 (для збереження або відображення)
- */
-export const imageUrlToBase64 = async (url) => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    console.error("Base64 Conversion Error:", e);
-    // Якщо не вдалося конвертувати, повертаємо оригінальний URL як запасний варіант
-    return url;
-  }
 };
