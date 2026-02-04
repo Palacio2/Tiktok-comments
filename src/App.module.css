@@ -1,11 +1,8 @@
 .app {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-  color: #121212;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 20px;
   box-sizing: border-box;
-  transition: background 0.4s ease;
+  background-color: #f8f9fa;
 }
 
 .container {
@@ -13,306 +10,98 @@
   margin: 0 auto;
 }
 
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  padding: 20px 0;
-  position: relative;
-  z-index: 100;
-}
-
-.headerLeft h1 {
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: -0.8px;
-  margin: 0;
-  background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #14b8a6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  color: #64748b;
-  font-size: 15px;
-  margin-top: 8px;
-  font-weight: 500;
-}
-
-/* Header Actions Container */
-.headerActions {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-/* PRO Badge / Upgrade Button */
-.proBadge,
-.upgradeBtn {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
-  transition: all 0.3s ease;
-}
-
-.proBadge:hover,
-.upgradeBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
-}
-
-/* Language Menu */
-.languageWrapper {
-  position: relative;
-}
-
-.languageButton {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 10px 16px;
-  border-radius: 50px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.languageButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.languageDropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  min-width: 180px;
-  animation: fadeIn 0.3s ease;
-  z-index: 200;
-}
-
-.languageOption {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  width: 100%;
-  border: none;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-
-.languageOption:hover {
-  background: rgba(139, 92, 246, 0.15);
-}
-
-.languageOption.active {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
-  font-weight: 700;
-  color: #8b5cf6;
-}
-
-/* Main Grid */
 .mainContent {
   display: grid;
   grid-template-columns: 440px 1fr;
-  gap: 36px;
+  gap: 32px;
   align-items: start;
-}
-
-/* Form & Preview Cards */
-.formWrapper,
-.previewWrapper {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  padding: 28px;
-  transition: all 0.4s ease;
+  margin-top: 32px;
 }
 
 .formWrapper {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 32px;
   position: sticky;
   top: 20px;
-  height: fit-content;
-  max-height: calc(100vh - 140px);
+  height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .scrollableContent {
   flex: 1;
   overflow-y: auto;
-  padding-right: 8px;
-  margin-bottom: 20px;
+  padding-right: 12px;
+  margin-right: -12px;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.scrollableContent::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollableContent::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.4);
-  border-radius: 3px;
-}
-
-/* Clear Button */
-.clearButton {
-  width: 100%;
-  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.previewWrapper {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 15px;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-  flex-shrink: 0;
+  position: relative;
 }
 
-.clearButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 10px 0;
 }
 
-.clearButton:disabled {
-  opacity: 0.5;
-  transform: none;
-  cursor: not-allowed;
-}
-
-/* Empty State */
 .emptyState {
   text-align: center;
-  padding: 60px 20px;
-  color: #64748b;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .emptyEmoji {
-  font-size: 80px;
-  margin-bottom: 20px;
+  font-size: 64px;
+  margin-bottom: 24px;
+  opacity: 0.5;
   animation: float 4s ease-in-out infinite;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-/* Responsive */
 @media (max-width: 1100px) {
   .mainContent {
-    grid-template-columns: 400px 1fr;
-    gap: 28px;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
   }
 }
 
 @media (max-width: 960px) {
-  .app {
-    padding: 16px;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .headerActions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .mainContent {
     grid-template-columns: 1fr;
-    gap: 24px;
   }
 
   .formWrapper {
     position: static;
+    height: auto;
     max-height: none;
-  }
-
-  .previewWrapper {
-    min-height: 500px;
+    overflow: visible;
   }
 }
 
 @media (max-width: 480px) {
-  .headerLeft h1 {
-    font-size: 24px;
-  }
-
-  .formWrapper,
-  .previewWrapper {
-    padding: 20px;
-    border-radius: 20px;
-  }
-
-  .headerActions {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .proBadge,
-  .upgradeBtn,
-  .languageButton {
-    justify-content: center;
-    width: 100%;
-  }
+  .app { padding: 16px; }
+  .formWrapper, .previewWrapper { padding: 24px; }
 }

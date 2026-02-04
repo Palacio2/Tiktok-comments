@@ -1,3 +1,5 @@
+import { supabase } from './supabaseClient';
+
 export const validateCommentData = (data) => {
   const errors = {}
   if (!data.username?.trim()) errors.username = "Введіть ім'я користувача"
@@ -30,19 +32,35 @@ export const formatLikeCount = (count) => {
   return (count / 1000).toFixed(count % 1000 === 0 ? 0 : 1).replace('.0', '') + 'k'
 }
 
-// ✅ ПОВЕРНУЛИ СТАРУ ВЕРСІЮ (Чекає до переможного)
 export const urlToBase64 = async (url) => {
+  if (!url) return null;
+  if (url.startsWith('data:')) return url; 
+
   try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    console.error("Base64 error:", e);
-    return url;
+    // 1. Спроба прямого завантаження (якщо сервер дозволяє CORS)
+    const response = await fetch(url, { mode: 'cors' });
+    if (response.ok) {
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
+    throw new Error('CORS or fetch error');
+  } catch (directError) {
+    // 2. Якщо пряме завантаження не вдалося, йдемо через проксі
+    try {
+      const { data, error } = await supabase.functions.invoke('proxy-image-TT-comments', {
+        body: { imageUrl: url }
+      });
+
+      if (error || !data?.result) throw error;
+      return data.result;
+    } catch (proxyError) {
+      console.warn("Proxy also failed:", proxyError);
+      return url; // Повертаємо оригінал як fallback, хоча він може не відрендеритись
+    }
   }
 };
 

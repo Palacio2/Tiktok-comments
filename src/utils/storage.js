@@ -1,56 +1,48 @@
-const STORAGE_KEY = 'tiktok_comments_data_v2'
-const MAX_COMMENTS = 50
+import { get, set } from 'idb-keyval';
 
-export const loadComments = () => {
+const STORAGE_KEY = 'tiktok_comments_data_v3';
+const MAX_COMMENTS = 50;
+
+export const loadComments = async () => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY)
-    if (!data) return []
-    
-    const parsed = JSON.parse(data)
-    return Array.isArray(parsed) ? parsed : []
+    const data = await get(STORAGE_KEY);
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error('Помилка завантаження коментарів:', error)
-    return []
+    return [];
   }
-}
+};
 
-export const saveComment = (comment) => {
+export const saveComment = async (comment) => {
   try {
-    const comments = loadComments()
+    const comments = (await loadComments()) || [];
     
-    // Перевірка на дублікат за вмістом
     const isDuplicate = comments.some(
       c => c.username === comment.username && 
            c.commentText === comment.commentText &&
            c.date === comment.date
-    )
+    );
     
-    if (isDuplicate) {
-      console.warn('Коментар-дублікат не збережено')
-      return comments
-    }
+    if (isDuplicate) return comments;
     
-    const newComments = [comment, ...comments].slice(0, MAX_COMMENTS)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newComments))
-    return newComments
+    const newComments = [comment, ...comments].slice(0, MAX_COMMENTS);
+    await set(STORAGE_KEY, newComments);
+    return newComments;
   } catch (error) {
-    console.error('Помилка збереження коментаря:', error)
-    return []
+    return [];
   }
-}
+};
 
-export const clearComments = () => {
-  localStorage.removeItem(STORAGE_KEY)
-}
+export const clearComments = async () => {
+  await set(STORAGE_KEY, []);
+};
 
-export const deleteComment = (commentId) => {
+export const deleteComment = async (commentId) => {
   try {
-    const comments = loadComments()
-    const filteredComments = comments.filter(comment => comment.id !== commentId)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredComments))
-    return filteredComments
+    const comments = (await loadComments()) || [];
+    const filteredComments = comments.filter(comment => comment.id !== commentId);
+    await set(STORAGE_KEY, filteredComments);
+    return filteredComments;
   } catch (error) {
-    console.error('Помилка видалення коментаря:', error)
-    return loadComments()
+    return [];
   }
-}
+};

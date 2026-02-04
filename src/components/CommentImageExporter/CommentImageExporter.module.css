@@ -1,107 +1,79 @@
-.exporterContainer {
+.wrapper {
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
-  max-width: 100%; /* ✅ ВАЖЛИВО: Не дає контейнеру вилазити за екран */
-  box-sizing: border-box;
 }
 
-.previewSection {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  overflow: hidden; /* ✅ Обрізає зайве, щоб не ламало верстку */
-}
-
-.previewTitle {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #64748b;
-  letter-spacing: 0.5px;
-}
-
-/* ✅ ОНОВЛЕНО: Фон та скрол */
-.previewWrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #e2e8f0;
-  border-radius: 24px;
-  padding: 40px;
-  border: 1px solid #cbd5e1;
+/* --- Preview Workspace --- */
+.previewContainer {
   position: relative;
-  
-  /* Фоновий патерн */
+  width: 100%;
+  background-color: #f3f4f6;
   background-image: 
-    linear-gradient(45deg, #cbd5e1 25%, transparent 25%), 
-    linear-gradient(-45deg, #cbd5e1 25%, transparent 25%), 
-    linear-gradient(45deg, transparent 75%, #cbd5e1 75%), 
-    linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+    linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+    linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-
-  /* ✅ ВАЖЛИВО: Внутрішній скрол */
-  overflow-x: auto; 
-  box-sizing: border-box;
-  
-  /* Плавна прокрутка на iOS */
-  -webkit-overflow-scrolling: touch; 
-}
-
-/* Саме полотно, що експортується */
-.exportContent {
-  position: relative;
-  background: white;
-  box-shadow: 0 20px 50px -12px rgba(0,0,0,0.25);
-  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 40px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  flex-shrink: 0; /* ✅ Забороняє стискати картинку */
-  transition: background 0.3s ease;
-  
-  /* Відступи, щоб тінь не обрізалась при скролі */
-  margin: 10px; 
+  overflow-x: auto;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  min-height: 200px;
 }
 
-.exportContent.darkTheme {
-  background: #121212;
-  color: #efefef;
-}
-
-.watermark {
+.workspaceLabel {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-30deg);
-  font-size: 40px;
-  font-weight: 900;
-  color: rgba(0,0,0,0.04);
-  pointer-events: none;
-  white-space: nowrap;
+  top: 12px;
+  left: 16px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  z-index: 0;
+  color: #9ca3af;
+  letter-spacing: 1px;
+  pointer-events: none;
 }
 
-.darkTheme .watermark {
-  color: rgba(255,255,255,0.05);
-}
-
-.commentsWrapper {
+/* --- Export Card (The actual image) --- */
+.exportArea {
   position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xl);
+  transition: background 0.2s ease;
+  /* IMPORTANT: No backdrop-filter here, causes issues with html2canvas */
 }
 
-/* Окремий коментар */
+/* Light Mode (TikTok Standard) */
+.lightMode {
+  background-color: #ffffff;
+  color: #161823;
+}
+
+/* Dark Mode (TikTok Dark) */
+.darkMode {
+  background-color: #161823; /* Or #121212 for purely OLED */
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.darkMode .username { color: rgba(255, 255, 255, 0.9); }
+.darkMode .commentText { color: rgba(255, 255, 255, 0.9); }
+.darkMode .metaRow { color: rgba(255, 255, 255, 0.5); }
+.darkMode .heartIconWrapper { color: rgba(255, 255, 255, 0.5); }
+.darkMode .sideLikeCount { color: rgba(255, 255, 255, 0.5); }
+.darkMode .replyAction { color: rgba(255, 255, 255, 0.5); }
+
+/* --- Single Comment Layout --- */
 .commentMain {
   display: flex;
   align-items: flex-start;
+  width: 100%;
 }
 
 .commentLeft {
@@ -111,7 +83,7 @@
 .commentAvatar {
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: block;
 }
 
 .defaultAvatar {
@@ -121,211 +93,202 @@
   justify-content: center;
   color: white;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .commentRight {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  min-width: 0; /* Prevents flex overflow */
 }
 
-.commentHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.usernameContainer {
+.usernameRow {
   display: flex;
   align-items: center;
   gap: 4px;
+  line-height: 1;
 }
 
-.commentUsername {
-  font-weight: 600;
+.username {
+  font-weight: 700; /* TikTok bold */
   color: #161823;
 }
 
-.darkTheme .commentUsername {
-  color: #efefef;
-}
-
-.verifiedBadge {
-  background: #20d5ec;
-  color: white;
-  border-radius: 50%;
+.verifiedIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
 }
 
 .creatorBadge {
-  color: #5BAFB5;
+  color: #FE2C55;
   font-weight: 600;
-  margin-left: 6px;
-  white-space: nowrap;
-}
-
-.darkTheme .creatorBadge {
-  color: #5BAFB5; 
 }
 
 .commentText {
-  color: #161823;
-  line-height: 1.3;
+  margin: 0;
+  line-height: 1.2;
+  white-space: pre-wrap;
   word-break: break-word;
 }
 
-.darkTheme .commentText {
-  color: #efefef;
-}
-
-.commentFooter {
+.metaRow {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
   color: rgba(22, 24, 35, 0.5);
-}
-
-.darkTheme .commentFooter {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.footerLeft {
-  display: flex;
-  gap: 34px;
   font-weight: 400;
 }
 
-.commentReply {
+.replyAction {
   font-weight: 600;
   cursor: pointer;
 }
 
-.footerRight {
+/* Likes Column */
+.likeSection {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding-left: 8px; 
 }
 
-.actionRow {
+.likeColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.heartIconWrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
+  color: rgba(22, 24, 35, 0.5);
 }
 
-.actionButton {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.sideLikeCount {
+  font-weight: 400;
+  color: rgba(22, 24, 35, 0.5);
 }
 
-/* Кнопки керування */
+/* Nested Thread */
+.replyThread {
+  position: relative;
+  margin-top: 2px;
+}
+
+.replyConnector {
+  position: absolute;
+  width: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.darkMode .replyConnector {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Controls --- */
 .controlsSection {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1fr 1.5fr;
   gap: 12px;
-  width: 100%; /* ✅ Фікс */
 }
 
-.copyButton, .exportButton {
-  border: none;
-  padding: 16px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
+.actionBtnPrimary, .actionBtnSecondary {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap; /* ✅ Текст не переноситься */
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.copyButton {
-  background: #f1f5f9;
-  color: #475569;
+.actionBtnSecondary {
+  background: white;
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
-.copyButton:hover {
-  background: #e2e8f0;
+.actionBtnSecondary:hover:not(:disabled) {
+  background: #f9fafb;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.copyButton:active {
-  transform: translateY(0);
-}
-
-.exportButton {
-  background: #111;
+.actionBtnPrimary {
+  background: var(--text-main);
   color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-md);
 }
 
-.exportButton:hover {
-  background: #222;
+.actionBtnPrimary:hover:not(:disabled) {
+  background: black;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-lg);
 }
 
-.exportButton:active {
-  transform: translateY(0);
-}
-
-.exportButton:disabled, .copyButton:disabled {
+.actionBtnPrimary:disabled, .actionBtnSecondary:disabled {
   opacity: 0.6;
   cursor: wait;
-  transform: none !important;
+  transform: none;
 }
 
 .locked {
-  background: #fbbf24;
-  color: #78350f;
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+  background: var(--gradient-pro); /* Assuming defined in global */
+  color: white;
+  border: none;
 }
 
-.locked:hover {
-  background: #fcd34d;
+.lockBadge {
+  font-size: 0.8em;
+  opacity: 0.7;
+  display: flex;
 }
 
-.downloadIcon {
-  font-weight: 900;
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-/* ========================================= */
-/* 📱 Мобільна Адаптація (Оновлено)         */
-/* ========================================= */
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 640px) {
+.proBanner {
+  background: linear-gradient(90deg, #FE2C55 0%, #FF1764 100%);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.proBanner:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
   .controlsSection {
     grid-template-columns: 1fr;
-    gap: 12px;
   }
   
-  .copyButton, .exportButton {
-    padding: 18px; 
-    font-size: 16px;
-    width: 100%;
-  }
-
-  .previewWrapper {
+  .previewContainer {
     padding: 20px;
-    border-radius: 20px;
-    /* ✅ ВАЖЛИВО: block дозволяє скролити по горизонталі без розпирання */
-    display: block; 
-    text-align: left; /* Скидаємо центрування */
-  }
-
-  /* Центруємо картинку всередині, якщо вона менша за екран (рідко, але буває) */
-  .exportContent {
-    margin: 0 auto; 
-    /* Мінімальна ширина для мобільного, щоб не було глюків рендеру */
-    min-width: 300px; 
-  }
-
-  .watermark {
-    font-size: 24px;
   }
 }

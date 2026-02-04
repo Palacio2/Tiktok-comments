@@ -5,231 +5,83 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 .section {
-  background: rgba(224, 224, 224, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
-  padding: 28px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
 }
 
-.replySection {
-  border-left: 4px solid #ec4899;
-  padding-left: 32px;
-}
-
 .sectionTitle {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #64748b;
-  margin: 0 0 24px 0;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin: 0 0 20px 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .fieldsGroup {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 16px;
 }
 
-.formRow {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.topRow {
+    display: flex;
+    gap: 16px;
 }
 
-.formRow label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #374151;
-}
-
-/* Перемикачі */
-.togglesRow {
-  display: flex;
-  flex-direction: column;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 18px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.toggleItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: background 0.2s ease;
-}
-
-.toggleItem:last-child {
-  border-bottom: none;
-}
-
-.toggleItem:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-.toggleItem label {
-  font-size: 15px;
-  font-weight: 600;
-  color: #374151;
-  margin: 0;
-  cursor: pointer;
-  flex: 1;
-}
-
-.switchWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 52px;
-  height: 30px;
-  cursor: pointer;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #e2e8f0;
-  border-radius: 32px;
-  transition: 0.3s ease;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-input:checked + .slider {
-  background: linear-gradient(135deg, #ec4899, #f43f5e);
-}
-
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-.proLock {
-  color: #fbbf24;
-  font-size: 18px;
-  cursor: pointer;
-  opacity: 0.8;
-  transition: opacity 0.2s;
-}
-
-.proLock:hover {
-  opacity: 1;
-}
-
-/* Інпути */
-.formRow input,
-.formRow textarea,
-.formRow select {
-  width: 100%;
-  padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 16px;
-  font-size: 15px;
-  color: #111;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.formRow input:focus,
-.formRow textarea:focus,
-.formRow select:focus {
-  outline: none;
-  border-color: #ec4899;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
-}
-
-.labelWithAiWrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.aiButton {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-}
-
-.aiButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+.inputsColumn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .gridRowCompact {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
+}
+
+.replySection {
+  border-left: 4px solid var(--accent-pink);
+  padding-left: 28px;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .replyToggle {
   width: 100%;
-  padding: 18px;
-  border-radius: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
   border: 2px dashed rgba(236, 72, 153, 0.3);
   background: rgba(236, 72, 153, 0.05);
-  color: #ec4899;
+  color: var(--accent-pink);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .replyToggle:hover {
   background: rgba(236, 72, 153, 0.1);
-  border-color: #ec4899;
+  border-color: var(--accent-pink);
 }
 
 .replyActive {
@@ -237,129 +89,173 @@ input:checked + .slider:before {
   border-style: solid;
 }
 
+.textAreaWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-input);
+  font-size: 15px;
+  color: var(--text-main);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.textarea:focus {
+  background: white;
+  border-color: var(--accent-active);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
 .exportOptions {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .optionRow {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.optionRow label {
-  font-size: 14px;
+.optionLabel {
+  font-size: 12px;
   font-weight: 700;
-  color: #374151;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-left: 4px;
 }
 
 .toggleGroup {
   display: flex;
-  background: rgba(240, 240, 240, 0.6);
-  padding: 6px;
-  border-radius: 16px;
-  gap: 6px;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+  border: 1px solid var(--border-light);
 }
 
 .toggleGroup button {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px;
   border: none;
   border-radius: 12px;
   background: transparent;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
+.toggleGroup button:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.5);
+}
+
 .toggleGroup button.active {
   background: white;
-  color: #111;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .lockIcon {
-  margin-left: 6px;
-  opacity: 0.6;
+  margin-left: 4px;
+  color: var(--accent-red);
+  display: flex;
+}
+
+.selectWrapper {
+    position: relative;
 }
 
 .select {
-  padding: 14px 18px;
-  padding-right: 50px !important;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 16px;
-  font-size: 15px;
-  color: #111;
+  width: 100%;
+  padding: 12px 16px;
+  padding-right: 40px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-main);
   appearance: none;
+  cursor: pointer;
+  outline: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 18px center;
-  transition: all 0.3s ease;
+  background-position: right 14px center;
 }
 
 .select:focus {
-  border-color: #ec4899;
-  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
+    border-color: var(--accent-active);
 }
 
 .customSizeRow {
   display: grid;
-  grid-template-columns: 1fr 24px 1fr;
+  grid-template-columns: 1fr 20px 1fr;
   align-items: end;
-  gap: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 20px;
-  animation: fadeInUp 0.4s ease-out;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  animation: fadeInUp 0.3s ease-out;
 }
 
 .dimension {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .dimension span {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
-  color: #94a3b8;
+  color: var(--text-placeholder);
   text-align: center;
 }
 
 .dimension input {
   width: 100%;
-  padding: 12px 8px;
+  padding: 10px;
   text-align: center;
-  font-size: 15px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: 14px;
+  font-size: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
   background: white;
+  outline: none;
+}
+
+.dimension input:focus {
+    border-color: var(--accent-active);
 }
 
 .separator {
-  font-size: 24px;
-  color: #cbd5e1;
-  font-weight: 300;
+  font-size: 20px;
+  color: var(--text-placeholder);
   text-align: center;
-  padding-bottom: 6px;
+  padding-bottom: 8px;
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ✅ ОНОВЛЕНІ КНОПКИ (Actions) - тепер кольори як в Exporter */
 .actions {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -367,10 +263,12 @@ input:checked + .slider:before {
   margin-top: 8px;
 }
 
-.submitBtn, .resetBtn {
+.submitBtn {
+  background: var(--text-main);
+  color: white;
   border: none;
   padding: 16px;
-  border-radius: 14px;
+  border-radius: var(--radius-full);
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
@@ -378,31 +276,37 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s;
-}
-
-/* Кнопка "Створити" - тепер ЧОРНА (як Export Button) */
-.submitBtn {
-  background: #111;
-  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
 .submitBtn:hover {
-  background: #333;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: black;
 }
 
-/* Кнопка "Скинути" - тепер СІРА (як Copy Button) */
 .resetBtn {
-  background: #f1f5f9;
-  color: #475569;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .resetBtn:hover {
-  background: #e2e8f0;
+  background: rgba(0,0,0,0.05);
+  color: var(--text-main);
 }
 
 @media (max-width: 640px) {
+  .topRow {
+      flex-direction: column;
+  }
+  
   .gridRowCompact,
   .actions {
     grid-template-columns: 1fr;
@@ -410,20 +314,10 @@ input:checked + .slider:before {
 
   .customSizeRow {
     grid-template-columns: 1fr;
-    gap: 16px;
-    text-align: center;
+    gap: 12px;
   }
 
   .separator {
     display: none;
-  }
-
-  .section {
-    padding: 20px;
-  }
-
-  .replySection {
-    padding-left: 20px;
-    border-left-width: 3px;
   }
 }

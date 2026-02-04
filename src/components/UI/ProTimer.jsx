@@ -34,7 +34,7 @@ export const ProTimer = ({ date, t }) => {
       const result = calculateTime();
       setTimeLeft(result);
       if (result === (t.proExpired || 'Expired')) clearInterval(interval);
-    }, 60000); // Оновлюємо раз на хвилину, щоб не навантажувати
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [date, t]);

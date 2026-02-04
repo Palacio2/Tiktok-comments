@@ -1,177 +1,187 @@
-.uploader {
-  width: 100%;
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+/* --- Preview Section --- */
+.previewWrapper {
   position: relative;
-}
-
-.options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  width: 100%;
-}
-
-.uploadBtn,
-.aiBtn {
-  padding: 18px 16px;
-  border-radius: 20px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px dashed #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: #f8fafc;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.previewWrapper:hover {
+  border-color: var(--accent-pink);
+  border-style: solid;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+
+.previewWrapper:hover .overlay {
+  opacity: 1;
+}
+
+/* --- Actions Section --- */
+.actionsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.primaryActions {
+  display: flex;
   gap: 10px;
+}
+
+/* Buttons Shared Styles */
+.uploadBtn, .aiBtn, .removeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Upload Button */
+.uploadBtn {
+  background: white;
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  flex: 1;
+}
+
+.uploadBtn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* AI Button */
+.aiBtn {
+  background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 100%);
+  color: var(--accent-purple);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  flex: 1.2; /* Slightly wider */
+}
+
+.aiBtn:hover:not(.locked) {
+  background: linear-gradient(135deg, #fbcfe8 0%, #c7d2fe 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
+}
+
+/* Locked State for AI Button */
+.locked {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-color: var(--border-light);
+  cursor: pointer; /* Still clickable to open modal */
   position: relative;
   overflow: hidden;
 }
 
-.uploadBtn {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 2px dashed rgba(229, 231, 235, 0.8);
-  color: #374151;
+.locked:hover {
+  background: #e2e8f0;
 }
 
-.uploadBtn:hover:not(:disabled) {
-  border-color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2);
-}
-
-.aiBtn {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
-  color: white;
-  border: none;
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
-}
-
-.aiBtn:hover:not(.locked) {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
-  background: linear-gradient(135deg, #a78bfa, #f472b6);
-}
-
-.aiBtn.locked {
-  background: rgba(240, 240, 240, 0.8);
-  color: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.aiBtn.locked:hover {
-  transform: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.lockIcon {
-  margin-left: 8px;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-.preview {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-
-.preview:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-}
-
-.avatarImg {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.preview:hover .avatarImg {
-  transform: scale(1.08);
-  border-color: #ec4899;
-}
-
-.removeBtn {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
+.lockBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-  transition: all 0.3s ease;
+  background: rgba(0,0,0,0.1);
+  padding: 2px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+/* Remove Button */
+.removeBtn {
+  background: transparent;
+  color: #ef4444;
+  padding: 4px;
+  font-size: 12px;
+  width: fit-content;
+  align-self: flex-start;
 }
 
 .removeBtn:hover {
-  transform: scale(1.15) rotate(90deg);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+  background: #fef2f2;
+  text-decoration: underline;
 }
 
-.removeBtn:active {
-  transform: scale(0.95);
-}
-
-.fileInput {
-  display: none;
-}
-
-/* Адаптивність */
-@media (max-width: 640px) {
-  .options {
-    grid-template-columns: 1fr;
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .container {
+    flex-direction: column;
+    text-align: center;
     gap: 12px;
   }
 
-  .uploadBtn,
-  .aiBtn {
-    padding: 16px;
-    font-size: 15px;
+  .actionsColumn {
+    width: 100%;
   }
 
-  .preview {
-    padding: 6px;
+  .primaryActions {
+    width: 100%;
   }
-
-  .avatarImg {
-    width: 70px;
-    height: 70px;
+  
+  .uploadBtn, .aiBtn {
+    flex: 1;
   }
 
   .removeBtn {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-    top: -6px;
-    right: -6px;
-  }
-}
-
-@media (max-width: 480px) {
-  .avatarImg {
-    width: 60px;
-    height: 60px;
+    align-self: center;
   }
 }

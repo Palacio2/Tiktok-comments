@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { generateComment } from '../services/aiService';
-import { translations } from '../utils/translations';
+import { generateComment } from '@services/aiService';
+import { useLanguage } from './useLanguage'; // Імпортуємо контекст
 
-export const useAiGenerator = (onApply, onClose, language) => {
+export const useAiGenerator = (onApply, onClose) => {
+  // Більше не приймаємо language як аргумент, беремо з контексту
+  const { t, language } = useLanguage();
+
   const [settings, setSettings] = useState({
     topic: '',
     mood: 'positive',
@@ -10,22 +13,19 @@ export const useAiGenerator = (onApply, onClose, language) => {
   });
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const t = translations[language];
+  const [error, setError] = useState(null);
 
   const handleGenerate = async () => {
     setIsLoading(true);
+    setError(null);
+    
     try {
-      // Використовуємо функцію з aiService, яку ми створили раніше
-      const text = await generateComment(settings, t);
-      
-      if (text) {
-        setResult(text);
-      } else {
-        alert("Отримано порожню відповідь.");
-      }
-    } catch (error) {
-      alert(`Помилка: ${error.message}`);
+      // Передаємо language (код 'uk'), бо бекенд чекає рядок
+      const text = await generateComment(settings, language);
+      setResult(text);
+    } catch (err) {
+      console.error(err);
+      setError(language === 'uk' ? 'Помилка генерації. Спробуйте пізніше.' : 'Generation failed. Try again.');
     } finally {
       setIsLoading(false);
     }
@@ -33,18 +33,19 @@ export const useAiGenerator = (onApply, onClose, language) => {
 
   const handleAccept = () => {
     onApply(result);
-    onClose();
-    setResult('');
+    handleClose();
   };
 
   const handleClose = () => {
     onClose();
     setResult('');
+    setError(null);
+    setSettings(prev => ({ ...prev, topic: '' }));
   };
 
-  // Оновлення конкретного поля налаштувань
   const updateSetting = (key, value) => {
     setSettings(prev => ({ ...prev, [key]: value }));
+    if (error) setError(null);
   };
 
   return {
@@ -53,6 +54,7 @@ export const useAiGenerator = (onApply, onClose, language) => {
     result,
     setResult,
     isLoading,
+    error,
     handleGenerate,
     handleAccept,
     handleClose

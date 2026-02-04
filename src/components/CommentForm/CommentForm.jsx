@@ -1,13 +1,13 @@
-import { useCallback } from 'react'
-import AvatarUploader from '../AvatarUploader/AvatarUploader'
-import AiGeneratorModal from '../AiGeneratorModal/AiGeneratorModal'
-import styles from './CommentForm.module.css'
-import { useCommentForm } from '../../hooks/useCommentForm'
-import { FormInput } from '../UI/FormElements'
-import { MdVerified } from "react-icons/md"; 
-// ✅ 1. Додаємо LuSun та LuMoon до імпорту
-import { LuCrown, LuCheck, LuX, LuKeyRound, LuArrowRight, LuSun, LuMoon } from "react-icons/lu";
-import { FaReply, FaTrash, FaCog, FaEye, FaLock } from 'react-icons/fa'
+import React, { useCallback } from 'react';
+
+// ВИПРАВЛЕНО: Використовуємо прямі шляхи замість @components щоб уникнути циклічної помилки
+import AvatarUploader from '../AvatarUploader/AvatarUploader';
+import AiGeneratorModal from '../AiGeneratorModal/AiGeneratorModal';
+import { FormInput, ProToggle, AiLabelButton } from '../UI/FormElements';
+import { Icons } from '../UI/Icons';
+
+import { useCommentForm, useLanguage } from '@hooks';
+import styles from './CommentForm.module.css';
 
 const PRESET_SIZES = [
   { width: 1080, height: 'auto', labelKey: 'Standard (1080×auto)' },
@@ -15,19 +15,21 @@ const PRESET_SIZES = [
   { width: 'custom', height: 'custom', labelKey: 'custom' } 
 ];
 
-function CommentForm({ onGenerate, language, translations: t, exportSettings, updateExportSettings, isPro, onOpenPro }) {
+function CommentForm({ onGenerate, exportSettings, updateExportSettings, isPro, onOpenPro, externalAvatar }) {
+  const { t, language } = useLanguage();
+
   const { 
     formData, isAiModalOpen, setIsAiModalOpen, 
     handleInputChange, toggleVerified, toggleCreator, toggleReplySection,
     setAvatar, handleAiApply, handleAiTextClick, 
-    handleSubmit, handleResetForm 
+    handleSubmit, handleResetForm, activeSection
   } = useCommentForm(onGenerate, isPro, onOpenPro);
 
   const handleSizeChange = useCallback((e) => {
     const value = e.target.value;
     const selected = PRESET_SIZES.find(s => `${s.width}×${s.height}` === value);
     
-    if (selected?.width === 'custom') {
+    if (selected?.labelKey === 'custom') {
       if (!isPro) return onOpenPro();
       updateExportSettings({ width: 1080, height: 600, customSize: true });
     } else if (selected) {
@@ -44,78 +46,92 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
 
   const renderCommentFields = (data, section = 'main') => (
     <div className={styles.fieldsGroup}>
-      <FormInput label={t.username} name="username" value={data.username} onChange={(e) => handleInputChange(e, section)} />
-
-      <div className={styles.togglesRow}>
-        <div className={styles.toggleItem}>
-          <label 
-            onClick={() => toggleVerified(section)} 
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
-          >
-            {t.verified} 
-            <MdVerified style={{ color: '#20d5ec', fontSize: '16px' }} />
-          </label>
-          <div className={styles.switchWrapper}>
-            <label className={styles.switch}>
-              <input type="checkbox" checked={data.verified} onChange={() => toggleVerified(section)} />
-              <span className={styles.slider}></span>
-            </label>
-            {!isPro && <FaLock className={styles.proLock} onClick={onOpenPro} />}
-          </div>
-        </div>
-
-        <div className={styles.toggleItem}>
-          <label onClick={() => toggleCreator(section)}>{t.isCreator || 'Автор'}</label>
-          <div className={styles.switchWrapper}>
-            <label className={styles.switch}>
-              <input type="checkbox" checked={data.isCreator} onChange={() => toggleCreator(section)} />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.formRow}>
-        <label>{t.avatar}</label>
+      <div className={styles.topRow}>
         <AvatarUploader 
-          onAvatarSelect={(img) => setAvatar(img, section)} 
-          currentAvatar={data.avatar} 
-          t={t} 
-          isPro={isPro} 
-          onOpenPro={onOpenPro} 
+           onAvatarSelect={(img) => setAvatar(img, section)} 
+           currentAvatar={externalAvatar && section === 'main' ? externalAvatar : data.avatar} 
+           isPro={isPro} 
+           onOpenPro={onOpenPro} 
         />
+        
+        <div className={styles.inputsColumn}>
+            <FormInput 
+                label={t.username} 
+                name="username" 
+                value={data.username} 
+                onChange={(e) => handleInputChange(e, section)} 
+            />
+            
+            <ProToggle 
+                label={t.verified}
+                checked={data.verified}
+                onChange={() => toggleVerified(section)}
+                isPro={isPro}
+                onLockClick={onOpenPro}
+            />
+
+            <ProToggle 
+                label={t.isCreator || 'Author'}
+                checked={data.isCreator}
+                onChange={() => toggleCreator(section)}
+                isPro={true}
+            />
+        </div>
       </div>
 
-      <div className={styles.formRow}>
-        <div className={styles.labelWithAiWrapper}>
-          <label>{t.text}</label>
-          <button type="button" className={styles.aiButton} onClick={() => handleAiTextClick(section)}>
-            {t.aiBtn}
-          </button>
-        </div>
+      <div className={styles.textAreaWrapper}>
+        <AiLabelButton
+            label={t.text}
+            buttonText={t.aiBtn || "AI Magic"}
+            isPro={isPro}
+            onClick={() => handleAiTextClick(section)}
+        />
         <textarea 
           name="commentText" 
           value={data.commentText} 
           onChange={(e) => handleInputChange(e, section)} 
           rows="4" 
           placeholder={t.textPlaceholder || "..."} 
+          className={styles.textarea}
         />
       </div>
 
       <div className={styles.gridRowCompact}>
-        <FormInput label={t.likes} name="likes" type="number" value={data.likes} onChange={(e) => handleInputChange(e, section)} />
-        <FormInput label={t.date} name="date" type="date" value={data.date} onChange={(e) => handleInputChange(e, section)} />
+        <FormInput 
+            label={t.likes} 
+            name="likes" 
+            type="number" 
+            value={data.likes} 
+            onChange={(e) => handleInputChange(e, section)} 
+        />
+        <FormInput 
+            label={t.date} 
+            name="date" 
+            type="text" 
+            placeholder="YYYY-MM-DD"
+            value={data.date} 
+            onChange={(e) => handleInputChange(e, section)} 
+        />
       </div>
     </div>
   );
 
   return (
     <div className={styles.formContainer}>
-      <AiGeneratorModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} onApply={handleAiApply} language={language} />
+      <AiGeneratorModal 
+        isOpen={isAiModalOpen} 
+        onClose={() => setIsAiModalOpen(false)} 
+        onApply={handleAiApply} 
+        language={language}
+        initialPrompt={activeSection === 'main' ? formData.commentText : formData.reply.commentText}
+      />
       
       <form className={styles.form} onSubmit={handleSubmit}>
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}><FaEye /> {t.info}</h3>
+          <h3 className={styles.sectionTitle}>
+            <Icons.Eye size={18} /> 
+            {t.info || 'Comment Info'}
+          </h3>
           {renderCommentFields(formData, 'main')}
         </section>
 
@@ -124,68 +140,81 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
           className={`${styles.replyToggle} ${formData.showReply ? styles.replyActive : ''}`} 
           onClick={toggleReplySection}
         >
-          {formData.showReply ? <><FaTrash /> {t.removeReplyThread}</> : <><FaReply /> {t.addReplyThread}</>}
+          {formData.showReply ? (
+            <><Icons.Trash size={16} /> {t.removeReplyThread || 'Remove Reply'}</>
+          ) : (
+            <><Icons.Reply size={16} /> {t.addReplyThread || 'Add Reply'}</>
+          )}
         </button>
 
         {formData.showReply && (
           <section className={`${styles.section} ${styles.replySection}`}>
-            <h3 className={styles.sectionTitle}>{t.replySection}</h3>
+            <h3 className={styles.sectionTitle}>
+              <Icons.Reply size={18} />
+              {t.replySection || 'Reply'}
+            </h3>
             {renderCommentFields(formData.reply, 'reply')}
           </section>
         )}
 
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}><FaCog /> {t.export}</h3>
+          <h3 className={styles.sectionTitle}>
+            <Icons.Cog size={18} /> 
+            {t.export || 'Export Settings'}
+          </h3>
 
           <div className={styles.exportOptions}>
             <div className={styles.optionRow}>
-              <label>{t.mood}</label>
-              
-              {/* ✅ 2. Оновлена група кнопок з іконками */}
+              <label className={styles.optionLabel}>{t.mood || 'Theme'}</label>
               <div className={styles.toggleGroup}>
                 <button 
                   type="button" 
                   className={!exportSettings.isDark ? styles.active : ''} 
                   onClick={() => updateExportSettings({ isDark: false })}
-                  title="Light Mode"
                 >
-                  <LuSun size={18} />
+                  <Icons.Sun size={16} /> Light
                 </button>
                 <button 
                   type="button" 
                   className={exportSettings.isDark ? styles.active : ''} 
                   onClick={() => updateExportSettings({ isDark: true })}
-                  title="Dark Mode"
                 >
-                  <LuMoon size={18} />
+                  <Icons.Moon size={16} /> Dark
                 </button>
               </div>
-
             </div>
 
             <div className={styles.optionRow}>
-              <label>Format</label>
+              <label className={styles.optionLabel}>Format</label>
               <div className={styles.toggleGroup}>
-                <button type="button" className={exportSettings.format === 'png' ? styles.active : ''} onClick={() => updateExportSettings({ format: 'png' })}>PNG</button>
-                <button type="button" className={exportSettings.format === 'svg' ? styles.active : ''} onClick={() => !isPro ? onOpenPro() : updateExportSettings({ format: 'svg' })}>
-                  SVG {!isPro && <FaLock className={styles.lockIcon} />}
+                <button type="button" className={exportSettings.format === 'png' ? styles.active : ''} onClick={() => updateExportSettings({ format: 'png' })}>
+                  PNG
+                </button>
+                <button 
+                    type="button" 
+                    className={exportSettings.format === 'svg' ? styles.active : ''} 
+                    onClick={() => !isPro ? onOpenPro() : updateExportSettings({ format: 'svg' })}
+                >
+                  SVG {!isPro && <span className={styles.lockIcon}><Icons.Lock size={12}/></span>}
                 </button>
               </div>
             </div>
 
             <div className={styles.optionRow}>
-              <label>{t.size}</label>
-              <select 
-                className={styles.select} 
-                value={exportSettings.customSize ? 'custom×custom' : `${exportSettings.width}×${exportSettings.height}`} 
-                onChange={handleSizeChange}
-              >
-                {PRESET_SIZES.map(size => (
-                  <option key={`${size.width}×${size.height}`} value={`${size.width}×${size.height}`}>
-                    {size.labelKey === 'custom' ? `📐 ${t.proFeatureCustom || 'Custom'}` : size.labelKey}
-                  </option>
-                ))}
-              </select>
+              <label className={styles.optionLabel}>{t.size || 'Size'}</label>
+              <div className={styles.selectWrapper}>
+                <select 
+                  className={styles.select} 
+                  value={exportSettings.customSize ? 'custom' : `${exportSettings.width}×${exportSettings.height}`} 
+                  onChange={handleSizeChange}
+                >
+                  {PRESET_SIZES.map(size => (
+                    <option key={size.labelKey} value={size.labelKey === 'custom' ? 'custom' : `${size.width}×${size.height}`}>
+                      {size.labelKey === 'custom' ? `Pro Custom` : size.labelKey}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {exportSettings.customSize && (
@@ -205,8 +234,12 @@ function CommentForm({ onGenerate, language, translations: t, exportSettings, up
         </section>
 
         <div className={styles.actions}>
-          <button type="submit" className={styles.submitBtn}>{t.create}</button>
-          <button type="button" className={styles.resetBtn} onClick={handleResetForm}>{t.reset}</button>
+          <button type="submit" className={styles.submitBtn}>
+            <Icons.Sparkles /> {t.create || 'Generate'}
+          </button>
+          <button type="button" className={styles.resetBtn} onClick={handleResetForm}>
+            {t.reset || 'Reset'}
+          </button>
         </div>
       </form>
     </div>

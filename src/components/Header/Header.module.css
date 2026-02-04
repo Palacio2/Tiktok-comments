@@ -1,0 +1,287 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* --- Логотип --- */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+}
+
+.logoIconWrapper {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: var(--shadow-glow-purple);
+  transform: rotate(-5deg);
+  transition: transform 0.3s ease;
+}
+
+.logoContainer:hover .logoIconWrapper {
+  transform: rotate(0deg) scale(1.1);
+}
+
+.logoTextWrapper {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logoTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.proBadge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* --- Controls --- */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* PRO Button */
+.proBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 99px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  /* Default State (Get Pro) */
+  background: var(--text-main); /* Чорний або темний */
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.proBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Active State */
+.proBtn.proActive {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  box-shadow: none;
+  cursor: default;
+  padding: 10px 16px;
+}
+
+.proBtn.proActive:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.proIconActive {
+  color: #FFA500;
+  display: flex;
+}
+
+/* --- Language Switcher --- */
+.langWrapper {
+  position: relative;
+}
+
+.langBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.langBtn:hover, .langBtnActive {
+  background: white;
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.flagWrapper {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.langCode {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.chevron {
+  color: var(--text-placeholder);
+  transition: transform 0.3s ease;
+  display: flex;
+}
+
+.chevronRotate {
+  transform: rotate(180deg);
+}
+
+/* Dropdown */
+.langDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 8px;
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+.langOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.langOption:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
+}
+
+.langOptionActive {
+  background: white !important;
+  color: var(--text-main);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.optionFlag {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex; /* Важливо для центрування svg */
+}
+
+.activeDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0 16px;
+    height: 64px;
+  }
+
+  .logoTitle {
+    display: none;
+  }
+  
+  .proText {
+    display: none; /* На мобільному показуємо тільки корону в кнопці */
+  }
+
+  .proBtn {
+    padding: 10px;
+    border-radius: 50%; /* Кругла кнопка на мобільному */
+  }
+  
+  .langCode {
+    display: none; /* Тільки прапор на мобільному */
+  }
+  
+  .chevron {
+    display: none;
+  }
+  
+  .langBtn {
+    padding: 8px;
+    border-radius: 50%;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 640px) {
+    /* Трохи тюнінгу для середніх мобільних */
+    .logoTitle {
+        display: block;
+        font-size: 0.9rem;
+    }
+}

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { validateCommentData } from '../utils/helpers';
+// ✅ Використовуємо аліас
+import { validateCommentData } from '@utils';
 
 export const useCommentForm = (onGenerate, isPro, onOpenPro) => {
   const [formData, setFormData] = useState({
-    username: 'tiktok_user', // Можна теж змінити на щось нейтральне
+    username: 'tiktok_user', 
     verified: false,
     isCreator: false,
     avatar: null,
-    // 👇 ЗМІНА 1: Текст головного коментаря
     commentText: 'TikTok Comment Generator', 
     likes: 1200,
     date: new Date().toISOString().split('T')[0],
@@ -17,7 +17,6 @@ export const useCommentForm = (onGenerate, isPro, onOpenPro) => {
       verified: false,
       isCreator: false,
       avatar: null,
-      // 👇 ЗМІНА 2: Текст відповіді
       commentText: 'TikTok Comment Generator', 
       likes: 50,
       date: new Date().toISOString().split('T')[0]
@@ -93,7 +92,6 @@ export const useCommentForm = (onGenerate, isPro, onOpenPro) => {
       verified: false, 
       isCreator: false, 
       avatar: null, 
-      // 👇 ЗМІНА 3: Скидання до дефолтного тексту
       commentText: 'TikTok Comment Generator', 
       likes: 0, 
       date: new Date().toISOString().split('T')[0], 
@@ -103,7 +101,6 @@ export const useCommentForm = (onGenerate, isPro, onOpenPro) => {
         verified: false, 
         isCreator: false, 
         avatar: null, 
-        // 👇 ЗМІНА 4: Скидання до дефолтного тексту відповіді
         commentText: 'TikTok Comment Generator', 
         likes: 0, 
         date: new Date().toISOString().split('T')[0] 

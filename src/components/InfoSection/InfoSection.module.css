@@ -1,71 +1,181 @@
 .infoWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-top: 40px;
-  padding-top: 30px;
-  border-top: 1px solid #eee;
+  gap: 24px;
+  width: 100%;
+}
+
+.column {
+  background: var(--bg-card); /* rgba(255,255,255, 0.75) */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Headers --- */
+.columnHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.iconBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.iconPurple {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+}
+
+.iconBlue {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
 }
 
 .sectionTitle {
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-main);
+  margin: 0;
 }
 
-.list {
+/* --- Updates Style --- */
+.updatesList {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 .updateItem {
-  background: #f9f9f9;
-  padding: 12px;
-  border-radius: 10px;
-  border-left: 4px solid #00F2EA;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: transform 0.2s ease;
 }
 
-.date {
+.updateItem:hover {
+  background: white;
+  transform: translateX(4px);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.updateHeader {
+  margin-bottom: 8px;
+}
+
+.dateBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 700;
-  color: #888;
-  display: block;
-  margin-bottom: 4px;
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
 }
 
-.text {
+.updateText {
   margin: 0;
   font-size: 14px;
-  color: #444;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* --- FAQ Style --- */
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .faqItem {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  background: white;
+}
+
+.faqItem[open] {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .question {
-  padding: 12px 15px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #fcfcfc;
+  padding: 16px;
+  font-weight: 700;
   font-size: 14px;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none; /* Ховає стандартний трикутник */
+  outline: none;
+}
+
+/* Ховає стандартний маркер у Safari/Chrome */
+.question::-webkit-details-marker {
+  display: none;
+}
+
+.chevron {
+  color: var(--text-placeholder);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+}
+
+.faqItem[open] .chevron {
+  transform: rotate(180deg);
+  color: #3b82f6;
+}
+
+.answerWrapper {
+  padding: 0 16px 16px 16px;
+  animation: slideDown 0.3s ease-out;
 }
 
 .answer {
-  padding: 15px;
   margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
   font-size: 14px;
-  color: #555;
-  border-top: 1px solid #eee;
-  line-height: 1.5;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
   .infoWrapper {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 }

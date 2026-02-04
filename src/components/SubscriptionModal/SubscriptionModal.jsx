@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FaCrown, FaCheck, FaTimes, FaKey, FaArrowRight } from 'react-icons/fa';
-import { MdVerified } from "react-icons/md"; // Іконка верифікації
+import { useLanguage } from '@hooks';
 import styles from './SubscriptionModal.module.css';
 
-function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, translations: t }) {
+function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating }) {
+  const { t } = useLanguage();
   const [accessCode, setAccessCode] = useState('');
   const [status, setStatus] = useState(null);
 
@@ -27,7 +28,7 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
       setStatus({ type: 'success', text: t.codeSuccess || 'Успіх! PRO активовано 🎉' });
       setAccessCode('');
     } else {
-      setStatus({ type: 'error', text: t.codeError || 'Невірний код. Спробуйте ще раз.' });
+      setStatus({ type: 'error', text: t.codeError || 'Невірний код.' });
     }
   };
 
@@ -38,11 +39,9 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
   };
 
   const handleSupportClick = () => {
-    const email = import.meta.env.VITE_SUPPORT_EMAIL || 'zaviiskyoleh@gmail.com';
-    const subject = encodeURIComponent(t.supportSubject || 'Питання PRO');
-    const body = encodeURIComponent(`${t.supportGreeting}\n\n${t.supportBody}\n\n`);
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
-    window.open(gmailUrl, '_blank');
+    const subject = encodeURIComponent(t.supportSubject);
+    const body = encodeURIComponent(`${t.supportGreeting}\n\n${t.supportBody}\n\n${t.supportQuestion}`);
+    window.location.href = `mailto:support@tt-comments.online?subject=${subject}&body=${body}`;
   };
 
   return createPortal(
@@ -51,32 +50,19 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
         <button className={styles.closeBtn} onClick={onClose}><FaTimes /></button>
         
         <div className={styles.header}>
-          <div className={styles.iconWrapper}>
+          <div className={styles.crownIconWrapper}>
             <FaCrown className={styles.crownIcon} />
           </div>
           <h2>{t.proTitle}</h2>
           <p>{t.proDesc}</p>
         </div>
 
-        <div className={styles.features}>
-          {[t.proFeature1, t.proFeatureNoWatermark, t.proFeature3, t.proFeatureVerified, t.proFeatureCustom].map((feature, i) => {
-            const isVerifiedItem = feature === t.proFeatureVerified;
-
-            return (
-              <div key={i} className={styles.featureItem}>
-                {/* 1. Зелена галочка завжди зліва */}
-                <div className={styles.checkIcon}><FaCheck /></div>
-                
-                {/* 2. Текст (якщо це верифікація - додаємо синю іконку перед текстом) */}
-                <span style={isVerifiedItem ? { display: 'flex', alignItems: 'center', gap: '6px' } : {}}>
-                  {isVerifiedItem && (
-                    <MdVerified style={{ color: '#20d5ec', fontSize: '18px', flexShrink: 0 }} />
-                  )}
-                  {feature}
-                </span>
-              </div>
-            );
-          })}
+        <div className={styles.featuresList}>
+          <div className={styles.featureItem}><FaCheck className={styles.checkIcon} /> {t.proFeature1}</div>
+          <div className={styles.featureItem}><FaCheck className={styles.checkIcon} /> {t.proFeatureNoWatermark}</div>
+          <div className={styles.featureItem}><FaCheck className={styles.checkIcon} /> {t.proFeature3}</div>
+          <div className={styles.featureItem}><FaCheck className={styles.checkIcon} /> {t.proFeatureVerified}</div>
+          <div className={styles.featureItem}><FaCheck className={styles.checkIcon} /> {t.proFeatureCustom}</div>
         </div>
 
         <button className={styles.buyBtn} onClick={onBuy}>
@@ -84,7 +70,7 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
         </button>
 
         <div className={styles.activationSection}>
-          <p className={styles.activationTitle}>{t.haveCode}</p>
+          <p className={styles.hasCodeText}>{t.haveCode}</p>
           <div className={styles.inputGroup}>
             <div className={styles.inputWrapper}>
               <input 
@@ -107,7 +93,7 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating, t
               className={styles.activateBtn} 
               disabled={!accessCode.trim() || isValidating}
             >
-              {isValidating ? <span className={styles.spinner}></span> : <><FaArrowRight /></>}
+              {isValidating ? <span className={styles.spinner}></span> : <FaArrowRight />}
             </button>
           </div>
           

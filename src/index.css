@@ -1,52 +1,55 @@
-/* ✅ 1. Підключаємо шрифт Sofia Sans (найбільш схожий на TikTok Sans) */
 @import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  /* ✅ 2. Встановлюємо його як головний */
-  font-family: 'Sofia Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  
-  line-height: 1.5;
-  font-weight: 400;
+  --font-main: 'Sofia Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  /* Modern Palette */
+  /* Backgrounds */
   --bg-page: #FAFAFA;
-  --bg-card: #FFFFFF;
-  --text-main: #121212;
-  --text-secondary: #757575;
-  --border-color: #E0E0E0;
-  
-  --tiktok-pink: #FE2C55;
-  --tiktok-blue: #25F4EE;
-  
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  
-  --transition: all 0.2s ease-in-out;
+  --bg-card: rgba(255, 255, 255, 0.75); /* Більш прозорий для ефекту скла */
+  --bg-card-hover: #FFFFFF;
+  --bg-input: rgba(255, 255, 255, 0.6);
+
+  /* Text */
+  --text-main: #0f172a;
+  --text-secondary: #64748b;
+  --text-placeholder: #94a3b8;
+
+  /* Accents */
+  --accent-pink: #ec4899;
+  --accent-purple: #8b5cf6;
+  --accent-teal: #14b8a6;
+  --accent-red: #ef4444;
+  --accent-active: var(--accent-purple); /* Основний активний колір */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);
+  --gradient-page: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+
+  /* Borders & Radius */
+  --border-light: rgba(229, 231, 235, 0.6);
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 8px 32px rgba(139, 92, 246, 0.15);
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-page);
+  background: var(--gradient-page);
   color: var(--text-main);
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  width: 100%;
-  position: relative;
+  min-height: 100vh;
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 4px;
+/* Анімація спінера глобально доступна */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

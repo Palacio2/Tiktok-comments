@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import { toPng, toSvg, toBlob } from 'html-to-image';
+import { useLanguage } from './useLanguage';
 
-export const useCommentExport = ({ exportRef, exportSettings, isPro, onOpenPro, language, previewHeight, translations }) => {
+export const useCommentExport = ({ exportRef, exportSettings }) => {
+  const { t, language } = useLanguage();
   const [isExporting, setIsExporting] = useState(false);
 
   // Копіювання в буфер (Clipboard)
@@ -20,31 +22,27 @@ export const useCommentExport = ({ exportRef, exportSettings, isPro, onOpenPro, 
 
       const item = new ClipboardItem({ "image/png": blob });
       await navigator.clipboard.write([item]);
-      alert(translations.copied || 'Copied!');
+      alert(t.copied || 'Copied!');
     } catch (err) {
       console.error("Copy failed:", err);
       alert("Copy failed. Try downloading.");
     } finally {
       setIsExporting(false);
     }
-  }, [exportRef, translations, exportSettings.isDark]);
+  }, [exportRef, t, exportSettings]);
 
-  // Експорт у файл
+  // Завантаження файлу
   const handleExport = useCallback(async () => {
-    if (exportSettings.format === 'svg' && !isPro) {
-      onOpenPro();
-      return;
-    }
-
-    if (!exportRef.current || isExporting) return;
+    if (!exportRef.current) return;
     setIsExporting(true);
     
     try {
-      const width = parseInt(exportSettings.width) || 1080;
-      const height = exportSettings.customSize ? parseInt(exportSettings.height) : previewHeight;
-      // Вектор і кастомні розміри - 1x, стандартні PNG - 2x для чіткості
-      const pixelRatio = (exportSettings.customSize || exportSettings.format === 'svg') ? 1 : 2;
+      // Для експорту беремо масштаб 2x для чіткості (Retina)
+      const pixelRatio = (exportSettings.width > 1500 || exportSettings.format === 'svg') ? 1 : 2;
       const bgColor = exportSettings.isDark ? '#121212' : 'white';
+      
+      const width = exportRef.current.offsetWidth;
+      const height = exportRef.current.offsetHeight;
 
       const options = {
         width: width,
@@ -81,12 +79,12 @@ export const useCommentExport = ({ exportRef, exportSettings, isPro, onOpenPro, 
       
     } catch (error) {
       console.error('Export error:', error);
-      const errorMsg = language === 'uk' ? 'Помилка експорту' : 'Export failed';
+      const errorMsg = language === 'uk' ? 'Помилка експорту. Спробуйте інший браузер.' : 'Export failed.';
       alert(errorMsg);
     } finally {
       setIsExporting(false);
     }
-  }, [exportRef, isExporting, previewHeight, language, exportSettings, isPro, onOpenPro]);
+  }, [exportRef, exportSettings, language]);
 
-  return { isExporting, handleExport, copyToClipboard };
+  return { handleExport, copyToClipboard, isExporting };
 };
