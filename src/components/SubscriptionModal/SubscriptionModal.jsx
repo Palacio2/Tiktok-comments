@@ -11,8 +11,8 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating })
 
   useEffect(() => {
     if (isOpen) {
-      setAccessCode('');
-      setStatus(null);
+      setAccessCode(prev => prev !== '' ? '' : prev);
+      setStatus(prev => prev !== null ? null : prev);
     }
   }, [isOpen]);
 
@@ -41,7 +41,8 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating })
   const handleSupportClick = () => {
     const subject = encodeURIComponent(t.supportSubject);
     const body = encodeURIComponent(`${t.supportGreeting}\n\n${t.supportBody}\n\n${t.supportQuestion}`);
-    window.location.href = `mailto:support@tt-comments.online?subject=${subject}&body=${body}`;
+    const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL || 'support@tt-comments.online';
+    window.location.href = `mailto:${supportEmail}?subject=${subject}&body=${body}`;
   };
 
   return createPortal(

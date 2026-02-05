@@ -10,7 +10,6 @@ export const translations = {
     replyLabel: 'Текст відповіді:',
     replyTextDefault: 'Відповісти',
     aiBtn: '✨ AI Генератор',
-    verified: 'Верифікація',
     isCreator: 'Мітка "Автор"',
     creatorBadge: 'Автор',
     likes: 'Лайки:',
@@ -68,6 +67,19 @@ export const translations = {
     days: 'дн.',
     hours: 'год.',
     minutes: 'хв.',
+    updatesTitle: 'Оновлення',
+    updates: [
+      { date: '05.02.2025', text: 'Додано AI Генератор коментарів та аватарів.' },
+      { date: '01.02.2025', text: 'Покращено якість експорту в PNG та додано SVG.' },
+      { date: '25.01.2025', text: 'Запуск бета-версії TikTok Comment Generator.' }
+    ],
+    faqTitle: 'FAQ',
+    faq: [
+      { q: 'Як прибрати водяний знак?', a: 'Водяний знак прибирається автоматично при активації PRO версії.' },
+      { q: 'Чи можна використовувати ці скріншоти в комерційних цілях?', a: 'Так, після генерації ви є власником зображення.' },
+      { q: 'Що робити, якщо код активації не прийшов?', a: 'Напишіть нам на пошту zaviiskyoleh@gmail.com і ми допоможемо.' },
+      { q: 'Про нас', a: 'Ми команда ентузіастів, що створюють корисні інструменти для ТікТок блогерів. Наша мета - спростити створення контенту.' }
+    ],
     moods: {
       positive: '😍 Фанат',
       funny: '😂 Смішно',
@@ -102,7 +114,6 @@ export const translations = {
     create: 'Create',
     reset: 'Reset',
     clearHistory: 'Clear History',
-    verified: 'Verified',
     isCreator: 'Creator Badge',
     creatorBadge: 'Creator',
     preview: 'Preview',
@@ -153,6 +164,19 @@ export const translations = {
     days: 'days',
     hours: 'hrs',
     minutes: 'min',
+    updatesTitle: 'Updates',
+    updates: [
+      { date: '2025-02-05', text: 'Added AI Generator for comments and avatars.' },
+      { date: '2025-02-01', text: 'Improved PNG export quality and added SVG support.' },
+      { date: '2025-01-25', text: 'Beta launch of TikTok Comment Generator.' }
+    ],
+    faqTitle: 'FAQ',
+    faq: [
+      { q: 'How to remove the watermark?', a: 'The watermark is automatically removed when you activate the PRO version.' },
+      { q: 'Can I use these screenshots commercially?', a: 'Yes, you own the generated image.' },
+      { q: 'What if I didn\'t receive my activation code?', a: 'Contact us at zaviiskyoleh@gmail.com for assistance.' },
+      { q: 'About Us', a: 'We are a team of enthusiasts creating useful tools for TikTok creators. Our goal is to simplify content creation.' }
+    ],
     moods: {
       positive: '😍 Fan',
       funny: '😂 Funny',
@@ -185,7 +209,6 @@ export const translations = {
     export: 'Eksport',
     size: 'Rozmiar:',
     create: 'Utwórz',
-    verified: 'Weryfikacja',
     isCreator: 'Odznaka Twórcy',
     creatorBadge: 'Twórca',
     reset: 'Resetuj',
@@ -275,7 +298,6 @@ export const translations = {
     preview: 'Aperçu',
     download: 'Télécharger',
     copy: 'Copier',
-    verified: 'Vérifié',
     isCreator: 'Badge Créateur',
     creatorBadge: 'Créateur',
     copied: '✅ Copié !',
@@ -372,7 +394,6 @@ export const translations = {
     mood: 'Настроение:',
     length: 'Длина:',
     generate: 'Сгенерировать',
-    verified: 'Верификация',
     isCreator: 'Метка "Автор"',
     creatorBadge: 'Автор',
     regenerate: '🔄 Другой вариант',

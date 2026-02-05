@@ -10,7 +10,7 @@ export const usePro = () => {
   const [isSubModalOpen, setIsSubModalOpen] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
 
-  // Helper для кодування/декодування дати (простий захист від дурня)
+  // Helper для кодування/декодування дати (простий захист від зміни в консолі)
   const encodeData = (dateStr) => btoa(`PRO_LICENSE_${dateStr}_SECRET`);
   const decodeData = (encodedStr) => {
     try {
@@ -55,28 +55,13 @@ export const usePro = () => {
     setIsValidating(true);
     const cleanedCode = code.trim().toUpperCase();
 
-    // Local override for PRO-YEAR-3615
-    if (cleanedCode === 'PRO-YEAR-3615') {
-      const expiry = new Date();
-      expiry.setFullYear(expiry.getFullYear() + 1);
-      const expiryStr = expiry.toISOString();
-
-      localStorage.setItem('pro_data_secure', encodeData(expiryStr));
-      setProData({ isPro: true, expirationDate: expiryStr, isLoading: false });
-
-      // Artificial delay to show spinner
-      await new Promise(r => setTimeout(r, 800));
-
-      setIsValidating(false);
-      return true;
-    }
-
     try {
       const { data, error } = await supabase.rpc('activate_license', { 
         lookup_code: cleanedCode
       });
 
       if (error || !data || !data.success) {
+        console.error('Activation error:', error || 'Invalid code');
         setIsValidating(false);
         return false;
       }
@@ -89,14 +74,19 @@ export const usePro = () => {
       return true;
       
     } catch (err) {
-      console.error(err);
+      console.error('System error during activation:', err);
       setIsValidating(false);
       return false;
     }
   }, []);
 
   const handleBuyPro = useCallback(() => {
-    window.open(import.meta.env.VITE_STRIPE_URL || '#', '_blank');
+    const stripeUrl = import.meta.env.VITE_STRIPE_URL;
+    if (stripeUrl) {
+      window.open(stripeUrl, '_blank');
+    } else {
+      console.error('Stripe URL is missing');
+    }
   }, []);
 
   return { 

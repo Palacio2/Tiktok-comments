@@ -51,3 +51,17 @@ export const generateAvatarUrl = (enhancedPrompt) => {
   const safePrompt = encodeURIComponent(`${enhancedPrompt}, white background, centered, avatar, high quality, 3d render style`);
   return `https://image.pollinations.ai/prompt/${safePrompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
 };
+
+// --- Проксі для зображень (щоб уникнути CORS при експорті) ---
+export const proxyImageUrl = async (imageUrl) => {
+  try {
+    const { data, error } = await supabase.functions.invoke('proxy-image-TT-comments', {
+      body: { imageUrl }
+    });
+    if (error || !data?.result) throw error || new Error('Proxy failed');
+    return data.result; // Повертає Data URL
+  } catch (err) {
+    console.warn("Proxy Error:", err);
+    return imageUrl; // Повертаємо оригінал як фолбек
+  }
+};
