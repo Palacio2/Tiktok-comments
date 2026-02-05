@@ -31,7 +31,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: var(--shadow-glow-purple);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
   transform: rotate(-5deg);
   transition: transform 0.3s ease;
 }
@@ -88,7 +88,7 @@
   overflow: hidden;
   
   /* Default State (Get Pro) */
-  background: var(--text-main); /* Чорний або темний */
+  background: var(--text-main);
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -138,7 +138,7 @@
 .langBtn:hover, .langBtnActive {
   background: white;
   border-color: var(--border-light);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .flagWrapper {
@@ -180,7 +180,7 @@
   border-radius: 16px;
   padding: 8px;
   min-width: 180px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -202,7 +202,6 @@
   cursor: pointer;
   border-radius: 10px;
   transition: all 0.2s;
-  position: relative;
 }
 
 .langOption:hover {
@@ -223,13 +222,13 @@
   border-radius: 50%;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  display: flex; /* Важливо для центрування svg */
+  display: flex;
 }
 
 .activeDot {
   width: 6px;
   height: 6px;
-  background: var(--accent-green);
+  background: #10b981;
   border-radius: 50%;
   margin-left: auto;
 }
@@ -256,16 +255,16 @@
   }
   
   .proText {
-    display: none; /* На мобільному показуємо тільки корону в кнопці */
+    display: none;
   }
 
   .proBtn {
     padding: 10px;
-    border-radius: 50%; /* Кругла кнопка на мобільному */
+    border-radius: 50%;
   }
   
   .langCode {
-    display: none; /* Тільки прапор на мобільному */
+    display: none;
   }
   
   .chevron {
@@ -276,12 +275,15 @@
     padding: 8px;
     border-radius: 50%;
   }
+
+  .controls {
+      gap: 10px;
+  }
 }
 
-@media (min-width: 360px) and (max-width: 640px) {
-    /* Трохи тюнінгу для середніх мобільних */
+@media (min-width: 480px) and (max-width: 640px) {
     .logoTitle {
         display: block;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
     }
 }

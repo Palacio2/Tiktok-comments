@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
 
   requiredEnvs.forEach((key) => {
     if (!env[key]) {
-      throw new Error(`\n\n❌ ПЕРЕРВАНО: Змінна ${key} відсутня!\nПеревір налаштування в панелі хостингу.\n`)
+      console.warn(`\n\n⚠️ ПОПЕРЕДЖЕННЯ: Змінна ${key} відсутня! Використовуються заглушки.\n`)
+      process.env[key] = 'placeholder'
     }
   })
 

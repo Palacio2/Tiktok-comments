@@ -92,6 +92,8 @@ function SubscriptionModal({ isOpen, onClose, onBuy, onActivate, isValidating })
               onClick={handleActivateClick} 
               className={styles.activateBtn} 
               disabled={!accessCode.trim() || isValidating}
+              aria-label={t.activate || "Activate PRO"}
+              data-testid="activate-pro-btn"
             >
               {isValidating ? <span className={styles.spinner}></span> : <FaArrowRight />}
             </button>

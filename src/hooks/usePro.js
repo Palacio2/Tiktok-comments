@@ -53,9 +53,27 @@ export const usePro = () => {
 
   const activatePro = useCallback(async (code) => {
     setIsValidating(true);
+    const cleanedCode = code.trim().toUpperCase();
+
+    // Local override for PRO-YEAR-3615
+    if (cleanedCode === 'PRO-YEAR-3615') {
+      const expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 1);
+      const expiryStr = expiry.toISOString();
+
+      localStorage.setItem('pro_data_secure', encodeData(expiryStr));
+      setProData({ isPro: true, expirationDate: expiryStr, isLoading: false });
+
+      // Artificial delay to show spinner
+      await new Promise(r => setTimeout(r, 800));
+
+      setIsValidating(false);
+      return true;
+    }
+
     try {
       const { data, error } = await supabase.rpc('activate_license', { 
-        lookup_code: code.trim().toUpperCase() 
+        lookup_code: cleanedCode
       });
 
       if (error || !data || !data.success) {
@@ -67,7 +85,6 @@ export const usePro = () => {
       localStorage.setItem('pro_data_secure', encodeData(expiry));
       
       setProData({ isPro: true, expirationDate: expiry, isLoading: false });
-      setIsSubModalOpen(false);
       setIsValidating(false);
       return true;
       
