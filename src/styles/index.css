@@ -1,0 +1,48 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-page: #f8fafc;
+  --text-primary: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 min-h-screen antialiased font-sans;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+  }
+
+  * { box-sizing: border-box; }
+
+  ::-webkit-scrollbar { @apply w-1.5 h-1.5; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors; }
+}
+
+@layer utilities {
+  .font-tiktok {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  }
+}
+
+@layer components {
+  .app-shell { @apply min-h-screen bg-[#FDFDFD] font-sans text-slate-800 pb-20; }
+  
+  .card-preview { @apply w-full bg-slate-50/50 rounded-3xl p-8 flex justify-center overflow-hidden border border-slate-100 shadow-sm; }
+  .card-preview-inner { @apply shadow-lg shadow-slate-200/40; }
+
+  .button { @apply inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none tracking-wide; }
+  .button-primary { @apply bg-slate-900 text-white hover:bg-slate-800 shadow-sm hover:shadow; }
+  .button-secondary { @apply bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 shadow-sm; }
+  .button-ghost { @apply bg-transparent text-slate-500 hover:bg-slate-100/50 hover:text-slate-800; }
+  .button-tiktok { @apply bg-[#FE2C55] text-white hover:bg-[#E6284D] shadow-sm hover:shadow; }
+  
+  .button-sm { @apply px-3 py-1.5 text-sm; }
+  .button-md { @apply px-5 py-3 text-base; }
+  .button-lg { @apply px-6 py-4 text-lg w-full; }
+}

@@ -1,0 +1,2941 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+COMPLETED_TASKS.md
+eslint.config.js
+index.html
+package.json
+postcss.config.js
+public/google11cdad8470922202.html
+public/og-image.jpg
+public/robots.txt
+public/sitemap.xml
+README.md
+src/App.tsx
+src/components/CommentForm/AiGenerator.tsx
+src/components/CommentForm/AuthorSection.tsx
+src/components/CommentForm/AvatarGeneratorModal.tsx
+src/components/CommentForm/AvatarUploader.tsx
+src/components/CommentForm/CommentContentSection.tsx
+src/components/CommentForm/CommentForm.tsx
+src/components/CommentForm/ExportSection.tsx
+src/components/CommentForm/RepliesManager.tsx
+src/components/CommentImageExporter/CommentImageExporter.tsx
+src/components/CommentView/CommentView.tsx
+src/components/CommentView/ReplyItem.tsx
+src/components/Header/Header.tsx
+src/components/SubscriptionModal/SubscriptionModal.tsx
+src/components/ui/atoms/Button.tsx
+src/components/ui/atoms/Input.tsx
+src/components/ui/atoms/Toggle.tsx
+src/components/ui/icons/FlagIcon.tsx
+src/components/ui/icons/Icons.tsx
+src/components/ui/index.ts
+src/components/ui/molecules/FormSection.tsx
+src/components/ui/molecules/Modal.tsx
+src/components/ui/molecules/ProTimer.tsx
+src/hooks/index.ts
+src/hooks/useAiGenerator.ts
+src/hooks/useAvatarGenerator.ts
+src/hooks/useCommentForm.ts
+src/hooks/useFileUploader.ts
+src/hooks/useLanguage.tsx
+src/hooks/useLoader.tsx
+src/hooks/usePro.ts
+src/main.tsx
+src/styles/index.css
+src/types/index.ts
+src/utils/helpers.ts
+src/utils/supabaseClient.ts
+src/utils/translations.ts
+tailwind.config.js
+tsconfig.json
+vite-env.d.ts
+vite.config.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="postcss.config.js">
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+</file>
+
+<file path="src/App.tsx">
+import { useState, useEffect } from 'react';
+import { useLanguage } from '@/hooks/useLanguage';
+import { usePro } from '@/hooks/usePro';
+import { useLoader } from '@/hooks/useLoader';
+import { CommentData, ExportSettings } from '@/types';
+import Header from '@/components/Header/Header';
+import CommentForm from '@/components/CommentForm/CommentForm';
+import CommentImageExporter from '@/components/CommentImageExporter/CommentImageExporter';
+import SubscriptionModal from '@/components/SubscriptionModal/SubscriptionModal';
+
+const App = () => {
+  const { isPro, timeLeft, openPro, closePro, showProModal, activatePro, handleBuyPro, isValidating } = usePro();
+  const { t } = useLanguage();
+  const { showLoader, hideLoader } = useLoader();
+  
+  const [commentData, setCommentData] = useState<CommentData | null>(null);
+  const [exportSettings, setExportSettings] = useState<ExportSettings>({
+    format: 'png',
+    width: 500,
+    height: 'auto',
+    isDark: false,
+    customSize: false
+  });
+
+  // Ефект початкового завантаження сайту
+  useEffect(() => {
+    showLoader(t.loading || 'Завантаження...');
+    // Імітуємо ініціалізацію (шрифти, перевірка сесії тощо)
+    const timer = setTimeout(() => {
+      hideLoader();
+    }, 1200);
+    
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  const updateExportSettings = (settings: Partial<ExportSettings>) => {
+    setExportSettings(prev => ({ ...prev, ...settings }));
+  };
+
+  return (
+    <div className="app-shell bg-[#F8FAFC]">
+      <Header 
+        isPro={isPro} 
+        timeLeft={timeLeft}
+        onOpenPro={openPro} 
+      />
+      
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-12 pb-20 max-w-[1400px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          <div className="order-2 lg:order-1 lg:col-span-5 xl:col-span-4">
+            <CommentForm 
+              onGenerate={setCommentData}
+              exportSettings={exportSettings}
+              updateExportSettings={updateExportSettings}
+              isPro={isPro}
+              onOpenPro={openPro}
+            />
+          </div>
+          
+          <div className="order-1 lg:order-2 lg:col-span-7 xl:col-span-8 lg:sticky lg:top-28">
+            {commentData && (
+              <CommentImageExporter data={commentData} settings={exportSettings} t={t} />
+            )}
+          </div>
+
+        </div>
+      </main>
+
+      <SubscriptionModal 
+        isOpen={showProModal} 
+        onClose={closePro}
+        onActivate={activatePro}
+        onBuy={handleBuyPro}
+        isValidating={isValidating}
+        isPro={isPro}
+        timeLeft={timeLeft}
+        t={t}
+      />
+    </div>
+  );
+};
+
+export default App;
+</file>
+
+<file path="src/components/CommentForm/AiGenerator.tsx">
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Button, Input, Icons } from '@/components/ui';
+import { useAiGenerator } from '@/hooks/useAiGenerator';
+import { TranslationSchema } from '@/utils/translations';
+
+interface AiGeneratorProps {
+  onGenerate: (text: string) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: TranslationSchema;
+}
+
+const LANGUAGES = [
+  { id: 'ukrainian', label: '🇺🇦 Українська' },
+  { id: 'english', label: '🇬🇧 English' },
+  { id: 'polish', label: '🇵🇱 Polski' }
+];
+
+const AiGenerator: React.FC<AiGeneratorProps> = ({ onGenerate, isPro, onOpenPro, t }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [prompt, setPrompt] = useState('');
+  const [mood, setMood] = useState('funny');
+  const [length, setLength] = useState('short');
+  const [language, setLanguage] = useState('ukrainian');
+
+  const { generateComment, isLoading } = useAiGenerator(isPro);
+
+  const MOODS = [
+    { id: 'funny', label: t.aiMoods?.funny || '😂 Смішний' },
+    { id: 'hater', label: t.aiMoods?.hater || '😡 Хейтер' },
+    { id: 'supportive', label: t.aiMoods?.supportive || '😍 Підтримка' },
+    { id: 'sarcastic', label: t.aiMoods?.sarcastic || '😏 Сарказм' },
+    { id: 'question', label: t.aiMoods?.question || '🤔 Питання' }
+  ];
+
+  const LENGTHS = [
+    { id: 'short', label: t.aiLengths?.short || 'Короткий' },
+    { id: 'medium', label: t.aiLengths?.medium || 'Середній' },
+    { id: 'long', label: t.aiLengths?.long || 'Довгий' }
+  ];
+
+  const handleOpen = () => {
+    if (!isPro) {
+      onOpenPro();
+      return;
+    }
+    setIsOpen(true);
+  };
+
+  const handleAction = async () => {
+    const result = await generateComment({ topic: prompt, mood, length, language });
+    if (result) {
+      onGenerate(result);
+      setIsOpen(false);
+      setPrompt('');
+    }
+  };
+
+  return (
+    <>
+      <button 
+        type="button"
+        onClick={handleOpen}
+        className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider font-bold transition-all duration-300 rounded-lg bg-slate-900 text-white hover:bg-slate-800 shadow-sm"
+      >
+        <Icons.Sparkles size={12} className="text-white" />
+        <span>AI</span>
+        {!isPro && <Icons.Lock size={10} className="text-slate-400" />}
+      </button>
+
+      {isOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsOpen(false)}>
+          <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh] border border-slate-100" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 shrink-0">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Icons.Sparkles className="text-slate-900" /> {t.aiAssist || "AI Текст"}
+              </h3>
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors"
+              >
+                <Icons.X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 flex flex-col gap-6 overflow-y-auto">
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {LANGUAGES.map(l => (
+                    <button
+                      key={l.id}
+                      onClick={() => setLanguage(l.id)}
+                      className={`px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${language === l.id ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {MOODS.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => setMood(m.id)}
+                      className={`px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${mood === m.id ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {LENGTHS.map(len => (
+                    <button
+                      key={len.id}
+                      onClick={() => setLength(len.id)}
+                      className={`px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${length === len.id ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                    >
+                      {len.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2 border-t border-slate-100">
+                <Input
+                  placeholder={t.commentPlaceholder || "Про що відео?"}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="bg-slate-50 border-slate-100"
+                />
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50/50 border-t border-slate-100 shrink-0">
+              <Button 
+                variant="tiktok" 
+                onClick={handleAction} 
+                isLoading={isLoading} 
+                className="w-full h-12 text-base shadow-sm"
+              >
+                {t.generate || "Згенерувати"}
+              </Button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
+
+export default AiGenerator;
+</file>
+
+<file path="src/components/CommentForm/AuthorSection.tsx">
+import React from 'react';
+import { Input, Toggle, Icons, FormSection } from '@/components/ui';
+import { CommentData } from '@/types';
+import { TranslationSchema } from '@/utils/translations';
+import AvatarUploader from './AvatarUploader';
+
+interface AuthorSectionProps {
+  formData: CommentData;
+  onChange: (field: keyof CommentData, value: any) => void;
+  onAvatarChange: (url: string | null) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: TranslationSchema;
+}
+
+const AuthorSection: React.FC<AuthorSectionProps> = ({ 
+  formData, 
+  onChange, 
+  onAvatarChange, 
+  isPro, 
+  onOpenPro, 
+  t 
+}) => {
+  const handleUsernameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!e.target.value.trim()) {
+      onChange('username', 'tiktok_gen');
+    }
+  };
+
+  return (
+    <FormSection 
+      title={t.authorSettings || "Профіль автора"} 
+      icon={<Icons.User size={16} className="text-slate-400" />}
+    >
+      <div className="flex flex-col sm:flex-row gap-6 items-start">
+        
+        <div className="shrink-0 w-24 flex flex-col items-center gap-3">
+          <AvatarUploader 
+            currentAvatar={formData.avatarUrl} 
+            onUpload={onAvatarChange} 
+            isPro={isPro} 
+            onOpenPro={onOpenPro} 
+            t={t} 
+          />
+        </div>
+        
+        <div className="flex-1 flex flex-col gap-5 w-full">
+          <Input 
+            label={t.username || "Нікнейм"} 
+            name="username" 
+            value={formData.username} 
+            onChange={(e) => onChange('username', e.target.value)} 
+            onBlur={handleUsernameBlur}
+          />
+          
+          <div className="grid grid-cols-2 gap-3">
+            <Toggle 
+              label={<span className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700"><Icons.Verified size={14} className="text-[#20D5EC] shrink-0" /> {t.verified || 'Верифікація'}</span>}
+              checked={formData.isVerified} 
+              onChange={(c) => onChange('isVerified', c)} 
+            />
+            <Toggle 
+              label={<span className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700"><Icons.Heart size={14} className="text-[#ff3b5c] shrink-0" /> {t.authorBadge || 'Мітка Автора'}</span>}
+              checked={formData.isAuthor} 
+              onChange={(c) => onChange('isAuthor', c)} 
+            />
+          </div>
+        </div>
+        
+      </div>
+    </FormSection>
+  );
+};
+
+export default AuthorSection;
+</file>
+
+<file path="src/components/CommentForm/AvatarGeneratorModal.tsx">
+import React from 'react';
+import { Icons, Button, Input, Modal } from '@/components/ui';
+import { useAvatarGenerator } from '@/hooks/useAvatarGenerator';
+import { useLanguage } from '@/hooks/useLanguage';
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (img: string) => void;
+}
+
+const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => {
+  const { t } = useLanguage();
+  const { promptText, setPromptText, previewImage, isLoading, status, handleGenerate, handleClose } = useAvatarGenerator(onApply, onClose);
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} className="border border-slate-100 shadow-xl shadow-slate-200/40">
+      <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <Icons.Sparkles className="text-slate-900" /> {t.aiAvatarTitle || "Створити аватар"}
+        </h3>
+        <button onClick={handleClose} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-full transition-colors">
+          <Icons.X size={20} />
+        </button>
+      </div>
+
+      <div className="p-8 flex flex-col items-center gap-8">
+        <div className={`relative w-40 h-40 rounded-full border-4 border-slate-50 shadow-sm flex items-center justify-center overflow-hidden bg-slate-100 transition-all duration-500 ${isLoading ? 'animate-pulse scale-95' : 'scale-100'}`}>
+          {previewImage ? (
+            <img src={previewImage} alt="Preview" className="w-full h-full object-cover animate-in fade-in zoom-in" />
+          ) : (
+            <Icons.User size={64} className="text-slate-300" />
+          )}
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+              <span className="w-8 h-8 border-4 border-slate-900/30 border-t-slate-900 rounded-full animate-spin" />
+            </div>
+          )}
+        </div>
+        
+        <div className="w-full space-y-4">
+          <Input 
+            placeholder={t.aiAvatarPrompt || "Напр. кіт у кіберпанк стилі..."}
+            value={promptText}
+            onChange={(e) => setPromptText(e.target.value)}
+            disabled={isLoading}
+            className="bg-slate-50 border-slate-100 w-full"
+          />
+          <Button variant="tiktok" onClick={handleGenerate} disabled={isLoading || !promptText.trim()} className="w-full h-12 text-base shadow-sm">
+            {isLoading ? (status || "Малюю...") : (t.generate || "Згенерувати")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="p-6 bg-slate-50/50 flex gap-3 border-t border-slate-100">
+        <Button variant="ghost" onClick={handleClose} className="flex-1 h-12 text-[15px]">{t.cancel || "Скасувати"}</Button>
+        <Button variant="primary" onClick={() => previewImage && onApply(previewImage)} disabled={!previewImage || isLoading} className="flex-1 h-12 text-[15px]">
+          {t.apply || "Застосувати"}
+        </Button>
+      </div>
+    </Modal>
+  );
+};
+
+export default AvatarGeneratorModal;
+</file>
+
+<file path="src/components/CommentForm/AvatarUploader.tsx">
+import React, { useState } from 'react';
+import { useFileUploader } from '@/hooks/useFileUploader';
+import { Icons } from '@/components/ui';
+import AvatarGeneratorModal from './AvatarGeneratorModal';
+
+interface AvatarUploaderProps {
+  currentAvatar: string | null;
+  onUpload: (img: string | null) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: any;
+}
+
+const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, onUpload, isPro, onOpenPro, t }) => {
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const { fileInputRef, handlePick, handleFileChange } = useFileUploader(onUpload);
+
+  return (
+    <div className="flex flex-col gap-3 items-center w-full">
+      <div className="relative w-max">
+        <div 
+          onClick={handlePick} 
+          className="group relative w-[88px] h-[88px] rounded-full border border-slate-100 shadow-sm overflow-hidden bg-slate-50 flex items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-md"
+        >
+          {currentAvatar ? (
+            <img src={currentAvatar} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <Icons.User size={36} className="text-slate-300" />
+          )}
+          <div className="absolute inset-0 bg-slate-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Icons.Upload className="text-white" size={20} />
+          </div>
+        </div>
+        {currentAvatar && (
+          <button 
+            onClick={(e) => { e.stopPropagation(); onUpload(null); }} 
+            className="absolute -top-1 -right-1 z-10 bg-white border border-slate-100 rounded-full p-1 text-slate-400 hover:text-red-500 shadow-sm transition-colors"
+          >
+            <Icons.X size={12} />
+          </button>
+        )}
+      </div>
+
+      <button 
+        type="button"
+        onClick={() => isPro ? setIsAiModalOpen(true) : onOpenPro()}
+        className="group relative flex items-center justify-center w-full gap-1.5 px-4 py-2.5 text-[12px] font-bold transition-all duration-300 rounded-2xl bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-100 shadow-sm"
+      >
+        <Icons.Plus size={14} className="text-slate-500 group-hover:text-slate-800" />
+        <span>AI</span>
+        {!isPro && <Icons.Lock size={10} className="text-slate-400 ml-1" />}
+      </button>
+
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+      
+      <AvatarGeneratorModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} onApply={onUpload} />
+    </div>
+  );
+};
+
+export default AvatarUploader;
+</file>
+
+<file path="src/components/CommentForm/CommentContentSection.tsx">
+import React from 'react';
+import { Input, Toggle, Icons, FormSection } from '@/components/ui';
+import { CommentData } from '@/types';
+import { TranslationSchema } from '@/utils/translations';
+import AiGenerator from './AiGenerator';
+
+interface CommentContentSectionProps {
+  formData: CommentData;
+  onChange: (field: keyof CommentData, value: any) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: TranslationSchema;
+}
+
+const CommentContentSection: React.FC<CommentContentSectionProps> = ({ 
+  formData, 
+  onChange, 
+  isPro, 
+  onOpenPro, 
+  t 
+}) => {
+  const handleDateChange = (rawDate: string) => {
+    if (rawDate.includes('-')) {
+      const parts = rawDate.split('-');
+      if (parts.length === 3) {
+        onChange('timeAgo', `${parts[1]}-${parts[2]}`);
+        return;
+      }
+    }
+    onChange('timeAgo', rawDate);
+  };
+
+  return (
+    <FormSection title={t.commentContent || "Контент"} icon={<Icons.Topic size={18} className="text-slate-400" />}>
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide ml-1">
+            {t.commentText || "Текст коментаря"}
+          </label>
+          <div className="relative">
+            <textarea
+              value={formData.commentText}
+              onChange={(e) => onChange('commentText', e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-800 text-[14px] outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-200 resize-none min-h-[100px] transition-all pb-12 shadow-sm"
+            />
+            <div className="absolute bottom-3 right-3 no-export">
+              <AiGenerator 
+                onGenerate={(text) => onChange('commentText', text)} 
+                isPro={isPro} 
+                onOpenPro={onOpenPro} 
+                t={t} 
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wide ml-1">
+              {t.timeAgo || "Час"}
+            </label>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-800 text-[14px] outline-none focus:bg-white focus:border-slate-300 transition-all placeholder:text-slate-400 shadow-sm" 
+                value={formData.timeAgo} 
+                onChange={(e) => onChange('timeAgo', e.target.value)} 
+                placeholder="Напр. 4ч."
+              />
+              <div className="relative w-12 shrink-0 flex items-center justify-center bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-slate-100 cursor-pointer overflow-hidden transition-all group shadow-sm">
+                <Icons.Clock size={18} className="text-slate-500 group-hover:text-slate-800 transition-colors" />
+                <input 
+                  type="date" 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  onChange={(e) => handleDateChange(e.target.value)} 
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Input 
+              label={t.likesCount || "Лайки"} 
+              type="text"
+              value={formData.likes} 
+              onChange={(e) => onChange('likes', e.target.value)} 
+              className="py-2.5 text-[14px] bg-slate-50/50 border-slate-100 shadow-sm"
+              placeholder="Напр. 12500 або 12.5K"
+            />
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-slate-100/80 mt-1">
+          <Toggle 
+            label={<span className="flex items-center gap-2 text-[13px] font-semibold text-slate-700"><Icons.Heart size={16} className="text-[#FE2C55]" /> {t.likedByCreator || 'Лайк від автора'}</span>} 
+            checked={formData.isLikedByCreator} 
+            onChange={(c) => onChange('isLikedByCreator', c)} 
+          />
+        </div>
+      </div>
+    </FormSection>
+  );
+};
+
+export default CommentContentSection;
+</file>
+
+<file path="src/components/CommentForm/CommentForm.tsx">
+import { useCommentForm } from '@/hooks/useCommentForm';
+import { useLanguage } from '@/hooks/useLanguage';
+import { Icons, FormSection } from '@/components/ui';
+import { CommentData, ExportSettings } from '@/types';
+
+import AuthorSection from './AuthorSection';
+import CommentContentSection from './CommentContentSection';
+import RepliesManager from './RepliesManager';
+import ExportSection from './ExportSection';
+
+interface CommentFormProps {
+  onGenerate: (data: CommentData) => void;
+  exportSettings: ExportSettings;
+  updateExportSettings: (settings: Partial<ExportSettings>) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  externalAvatar?: string | null;
+}
+
+const CommentForm = ({ 
+  onGenerate, 
+  exportSettings, 
+  updateExportSettings, 
+  isPro, 
+  onOpenPro,
+  externalAvatar 
+}: CommentFormProps) => {
+  const { t } = useLanguage();
+  
+  const { 
+    formData, 
+    handleInputChange, 
+    handleAvatarChange, 
+    handleRepliesChange
+  } = useCommentForm(onGenerate, externalAvatar);
+
+  return (
+    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
+      <AuthorSection 
+        formData={formData} 
+        onChange={handleInputChange} 
+        onAvatarChange={handleAvatarChange} 
+        isPro={isPro} 
+        onOpenPro={onOpenPro} 
+        t={t} 
+      />
+
+      <CommentContentSection 
+        formData={formData} 
+        onChange={handleInputChange} 
+        isPro={isPro} 
+        onOpenPro={onOpenPro} 
+        t={t} 
+      />
+
+      <FormSection title={t.replies || "Відповіді"} icon={<Icons.Reply size={18} className="text-slate-400" />}>
+        <RepliesManager 
+          replies={formData.replies} 
+          onChange={handleRepliesChange} 
+          isPro={isPro} 
+          onOpenPro={onOpenPro} 
+          t={t} 
+        />
+      </FormSection>
+
+      <ExportSection 
+        settings={exportSettings} 
+        onUpdate={updateExportSettings} 
+        isPro={isPro} 
+        onOpenPro={onOpenPro} 
+        t={t} 
+      />
+    </div>
+  );
+};
+
+export default CommentForm;
+</file>
+
+<file path="src/components/CommentForm/ExportSection.tsx">
+import React, { useState, useEffect } from 'react';
+import { Toggle, Icons, FormSection, Input } from '@/components/ui';
+import { ExportSettings } from '@/types';
+import { TranslationSchema } from '@/utils/translations';
+
+interface ExportSectionProps {
+  settings: ExportSettings;
+  onUpdate: (settings: Partial<ExportSettings>) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: TranslationSchema;
+}
+
+const ExportSection: React.FC<ExportSectionProps> = ({ 
+  settings, 
+  onUpdate, 
+  isPro, 
+  onOpenPro, 
+  t 
+}) => {
+  const [activePreset, setActivePreset] = useState<string>('auto');
+
+  useEffect(() => {
+    if (!settings.customSize || settings.width === 'auto') {
+      setActivePreset('auto');
+    } else if (settings.width === 1080 && settings.height === 1080) {
+      setActivePreset('square');
+    } else if (settings.width === 1080 && settings.height === 1920) {
+      setActivePreset('story');
+    } else {
+      setActivePreset('custom');
+    }
+  }, [settings.customSize, settings.width, settings.height]);
+
+  const handlePresetChange = (preset: string) => {
+    if (preset === 'auto') {
+      onUpdate({ customSize: false, width: 'auto', height: 'auto' });
+    } else if (preset === 'square') {
+      onUpdate({ customSize: true, width: 1080, height: 1080 });
+    } else if (preset === 'story') {
+      onUpdate({ customSize: true, width: 1080, height: 1920 });
+    } else if (preset === 'custom') {
+      onUpdate({ 
+        customSize: true, 
+        width: (settings.width === 'auto' || !settings.width) ? 1080 : settings.width, 
+        height: (settings.height === 'auto' || !settings.height) ? 1080 : settings.height 
+      });
+    }
+  };
+
+  const handleCustomChange = (field: 'width' | 'height', value: string) => {
+    if (value === '') {
+      onUpdate({ [field]: '' });
+      return;
+    }
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      onUpdate({ [field]: numValue });
+    }
+  };
+
+  const getPresetLabel = (preset: string) => {
+    switch (preset) {
+      case 'auto': return t.presetAuto;
+      case 'square': return t.presetSquare;
+      case 'story': return t.presetStory;
+      case 'custom': return t.presetCustom;
+      default: return preset;
+    }
+  };
+
+  return (
+    <FormSection title={t.exportSettings || "Експорт"} icon={<Icons.Download size={18} className="text-slate-400" />}>
+      <div className="flex flex-col gap-6">
+        
+        <div className="grid grid-cols-2 gap-4">
+          <Toggle 
+            label={<span className="flex items-center gap-2 text-[13px] font-medium text-slate-700">🌙 {t.darkMode}</span>} 
+            checked={settings.isDark} 
+            onChange={(c) => onUpdate({ isDark: c })} 
+          />
+          <Toggle 
+            label={<span className="flex items-center gap-2 text-[13px] font-medium text-slate-700"><Icons.Sparkles size={14} /> SVG</span>} 
+            checked={settings.format === 'svg'} 
+            onChange={(c) => { 
+              if (!isPro && c) return onOpenPro(); 
+              onUpdate({ format: c ? 'svg' : 'png' }); 
+            }} 
+          />
+        </div>
+
+        <div className="flex flex-col gap-4 pt-4 border-t border-slate-100/80">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50/50 p-1 rounded-2xl border border-slate-100">
+            {['auto', 'square', 'story', 'custom'].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => handlePresetChange(preset)}
+                className={`px-3 py-2 rounded-xl text-[12px] font-semibold transition-all duration-200 ${
+                  activePreset === preset 
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
+                }`}
+              >
+                {getPresetLabel(preset)}
+              </button>
+            ))}
+          </div>
+
+          {activePreset === 'custom' && (
+            <div className="grid grid-cols-2 gap-4 mt-2 animate-in fade-in slide-in-from-top-2">
+              <Input 
+                label={t.width || "Ширина"} 
+                type="number"
+                value={settings.width === 'auto' ? '' : String(settings.width)} 
+                onChange={(e) => handleCustomChange('width', e.target.value)} 
+                className="py-2.5 text-[13px] bg-slate-50/50 border-slate-100 shadow-sm"
+              />
+              <Input 
+                label={t.height || "Висота"} 
+                type="number"
+                value={settings.height === 'auto' ? '' : String(settings.height)} 
+                onChange={(e) => handleCustomChange('height', e.target.value)} 
+                className="py-2.5 text-[13px] bg-slate-50/50 border-slate-100 shadow-sm"
+              />
+            </div>
+          )}
+        </div>
+
+      </div>
+    </FormSection>
+  );
+};
+
+export default ExportSection;
+</file>
+
+<file path="src/components/CommentForm/RepliesManager.tsx">
+import React from 'react';
+import { ReplyData } from '@/types';
+import { Input, Button, Icons, Toggle } from '@/components/ui';
+import AvatarUploader from './AvatarUploader';
+import AiGenerator from './AiGenerator';
+import { TranslationSchema } from '@/utils/translations';
+
+interface RepliesManagerProps {
+  replies: ReplyData[];
+  onChange: (replies: ReplyData[]) => void;
+  isPro: boolean;
+  onOpenPro: () => void;
+  t: TranslationSchema;
+}
+
+const RepliesManager: React.FC<RepliesManagerProps> = ({ replies, onChange, isPro, onOpenPro, t }) => {
+  const addReply = () => {
+    if (replies.length >= 5) return;
+    const newReply: ReplyData = {
+      id: Date.now().toString(),
+      username: 'tiktok_gen',
+      text: 'Me too! 🙌',
+      timeAgo: '1h',
+      likes: '10',
+      avatarUrl: null,
+      isLikedByCreator: false,
+      isAuthor: false,
+      isVerified: false
+    };
+    onChange([...replies, newReply]);
+  };
+
+  const removeReply = (id: string) => {
+    onChange(replies.filter(r => r.id !== id));
+  };
+
+  const updateReply = (id: string, field: keyof ReplyData, value: any) => {
+    onChange(replies.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {replies.map((reply, index) => (
+        <div key={reply.id} className="relative bg-slate-50/50 border border-slate-100 p-5 rounded-[20px] shadow-[0_1px_5px_-3px_rgba(0,0,0,0.05)] animate-in fade-in slide-in-from-left-4">
+          
+          <div className="flex justify-between items-center mb-5">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              {t.replyNumber || 'Відповідь'} #{index + 1}
+            </span>
+            <button 
+              onClick={() => removeReply(reply.id)} 
+              className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-all"
+            >
+              <Icons.Trash size={15} />
+            </button>
+          </div>
+          
+          <div className="flex flex-row gap-5 items-start">
+            <div className="shrink-0 w-16">
+              <AvatarUploader 
+                currentAvatar={reply.avatarUrl} 
+                onUpload={(url) => updateReply(reply.id, 'avatarUrl', url)} 
+                isPro={isPro} 
+                onOpenPro={onOpenPro} 
+                t={t} 
+              />
+            </div>
+            
+            <div className="flex-1 flex flex-col gap-4 w-full">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label={t.username || "Username"}
+                  value={reply.username}
+                  onChange={(e) => updateReply(reply.id, 'username', e.target.value)}
+                  onBlur={(e) => {
+                    if (!e.target.value.trim()) updateReply(reply.id, 'username', 'tiktok_gen');
+                  }}
+                  className="py-2.5 text-[13px] bg-white border-slate-100 shadow-sm"
+                />
+                <Input
+                  label={t.time || "Час"}
+                  value={reply.timeAgo}
+                  onChange={(e) => updateReply(reply.id, 'timeAgo', e.target.value)}
+                  className="py-2.5 text-[13px] bg-white border-slate-100 shadow-sm"
+                />
+              </div>
+              
+              <div className="relative">
+                <textarea
+                  value={reply.text}
+                  onChange={(e) => updateReply(reply.id, 'text', e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-100 bg-white text-slate-800 text-[14px] outline-none focus:border-slate-300 transition-all resize-none min-h-[70px] shadow-sm"
+                />
+                <div className="absolute bottom-2 right-2">
+                  <AiGenerator 
+                    onGenerate={(text) => updateReply(reply.id, 'text', text)} 
+                    isPro={isPro} 
+                    onOpenPro={onOpenPro} 
+                    t={t} 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Toggle
+                  label={<span className="text-[12px] font-semibold flex items-center gap-1.5"><Icons.Heart size={13} className="text-[#FE2C55]"/> {t.likes || 'Лайк'}</span>}
+                  checked={reply.isLikedByCreator}
+                  onChange={(c) => updateReply(reply.id, 'isLikedByCreator', c)}
+                />
+                <Toggle
+                  label={<span className="text-[12px] font-semibold text-slate-700 flex items-center gap-1.5"><Icons.Verified size={13} className="text-[#20D5EC]" /> {t.verified || 'Галочка'}</span>}
+                  checked={reply.isVerified || false}
+                  onChange={(c) => updateReply(reply.id, 'isVerified', c)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      
+      {replies.length < 5 && (
+        <Button variant="secondary" onClick={addReply} className="w-full py-4 border-dashed border-2 border-slate-200 bg-transparent text-slate-400 hover:text-slate-700 hover:border-slate-300 hover:bg-slate-50/50 shadow-none transition-all">
+          <Icons.Plus size={18} className="mr-2" />
+          {t?.addReply || 'Додати відповідь'}
+        </Button>
+      )}
+    </div>
+  );
+};
+
+export default RepliesManager;
+</file>
+
+<file path="src/components/CommentImageExporter/CommentImageExporter.tsx">
+import { useRef } from 'react';
+import { toPng, toSvg } from 'html-to-image';
+import { CommentData, ExportSettings } from '@/types';
+import { Button, Icons } from '@/components/ui';
+import { TranslationSchema } from '@/utils/translations';
+import { useLoader } from '@/hooks/useLoader'; // Імпортуємо наш хук
+import CommentView from '../CommentView/CommentView';
+
+interface Props {
+  data: CommentData;
+  settings: ExportSettings;
+  t: TranslationSchema;
+}
+
+const CommentImageExporter = ({ data, settings, t }: Props) => {
+  const exportRef = useRef<HTMLDivElement>(null);
+  const { showLoader, hideLoader } = useLoader(); // Використовуємо глобальний лоадер
+
+  const handleExport = async () => {
+    if (!exportRef.current) return;
+
+    // Включаємо глобальний лоадер
+    showLoader(t.loading || 'Завантаження...');
+
+    try {
+      const filter = (node: HTMLElement) => {
+        return !node.classList?.contains('no-export');
+      };
+
+      const options = {
+        backgroundColor: settings.isDark ? '#121212' : '#FFFFFF',
+        pixelRatio: 2,
+        filter
+      };
+
+      const dataUrl = settings.format === 'svg' 
+        ? await toSvg(exportRef.current, options)
+        : await toPng(exportRef.current, options);
+
+      const link = document.createElement('a');
+      link.download = `tiktok-comment-${Date.now()}.${settings.format}`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Export failed', err);
+    } finally {
+      // Вимикаємо глобальний лоадер незалежно від того успішно чи помилка
+      hideLoader();
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-8 w-full">
+      <div className="card-preview w-full">
+        <div ref={exportRef} className="card-preview-inner w-full">
+          <CommentView data={data} isDark={settings.isDark} t={t} />
+        </div>
+      </div>
+
+      <Button 
+        onClick={handleExport}
+        className="w-full max-w-lg h-16 text-[16px] shadow-md hover:shadow-lg transition-all"
+        size="lg"
+      >
+        <Icons.Download className="mr-2.5" size={20} />
+        {t?.downloadBtn || 'Завантажити'}
+      </Button>
+    </div>
+  );
+};
+
+export default CommentImageExporter;
+</file>
+
+<file path="src/components/CommentView/CommentView.tsx">
+import { CommentData } from '@/types';
+import { Icons } from '@/components/ui';
+import { formatLikeCount } from '@/utils/helpers';
+import ReplyItem from './ReplyItem';
+import { TranslationSchema } from '@/utils/translations';
+
+interface CommentViewProps {
+  data: CommentData;
+  isDark?: boolean;
+  t: TranslationSchema;
+}
+
+const CommentView = ({ data, isDark = false, t }: CommentViewProps) => {
+  const displayLikes = formatLikeCount(data.likes) || '0';
+
+  return (
+    <div className={`font-tiktok w-full p-6 sm:p-8 rounded-3xl shadow-sm overflow-hidden ${isDark ? 'bg-[#121212] text-white' : 'bg-white text-black'}`}>
+      <div className="flex gap-4">
+        
+        <div className="shrink-0 pt-1">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full p-[2px] bg-gradient-to-tr from-[#00f2ea] to-[#00ff85]">
+            <div className={`w-full h-full rounded-full border-[1.5px] overflow-hidden flex items-center justify-center ${isDark ? 'border-[#121212] bg-slate-800' : 'border-white bg-slate-100'}`}>
+              {data.avatarUrl ? (
+                <img src={data.avatarUrl} alt={data.username} className="w-full h-full object-cover" />
+              ) : (
+                <Icons.User size={26} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center flex-wrap leading-tight mb-1.5">
+            <span className={`text-[16px] sm:text-[18px] font-semibold truncate max-w-[250px] ${isDark ? 'text-white/70' : 'text-[#6b6f76]'}`}>
+              {data.username}
+            </span>
+            
+            {data.isVerified && (
+              <Icons.Verified size={16} className="text-[#20D5EC] shrink-0 ml-1.5" />
+            )}
+            
+            {data.isAuthor && (
+              <span className={`text-[15px] sm:text-[16px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>
+                {t.authorBadgeLabel || '· Автор'}
+              </span>
+            )}
+          </div>
+
+          <p className={`text-[17px] sm:text-[19px] leading-[1.35] whitespace-pre-wrap break-words ${isDark ? 'text-white/95' : 'text-[#161722]'}`}>
+            {data.commentText}
+          </p>
+
+          <div className="flex items-center justify-between mt-3 sm:mt-4">
+            <div className="flex items-center gap-4">
+              <span className={`text-[14px] sm:text-[15px] font-medium ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+                {data.timeAgo}
+              </span>
+              <span className={`text-[14px] sm:text-[15px] font-bold cursor-pointer ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+                {t.replyAction || 'Відповісти'}
+              </span>
+              
+              {data.isLikedByCreator && (
+                <div className="relative flex items-center justify-center ml-1">
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border-[0.5px] ${isDark ? 'border-white/10 bg-slate-800' : 'border-black/10 bg-slate-100'}`}>
+                    {data.avatarUrl ? (
+                      <img src={data.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <Icons.User size={16} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
+                    )}
+                  </div>
+                  <div className={`absolute -bottom-1.5 -right-1.5 rounded-full p-[2px] ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
+                    <Icons.Heart size={12} className="text-[#ff3b5c] fill-[#ff3b5c]" />
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className={`flex items-center gap-5 ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+              <div className="flex items-center gap-1.5">
+                <Icons.HeartOutline size={22} />
+                {displayLikes !== '0' && <span className="text-[14px] font-medium">{displayLikes}</span>}
+              </div>
+              <Icons.CommentBubble size={22} />
+            </div>
+          </div>
+
+          {data.replies && data.replies.length > 0 && (
+            <div className="mt-6 flex flex-col gap-5">
+              <div className="flex items-center gap-3">
+                <div className={`w-[30px] border-b ${isDark ? 'border-white/10' : 'border-slate-200'}`}></div>
+                <div className={`text-[14px] sm:text-[15px] font-semibold flex items-center gap-1 cursor-pointer ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+                  {(t.viewReplies || 'Подивитись {count} відповіді').replace('{count}', data.replies.length.toString())} <Icons.ChevronDown size={18} />
+                </div>
+              </div>
+              {data.replies.map((reply) => (
+                <ReplyItem key={reply.id} reply={reply} isDark={isDark} t={t} />
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default CommentView;
+</file>
+
+<file path="src/components/CommentView/ReplyItem.tsx">
+import { ReplyData } from '@/types';
+import { Icons } from '@/components/ui';
+import { TranslationSchema } from '@/utils/translations';
+
+interface ReplyItemProps {
+  reply: ReplyData;
+  isDark: boolean;
+  t: TranslationSchema;
+}
+
+const ReplyItem = ({ reply, isDark, t }: ReplyItemProps) => {
+  return (
+    <div className="font-tiktok flex gap-3.5 animate-in fade-in slide-in-from-top-2 mt-1">
+      <div className="shrink-0 pt-0.5">
+        <div className={`w-9 h-9 rounded-full overflow-hidden flex items-center justify-center border-[0.5px] ${isDark ? 'bg-slate-800 border-white/10' : 'bg-slate-100 border-black/5'}`}>
+          {reply.avatarUrl ? (
+            <img src={reply.avatarUrl} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <Icons.User size={18} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
+          )}
+        </div>
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center flex-wrap leading-tight mb-1.5">
+          <span className={`text-[15px] font-semibold truncate max-w-[150px] ${isDark ? 'text-white/70' : 'text-[#6b6f76]'}`}>
+            {reply.username}
+          </span>
+          
+          {reply.isVerified && (
+            <Icons.Verified size={15} className="text-[#20D5EC] shrink-0 ml-1.5" />
+          )}
+          
+          {reply.isAuthor && (
+            <span className={`text-[14px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>
+              {t.authorBadgeLabel || '· Автор'}
+            </span>
+          )}
+        </div>
+        <p className={`text-[16px] leading-[1.35] whitespace-pre-wrap break-words ${isDark ? 'text-white/95' : 'text-[#161722]'}`}>
+          {reply.text}
+        </p>
+        
+        <div className="flex items-center justify-between mt-2.5">
+          <div className="flex items-center gap-4">
+            <span className={`text-[13.5px] font-medium ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+              {reply.timeAgo}
+            </span>
+            <span className={`text-[13.5px] font-bold cursor-pointer ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+              {t.replyAction || 'Відповісти'}
+            </span>
+            
+            {reply.isLikedByCreator && (
+              <div className="relative flex items-center justify-center ml-1">
+                <div className={`w-[20px] h-[20px] rounded-full overflow-hidden border-[0.5px] ${isDark ? 'border-white/10 bg-slate-800' : 'border-black/10 bg-slate-100'}`}>
+                  <Icons.User size={14} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
+                </div>
+                <div className={`absolute -bottom-1 -right-1 rounded-full p-[2px] ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
+                  <Icons.Heart size={10} className="text-[#ff3b5c] fill-[#ff3b5c]" />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className={`flex items-center gap-4 ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+            <div className="flex items-center gap-1.5">
+              <Icons.HeartOutline size={20} />
+              {reply.likes && reply.likes !== '0' && <span className="text-[13px] font-medium">{reply.likes}</span>}
+            </div>
+            <Icons.CommentBubble size={20} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ReplyItem;
+</file>
+
+<file path="src/components/Header/Header.tsx">
+import React from 'react';
+import { useLanguage } from '@/hooks/useLanguage';
+import { FlagIcon, Icons, ProTimer } from '@/components/ui';
+
+interface HeaderProps {
+  isPro: boolean;
+  timeLeft?: string;
+  onOpenPro: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ isPro, timeLeft, onOpenPro }) => {
+  const { currentLangObj, LANGUAGES, selectLanguage, isLangMenuOpen, toggleLangMenu, t } = useLanguage();
+  const safeLabel = (val: string | undefined, fallback: string) => (typeof val === 'string' ? val : fallback);
+
+  return (
+    <header className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 h-16 sm:h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100/80 transition-all">
+      <div className="flex items-center gap-3 cursor-pointer group">
+        <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105 shadow-sm">
+          <Icons.MusicNote size={20} />
+        </div>
+        <div className="hidden sm:flex flex-col leading-none">
+          <h1 className="text-lg font-black text-slate-900 tracking-tight m-0">
+            {safeLabel(t.appTitle, 'TikTok Gen')}
+          </h1>
+          {isPro && (
+            <span className="text-[10px] font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent uppercase tracking-wider mt-0.5">
+              PRO
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 sm:gap-4">
+        <button 
+          onClick={onOpenPro}
+          className={`
+            relative overflow-hidden flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl font-bold text-sm transition-all duration-300
+            ${isPro 
+              ? 'bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100' 
+              : 'bg-slate-900 text-white shadow-sm hover:-translate-y-0.5 hover:shadow-md'
+            }
+          `}
+        >
+          {isPro ? (
+            <>
+              <Icons.Crown size={16} className="text-amber-500 hidden sm:block" />
+              <span className="hidden sm:inline">{safeLabel(t.proActive, 'PRO')}</span>
+              {timeLeft && <ProTimer timeLeft={timeLeft} />}
+            </>
+          ) : (
+            <>
+              <Icons.Crown size={16} />
+              <span className="hidden sm:inline">{safeLabel(t.getPro, 'Get PRO')}</span>
+              <span className="sm:hidden">PRO</span>
+            </>
+          )}
+        </button>
+
+        <div className="relative">
+          <button onClick={toggleLangMenu} className={`flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-200 ${isLangMenuOpen ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50/80 border-transparent hover:bg-white hover:border-slate-100'}`}>
+            <FlagIcon code={currentLangObj.countryCode} />
+            <span className="hidden sm:block font-bold text-slate-800 text-sm">
+              {currentLangObj.code.toUpperCase()}
+            </span>
+            <Icons.ChevronDown size={14} className={`hidden sm:block text-slate-400 transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isLangMenuOpen && (
+            <div className="absolute top-[calc(100%+8px)] right-0 bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl p-2 min-w-[180px] shadow-lg shadow-slate-200/40 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 origin-top-right">
+              {LANGUAGES.map((lang: any) => (
+                <button key={lang.code} onClick={() => selectLanguage(lang.code)} className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-left text-sm transition-all ${currentLangObj.code === lang.code ? 'bg-slate-50 text-slate-900 font-bold shadow-sm border border-slate-100' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium border border-transparent'}`}>
+                  <FlagIcon code={lang.countryCode} className="w-5 h-5 rounded-md" />
+                  <span>{lang.label}</span>
+                  {currentLangObj.code === lang.code && <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full ml-auto" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
+</file>
+
+<file path="src/components/SubscriptionModal/SubscriptionModal.tsx">
+import React, { useState } from 'react';
+import { Icons, Button, Input, Modal } from '@/components/ui';
+import { TranslationSchema } from '@/utils/translations';
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  onActivate: (code: string) => Promise<{success: boolean, error?: string}>;
+  onBuy: () => void;
+  isValidating: boolean;
+  isPro: boolean;
+  timeLeft?: string;
+  t: TranslationSchema;
+}
+
+const SubscriptionModal = ({ isOpen, onClose, onActivate, onBuy, isValidating, isPro, timeLeft, t }: Props) => {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+
+  const handleActivate = async () => {
+    setError('');
+    if (!code.trim()) return setError(t.enterCode || 'Будь ласка, введіть код');
+    const result = await onActivate(code.trim().toUpperCase());
+    if (result.success) setCode('');
+    else setError(result.error || 'Невірний або використаний код');
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} className="p-8 text-center border border-slate-100 shadow-xl shadow-slate-200/40 relative">
+      <button onClick={onClose} className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-colors">
+        <Icons.X size={20} />
+      </button>
+
+      {isPro ? (
+        // === СТАН АКТИВНОЇ ПІДПИСКИ ===
+        <>
+          <div className="w-20 h-20 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <Icons.Crown size={36} className="text-emerald-500" />
+          </div>
+          <h2 className="text-2xl font-black mb-2 text-slate-900">{t.proActiveTitle || 'PRO Активовано'}</h2>
+          <p className="text-slate-600 mb-8 text-[15px]">
+            {t.proValidUntil || 'Підписка дійсна ще:'} <span className="font-black text-slate-900 bg-slate-100 px-2 py-1 rounded-md ml-1">{timeLeft}</span>
+          </p>
+
+          <div className="space-y-6">
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-slate-100"></div>
+              <span className="flex-shrink-0 mx-4 text-slate-400 text-sm font-medium">{t.extendPro || 'Продовжити підписку'}</span>
+              <div className="flex-grow border-t border-slate-100"></div>
+            </div>
+
+            <Button variant="tiktok" className="w-full h-12 text-[15px]" onClick={onBuy}>
+              {t.extendProBtn || 'Придбати новий код'}
+            </Button>
+
+            <div className="flex flex-col gap-4">
+              <Input 
+                placeholder="PRO-X7Y8Z9" 
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                error={error}
+                className="text-center font-mono font-bold tracking-wider text-base uppercase bg-slate-50/50"
+              />
+              <Button variant="primary" className="w-full h-12 text-[15px]" isLoading={isValidating} onClick={handleActivate}>
+                {t.activateCode || 'Активувати код'}
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : (
+        // === СТАН ВІДСУТНОЇ ПІДПИСКИ ===
+        <>
+          <div className="w-20 h-20 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <Icons.Sparkles size={36} className="text-slate-900" />
+          </div>
+          
+          <h2 className="text-2xl font-black mb-2 text-slate-900">{t.getProModalTitle || 'Отримай PRO'}</h2>
+          <p className="text-slate-500 mb-8 text-[15px]">
+            {t.getProModalDesc || 'Генеруй AI-коментарі, завантажуй в SVG без втрати якості та використовуй преміум-функції.'}
+          </p>
+          
+          <div className="space-y-6">
+            <Button variant="tiktok" className="w-full h-12 text-[15px]" onClick={onBuy}>
+              {t.getProModalTitle || 'Придбати доступ'}
+            </Button>
+
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-slate-100"></div>
+              <span className="flex-shrink-0 mx-4 text-slate-400 text-sm font-medium">{t.orEnterCode || 'Або введіть код'}</span>
+              <div className="flex-grow border-t border-slate-100"></div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Input 
+                placeholder="PRO-X7Y8Z9" 
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                error={error}
+                className="text-center font-mono font-bold tracking-wider text-base uppercase bg-slate-50/50"
+              />
+              <Button variant="primary" className="w-full h-12 text-[15px]" isLoading={isValidating} onClick={handleActivate}>
+                {t.activateCode || 'Активувати код'}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </Modal>
+  );
+};
+
+export default SubscriptionModal;
+</file>
+
+<file path="src/components/ui/atoms/Button.tsx">
+import React, { ButtonHTMLAttributes } from 'react';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'tiktok';
+  size?: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
+}
+
+export const Button: React.FC<ButtonProps> = ({ 
+  children, 
+  variant = 'primary', 
+  size = 'md', 
+  isLoading, 
+  className = '', 
+  disabled, 
+  ...props 
+}) => {
+  const baseStyles = "button";
+  
+  const variants = {
+    primary: "button-primary",
+    secondary: "button-secondary",
+    ghost: "button-ghost",
+    tiktok: "button-tiktok"
+  };
+
+  const sizes = {
+    sm: "button-sm",
+    md: "button-md",
+    lg: "button-lg"
+  };
+
+  return (
+    <button 
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled || isLoading}
+      {...props}
+    >
+      {isLoading && (
+        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2.5" />
+      )}
+      {children}
+    </button>
+  );
+};
+</file>
+
+<file path="src/components/ui/atoms/Input.tsx">
+import React, { InputHTMLAttributes } from 'react';
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+}
+
+export const Input: React.FC<InputProps> = ({ 
+  label, 
+  error, 
+  className = '', 
+  id, 
+  ...props 
+}) => {
+  const inputId = id || props.name;
+
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      {label && (
+        <label 
+          htmlFor={inputId} 
+          className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+        >
+          {label}
+        </label>
+      )}
+      <input
+        id={inputId}
+        className={`w-full px-4 py-3.5 rounded-2xl border border-slate-100 bg-white text-slate-800 text-[14px] transition-all outline-none focus:border-slate-300 focus:ring-4 focus:ring-slate-50 placeholder:text-slate-300 shadow-sm ${error ? 'border-red-400 bg-red-50' : ''} ${className}`}
+        {...props}
+      />
+      {error && <span className="text-xs text-red-500 ml-1">{error}</span>}
+    </div>
+  );
+};
+</file>
+
+<file path="src/components/ui/atoms/Toggle.tsx">
+import React from 'react';
+
+interface ToggleProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  disabled?: boolean;
+  label?: React.ReactNode;
+}
+
+export const Toggle: React.FC<ToggleProps> = ({ 
+  checked, 
+  onChange, 
+  disabled = false, 
+  label 
+}) => {
+  return (
+    <label className={`flex items-center justify-between px-4 py-3.5 bg-white border border-slate-100 shadow-sm rounded-2xl cursor-pointer transition-all active:scale-[0.98] select-none w-full ${disabled ? 'opacity-50' : 'hover:border-slate-200'}`}>
+      {label && (
+        <div className="flex items-center">
+          {label}
+        </div>
+      )}
+      
+      <div className="relative inline-flex items-center ml-2 shrink-0">
+        <input 
+          type="checkbox" 
+          className="sr-only peer" 
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
+        />
+        <div className="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#FE2C55]"></div>
+      </div>
+    </label>
+  );
+};
+</file>
+
+<file path="src/components/ui/icons/FlagIcon.tsx">
+import React from 'react';
+
+interface FlagIconProps {
+  code: string;
+  className?: string;
+}
+
+export const FlagIcon: React.FC<FlagIconProps> = ({ code, className = '' }) => (
+  <img 
+    src={`https://flagcdn.com/24x18/${code.toLowerCase()}.png`} 
+    alt={code} 
+    className={`inline-block rounded-[3px] object-cover shadow-sm border border-slate-900/5 ${className}`}
+    style={{ width: '20px', height: '15px' }} 
+  />
+);
+</file>
+
+<file path="src/components/ui/icons/Icons.tsx">
+export interface IconProps {
+  size?: number;
+  className?: string;
+}
+
+export const Icons = {
+  User: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+  MusicNote: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 18V5l12-2v13" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="16" r="3" />
+    </svg>
+  ),
+  Info: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  ),
+  Bell: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  ),
+  Crown: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M5 16l3-10 4 7 4-7 3 10H5z" />
+      <path d="M2 16h20" />
+    </svg>
+  ),
+  ChevronDown: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  ),
+  Upload: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+      <polyline points="7 9 12 4 17 9" />
+      <line x1="12" y1="4" x2="12" y2="16" />
+    </svg>
+  ),
+  Clock: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  Heart: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+    </svg>
+  ),
+  Verified: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+      <path d="M10.8333 15.6327L6.5 11.3117L7.675 10.1402L10.8333 13.2908L16.325 8.13623L17.5 9.30776L10.8333 15.6327Z" fill="white"/>
+    </svg>
+  ),
+  Download: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  ),
+  Plus: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  ),
+  Trash: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  ),
+  Sparkles: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 3l1.91 5.82L20 10l-6.09 1.18L12 17l-1.91-5.82L4 10l6.09-1.18L12 3z" />
+    </svg>
+  ),
+  Lock: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  ),
+  X: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  ),
+  Topic: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  ),
+  Reply: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+    </svg>
+  ),
+  HeartOutline: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+  ),
+  CommentBubble: ({ size = 24, className = "" }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
+    </svg>
+  )
+};
+</file>
+
+<file path="src/components/ui/index.ts">
+export * from './atoms/Button';
+export * from './atoms/Input';
+export * from './atoms/Toggle';
+export * from './icons/Icons';
+export * from './icons/FlagIcon';
+export * from './molecules/FormSection';
+export * from './molecules/ProTimer';
+export * from './molecules/Modal';
+</file>
+
+<file path="src/components/ui/molecules/FormSection.tsx">
+import React from 'react';
+
+interface FormSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  containerClassName?: string;
+}
+
+export const FormSection: React.FC<FormSectionProps> = ({ title, icon, children, containerClassName = '' }) => {
+  return (
+    <section className="flex flex-col gap-3 w-full">
+      <h3 className="text-[12px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 pl-2">
+        {icon}
+        {title}
+      </h3>
+      <div className={`bg-white p-6 sm:p-7 rounded-[28px] border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.04)] flex flex-col gap-6 ${containerClassName}`}>
+        {children}
+      </div>
+    </section>
+  );
+};
+</file>
+
+<file path="src/components/ui/molecules/Modal.tsx">
+import React from 'react';
+import { createPortal } from 'react-dom';
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className = '' }) => {
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={onClose}>
+      <div 
+        className={`bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-xl shadow-slate-200/40 border border-slate-100 animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh] ${className}`} 
+        onClick={e => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
+</file>
+
+<file path="src/components/ui/molecules/ProTimer.tsx">
+import React from 'react';
+import { Icons } from '../icons/Icons';
+
+interface ProTimerProps {
+  timeLeft: string;
+  isExpired?: boolean;
+}
+
+export const ProTimer: React.FC<ProTimerProps> = ({ timeLeft, isExpired }) => (
+  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50/80 rounded-lg border border-amber-100/50 shadow-sm">
+    <span className={`text-[11px] font-extrabold tabular-nums tracking-wide ${isExpired ? 'text-red-500' : 'text-amber-600'}`}>
+      {timeLeft}
+    </span>
+    <Icons.Clock className={isExpired ? 'text-red-400' : 'text-amber-400'} size={12} />
+  </div>
+);
+</file>
+
+<file path="src/hooks/index.ts">
+export * from './useLanguage';
+export * from './usePro';
+export * from './useCommentForm';
+export * from './useAiGenerator';
+export * from './useAvatarGenerator';
+export * from './useFileUploader';
+export * from './useLoader';
+</file>
+
+<file path="src/hooks/useAiGenerator.ts">
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabaseClient';
+
+interface AiParams {
+  topic: string;
+  mood: string;
+  length: string;
+  language: string;
+}
+
+export const useAiGenerator = (isPro: boolean) => {
+  const mutation = useMutation({
+    mutationFn: async ({ topic, mood, length, language }: AiParams) => {
+      if (!isPro) return null;
+      
+      const proCode = localStorage.getItem('tiktok_gen_pro_key');
+      const { data, error } = await supabase.functions.invoke('generate-comment', {
+        body: { type: 'comment', topic, mood, length, language, proCode }
+      });
+      
+      if (error) throw new Error(error.message || 'Помилка сервера Supabase');
+      if (data?.error) throw new Error(data.error);
+
+      return data.result as string;
+    },
+    onError: (err: any) => {
+      console.error(err);
+      alert("ШІ каже: " + err.message);
+    }
+  });
+
+  return { 
+    generateComment: mutation.mutateAsync, 
+    isLoading: mutation.isPending 
+  };
+};
+</file>
+
+<file path="src/hooks/useAvatarGenerator.ts">
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabaseClient';
+
+export const useAvatarGenerator = (
+  onApply: (image: string) => void,
+  onClose: () => void
+) => {
+  const [promptText, setPromptText] = useState('');
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const mutation = useMutation({
+    mutationFn: async (prompt: string) => {
+      const proCode = localStorage.getItem('tiktok_gen_pro_key');
+      const { data, error } = await supabase.functions.invoke('proxy-image-TT-comments', {
+        body: { prompt, proCode }
+      });
+
+      if (error) throw error;
+      if (!data?.result) throw new Error('Порожня відповідь сервера');
+
+      return data.result as string;
+    },
+    onSuccess: (result) => {
+      setPreviewImage(result);
+    },
+    onError: (err, prompt) => {
+      console.error('Помилка генерації аватара:', err);
+      // Fallback на безкоштовний аватар, якщо Edge Function впала
+      const safePrompt = encodeURIComponent(prompt || 'avatar');
+      setPreviewImage(`https://api.dicebear.com/9.x/avataaars/svg?seed=${safePrompt}&backgroundColor=b6e3f4,c0aede,d1d4f9`);
+    }
+  });
+
+  const status = mutation.isPending ? '✨ Зв\'язок з ШІ...' : (mutation.isSuccess ? 'Готово!' : '');
+
+  const handleGenerate = () => {
+    if (!promptText.trim()) return;
+    mutation.mutate(promptText);
+  };
+
+  const handleClose = () => {
+    onClose();
+    setTimeout(() => {
+      setPreviewImage(null);
+      setPromptText('');
+      mutation.reset(); // Скидаємо стан React Query
+    }, 300);
+  };
+
+  return {
+    promptText,
+    setPromptText,
+    previewImage,
+    isLoading: mutation.isPending,
+    status,
+    handleGenerate,
+    handleClose
+  };
+};
+</file>
+
+<file path="src/hooks/useCommentForm.ts">
+import { useState, useCallback, useEffect } from 'react';
+import { CommentData, ReplyData } from '@/types';
+
+export const useCommentForm = (
+  onGenerate: (data: CommentData) => void,
+  externalAvatar?: string | null
+) => {
+  const [formData, setFormData] = useState<CommentData>({
+    username: 'tiktok_star',
+    isVerified: false,
+    isAuthor: false,
+    avatarUrl: null,
+    commentText: 'This is an awesome video! 🔥',
+    likes: '12K',
+    timeAgo: '2h',
+    isLikedByCreator: false,
+    replies: []
+  });
+
+  // Передаємо стартові дані при першому завантаженні
+  useEffect(() => {
+    onGenerate(formData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (externalAvatar !== undefined) {
+      setFormData(prev => {
+        const next = { ...prev, avatarUrl: externalAvatar };
+        onGenerate(next);
+        return next;
+      });
+    }
+  }, [externalAvatar, onGenerate]);
+
+  const handleInputChange = useCallback(<K extends keyof CommentData>(field: K, value: CommentData[K]) => {
+    setFormData(prev => {
+      const next = { ...prev, [field]: value };
+      onGenerate(next);
+      return next;
+    });
+  }, [onGenerate]);
+
+  const handleAvatarChange = useCallback((newAvatarUrl: string | null) => {
+    setFormData(prev => {
+      const next = { ...prev, avatarUrl: newAvatarUrl };
+      onGenerate(next);
+      return next;
+    });
+  }, [onGenerate]);
+
+  const handleRepliesChange = useCallback((newReplies: ReplyData[]) => {
+    setFormData(prev => {
+      const next = { ...prev, replies: newReplies };
+      onGenerate(next);
+      return next;
+    });
+  }, [onGenerate]);
+
+  return {
+    formData,
+    handleInputChange,
+    handleAvatarChange,
+    handleRepliesChange
+  };
+};
+</file>
+
+<file path="src/hooks/useFileUploader.ts">
+import { useRef, useCallback, ChangeEvent } from 'react';
+
+export const useFileUploader = (onFileSelect: (base64: string | null) => void) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePick = () => fileInputRef.current?.click();
+
+  const handleFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Файл занадто великий! Максимум 2MB.");
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert("Будь ласка, завантажте зображення.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 400; // Розмір для TikTok аватарок
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Зменшуємо якість до 0.8 для економії пам'яті (Base64 буде крихітним)
+        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        onFileSelect(resizedBase64);
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }, [onFileSelect]);
+
+  return { fileInputRef, handlePick, handleFileChange };
+};
+</file>
+
+<file path="src/hooks/useLanguage.tsx">
+import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
+import { translations, TranslationSchema } from '@/utils/translations';
+
+export interface LanguageObj {
+  code: string;
+  label: string;
+  countryCode: string;
+}
+
+interface LanguageContextType {
+  language: string;
+  t: TranslationSchema;
+  isLangMenuOpen: boolean;
+  currentLangObj: LanguageObj;
+  LANGUAGES: LanguageObj[];
+  toggleLangMenu: () => void;
+  selectLanguage: (code: string) => void;
+  setLanguage: (code: string) => void;
+}
+
+// Винесли масив за межі компонента, щоб він не перестворювався при кожному рендері
+const LANGUAGES: LanguageObj[] = [
+  { code: 'uk', label: 'Українська', countryCode: 'ua' },
+  { code: 'en', label: 'English', countryCode: 'us' },
+  { code: 'pl', label: 'Polski', countryCode: 'pl' },
+  { code: 'fr', label: 'Français', countryCode: 'fr' },
+  { code: 'ru', label: 'Русский', countryCode: 'ru' },
+];
+
+const LanguageContext = createContext<LanguageContextType | null>(null);
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [language, setLanguage] = useState('uk');
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+  const currentLangObj = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
+  
+  // Правильна типізація замість @ts-ignore
+  const t = translations[language as keyof typeof translations] || translations['uk'];
+
+  const toggleLangMenu = useCallback(() => setIsLangMenuOpen(prev => !prev), []);
+  
+  const selectLanguage = useCallback((code: string) => {
+    setLanguage(code);
+    setIsLangMenuOpen(false);
+  }, []);
+
+  const value = {
+    language,
+    t,
+    isLangMenuOpen,
+    currentLangObj,
+    LANGUAGES,
+    toggleLangMenu,
+    selectLanguage,
+    setLanguage
+  };
+
+  return (
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
+</file>
+
+<file path="src/hooks/useLoader.tsx">
+import React, { createContext, useContext, useState } from 'react';
+import { createPortal } from 'react-dom';
+
+interface LoaderContextType {
+  showLoader: (text?: string) => void;
+  hideLoader: () => void;
+}
+
+const LoaderContext = createContext<LoaderContextType | null>(null);
+
+export const LoaderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [loaderText, setLoaderText] = useState('');
+
+  const showLoader = (text = '') => {
+    setLoaderText(text);
+    setIsLoading(true);
+  };
+
+  const hideLoader = () => {
+    setIsLoading(false);
+  };
+
+  return (
+    <LoaderContext.Provider value={{ showLoader, hideLoader }}>
+      {children}
+      {isLoading && createPortal(
+        <div className="fixed inset-0 z-[99999] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all animate-in fade-in">
+          <div className="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center gap-4 animate-in zoom-in-95">
+            <span className="w-10 h-10 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin"></span>
+            {loaderText && <p className="text-slate-800 font-bold text-[15px]">{loaderText}</p>}
+          </div>
+        </div>,
+        document.body
+      )}
+    </LoaderContext.Provider>
+  );
+};
+
+export const useLoader = () => {
+  const context = useContext(LoaderContext);
+  if (!context) {
+    throw new Error('useLoader must be used within a LoaderProvider');
+  }
+  return context;
+};
+</file>
+
+<file path="src/hooks/usePro.ts">
+import { useState, useCallback, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/utils/supabaseClient';
+
+export const usePro = () => {
+  const [isPro, setIsPro] = useState<boolean>(false);
+  const [expirationDate, setExpirationDate] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  const [isSubModalOpen, setIsSubModalOpen] = useState<boolean>(false);
+
+  const verifyMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const { data, error } = await supabase.functions.invoke('verify-license', {
+        body: { code }
+      });
+
+      if (error || data?.error) {
+        throw new Error(data?.error || 'Помилка перевірки коду');
+      }
+      if (data?.success) {
+        return { expirationDate: data.expirationDate, code };
+      }
+      throw new Error('Невідома помилка');
+    },
+    onSuccess: ({ expirationDate, code }) => {
+      setIsPro(true);
+      setExpirationDate(expirationDate);
+      localStorage.setItem('tiktok_gen_pro_key', code);
+    },
+    onError: () => {
+      setIsPro(false);
+      setExpirationDate(null);
+      localStorage.removeItem('tiktok_gen_pro_key');
+    }
+  });
+
+  // Локальний таймер
+  useEffect(() => {
+    if (!expirationDate) {
+      setTimeLeft('');
+      return;
+    }
+
+    const updateTimer = () => {
+      const diff = new Date(expirationDate).getTime() - new Date().getTime();
+
+      if (diff <= 0) {
+        setIsPro(false);
+        setTimeLeft('');
+        localStorage.removeItem('tiktok_gen_pro_key');
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      if (days > 0) setTimeLeft(`${days}d ${hours}h`);
+      else if (hours > 0) setTimeLeft(`${hours}h ${minutes}m`);
+      else setTimeLeft(`${minutes}m`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 60000);
+    return () => clearInterval(interval);
+  }, [expirationDate]);
+
+  // Перевірка збереженого коду при старті
+  useEffect(() => {
+    const storedKey = localStorage.getItem('tiktok_gen_pro_key');
+    if (storedKey) {
+      verifyMutation.mutate(storedKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const activatePro = async (key: string) => {
+    try {
+      await verifyMutation.mutateAsync(key);
+      setIsSubModalOpen(false);
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  const openPro = useCallback(() => setIsSubModalOpen(true), []);
+  const closePro = useCallback(() => setIsSubModalOpen(false), []);
+
+  const handleBuyPro = useCallback(() => {
+    window.open('https://buy.stripe.com/00wbJ0bcuei0dir9aQ9sk01', '_blank');
+  }, []);
+
+  return { 
+    isPro, timeLeft, showProModal: isSubModalOpen, 
+    isValidating: verifyMutation.isPending, 
+    openPro, closePro, activatePro, handleBuyPro 
+  };
+};
+</file>
+
+<file path="src/main.tsx">
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import App from './App';
+import { LanguageProvider } from '@/hooks/useLanguage';
+import { LoaderProvider } from '@/hooks/useLoader';
+import './styles/index.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
+        <LoaderProvider> {/* ДОДАНО */}
+          <App />
+        </LoaderProvider>
+      </LanguageProvider>
+    </QueryClientProvider>
+  </StrictMode>
+);
+</file>
+
+<file path="src/styles/index.css">
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-page: #f8fafc;
+  --text-primary: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 min-h-screen antialiased font-sans;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+  }
+
+  * { box-sizing: border-box; }
+
+  ::-webkit-scrollbar { @apply w-1.5 h-1.5; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors; }
+}
+
+@layer utilities {
+  .font-tiktok {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  }
+}
+
+@layer components {
+  .app-shell { @apply min-h-screen bg-[#FDFDFD] font-sans text-slate-800 pb-20; }
+  
+  .card-preview { @apply w-full bg-slate-50/50 rounded-3xl p-8 flex justify-center overflow-hidden border border-slate-100 shadow-sm; }
+  .card-preview-inner { @apply shadow-lg shadow-slate-200/40; }
+
+  .button { @apply inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none tracking-wide; }
+  .button-primary { @apply bg-slate-900 text-white hover:bg-slate-800 shadow-sm hover:shadow; }
+  .button-secondary { @apply bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 shadow-sm; }
+  .button-ghost { @apply bg-transparent text-slate-500 hover:bg-slate-100/50 hover:text-slate-800; }
+  .button-tiktok { @apply bg-[#FE2C55] text-white hover:bg-[#E6284D] shadow-sm hover:shadow; }
+  
+  .button-sm { @apply px-3 py-1.5 text-sm; }
+  .button-md { @apply px-5 py-3 text-base; }
+  .button-lg { @apply px-6 py-4 text-lg w-full; }
+}
+</file>
+
+<file path="src/types/index.ts">
+export interface ReplyData {
+  id: string;
+  username: string;
+  text: string;
+  timeAgo: string;
+  likes: string;
+  avatarUrl: string | null;
+  isLikedByCreator: boolean;
+  isAuthor?: boolean;
+  isVerified?: boolean;
+}
+
+export interface CommentData {
+  username: string;
+  commentText: string;
+  timeAgo: string;
+  likes: string;
+  avatarUrl: string | null;
+  isVerified: boolean;
+  isAuthor: boolean;
+  isLikedByCreator: boolean;
+  replies: ReplyData[];
+}
+
+export interface ExportSettings {
+  format: 'png' | 'svg';
+  width?: number | string;
+  height?: number | string;
+  isDark: boolean;
+  customSize?: boolean;
+}
+</file>
+
+<file path="src/utils/helpers.ts">
+export const formatLikeCount = (count: number | string): string | null => {
+  const numeric = typeof count === 'string' ? Number(count.replace(/[^0-9.]/g, '')) : count;
+  if (!numeric || numeric === 0) return null;
+  if (numeric < 1000) return numeric.toString();
+  if (numeric < 10000) return `${Math.floor(numeric / 1000)}k`;
+  return `${(numeric / 1000).toFixed(numeric % 1000 === 0 ? 0 : 1)}`.replace('.0', '') + 'k';
+};
+</file>
+
+<file path="src/utils/supabaseClient.ts">
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.warn('Supabase URL or Key is missing. Check your .env file.');
+}
+
+export const supabase = createClient(supabaseUrl ?? '', supabaseKey ?? '');
+</file>
+
+<file path="src/utils/translations.ts">
+export interface TranslationSchema {
+  appTitle: string;
+  aboutBtn: string;
+  updatesBtn: string;
+  getPro: string;
+  proActive: string;
+  username: string;
+  verified: string;
+  authorBadge: string;
+  commentText: string;
+  commentPlaceholder: string;
+  timeAgo: string;
+  likesCount: string;
+  likedByCreator: string;
+  replies: string;
+  addReply: string;
+  exportSettings: string;
+  darkMode: string;
+  downloadBtn: string;
+  aiAssist: string;
+  authorSettings: string;
+  commentContent: string;
+  aiAvatarTitle: string;
+  aiAvatarPrompt: string;
+  generate: string;
+  cancel: string;
+  apply: string;
+  width: string;
+  height: string;
+  presetAuto: string;
+  presetSquare: string;
+  presetStory: string;
+  presetCustom: string;
+  replyNumber: string;
+  likes: string;
+  time: string;
+  aiMoods: {
+    funny: string;
+    hater: string;
+    supportive: string;
+    sarcastic: string;
+    question: string;
+  };
+  aiLengths: {
+    short: string;
+    medium: string;
+    long: string;
+  };
+  // Ключі для прев'ю коментаря
+  authorBadgeLabel: string;
+  replyAction: string;
+  viewReplies: string;
+  
+  // Нові ключі для лоадера та модалки PRO
+  loading: string;
+  proActiveTitle: string;
+  proValidUntil: string;
+  extendPro: string;
+  extendProBtn: string;
+  enterCode: string;
+  activateCode: string;
+  getProModalTitle: string;
+  getProModalDesc: string;
+  orEnterCode: string;
+}
+
+export const translations: Record<string, TranslationSchema> = {
+  uk: {
+    appTitle: "TikTok Gen",
+    aboutBtn: "Про проект",
+    updatesBtn: "Оновлення",
+    getPro: "Отримати PRO",
+    proActive: "PRO Активне",
+    username: "Нікнейм",
+    verified: "Верифікація",
+    authorBadge: "Бейдж автора",
+    commentText: "Текст коментаря",
+    commentPlaceholder: "Напишіть щось цікаве...",
+    timeAgo: "Час",
+    likesCount: "Лайки",
+    likedByCreator: "Лайк автора",
+    replies: "Відповіді",
+    addReply: "Додати відповідь",
+    exportSettings: "Налаштування експорту",
+    darkMode: "Темна тема",
+    downloadBtn: "Завантажити",
+    aiAssist: "AI Помічник",
+    authorSettings: "Профіль автора",
+    commentContent: "Контент",
+    aiAvatarTitle: "Створити AI Аватар",
+    aiAvatarPrompt: "Напр. кіт у кіберпанк стилі...",
+    generate: "Згенерувати",
+    cancel: "Скасувати",
+    apply: "Застосувати",
+    width: "Ширина",
+    height: "Висота",
+    presetAuto: "Авто",
+    presetSquare: "1:1",
+    presetStory: "9:16",
+    presetCustom: "Свій",
+    replyNumber: "Відповідь",
+    likes: "Лайки",
+    time: "Час",
+    aiMoods: {
+      funny: "😂 Смішний",
+      hater: "😡 Хейтер",
+      supportive: "😍 Підтримка",
+      sarcastic: "😏 Сарказм",
+      question: "🤔 Питання"
+    },
+    aiLengths: {
+      short: "Короткий",
+      medium: "Середній",
+      long: "Довгий"
+    },
+    authorBadgeLabel: "· Автор",
+    replyAction: "Відповісти",
+    viewReplies: "Подивитись {count} відповіді",
+
+    // Переклади для лоадера та модалки PRO
+    loading: "Завантаження...",
+    proActiveTitle: "PRO Активовано!",
+    proValidUntil: "Ваша підписка дійсна ще:",
+    extendPro: "Бажаєте продовжити?",
+    extendProBtn: "Придбати новий код",
+    enterCode: "Введіть код активації",
+    activateCode: "Активувати код",
+    getProModalTitle: "Отримай PRO",
+    getProModalDesc: "Генеруй AI-коментарі, завантажуй в SVG без втрати якості та використовуй преміум-функції. (Діє 7 днів)",
+    orEnterCode: "Або введіть код"
+  },
+  en: {
+    appTitle: "TikTok Gen",
+    aboutBtn: "About",
+    updatesBtn: "Updates",
+    getPro: "Get PRO",
+    proActive: "PRO Active",
+    username: "Username",
+    verified: "Verified",
+    authorBadge: "Author Badge",
+    commentText: "Comment Text",
+    commentPlaceholder: "Write something cool...",
+    timeAgo: "Time",
+    likesCount: "Likes",
+    likedByCreator: "Liked by Creator",
+    replies: "Replies",
+    addReply: "Add Reply",
+    exportSettings: "Export Settings",
+    darkMode: "Dark Mode",
+    downloadBtn: "Download",
+    aiAssist: "AI Assistant",
+    authorSettings: "Author Profile",
+    commentContent: "Content",
+    aiAvatarTitle: "Create AI Avatar",
+    aiAvatarPrompt: "E.g. a cat in cyberpunk style...",
+    generate: "Generate",
+    cancel: "Cancel",
+    apply: "Apply",
+    width: "Width",
+    height: "Height",
+    presetAuto: "Auto",
+    presetSquare: "1:1",
+    presetStory: "9:16",
+    presetCustom: "Custom",
+    replyNumber: "Reply",
+    likes: "Likes",
+    time: "Time",
+    aiMoods: {
+      funny: "😂 Funny",
+      hater: "😡 Hater",
+      supportive: "😍 Supportive",
+      sarcastic: "😏 Sarcastic",
+      question: "🤔 Question"
+    },
+    aiLengths: {
+      short: "Short",
+      medium: "Medium",
+      long: "Long"
+    },
+    authorBadgeLabel: "· Creator",
+    replyAction: "Reply",
+    viewReplies: "View {count} replies",
+
+    // Переклади для лоадера та модалки PRO
+    loading: "Loading...",
+    proActiveTitle: "PRO is Active!",
+    proValidUntil: "Your subscription is valid for:",
+    extendPro: "Want to extend?",
+    extendProBtn: "Buy a new code",
+    enterCode: "Enter activation code",
+    activateCode: "Activate code",
+    getProModalTitle: "Get PRO",
+    getProModalDesc: "Generate AI comments, download in SVG without quality loss, and use premium features. (Valid for 7 days)",
+    orEnterCode: "Or enter code"
+  }
+};
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        tiktok: {
+          dark: '#121212',
+          light: '#ffffff',
+          pink: '#FE2C55',
+          cyan: '#20D5EC',
+          gray: 'rgba(22, 24, 35, 0.6)',
+        }
+      },
+      fontFamily: {
+        sans: ['Sofia Sans', 'system-ui', 'sans-serif'],
+      }
+    },
+  },
+  plugins: [],
+}
+</file>
+
+<file path="tsconfig.json">
+{
+    "compilerOptions":  {
+                            "target":  "ES2020",
+                            "useDefineForClassFields":  true,
+                            "lib":  [
+                                        "ES2020",
+                                        "DOM",
+                                        "DOM.Iterable"
+                                    ],
+                            "module":  "ESNext",
+                            "skipLibCheck":  true,
+                            "moduleResolution":  "bundler",
+                            "allowImportingTsExtensions":  true,
+                            "resolveJsonModule":  true,
+                            "isolatedModules":  true,
+                            "noEmit":  true,
+                            "jsx":  "react-jsx",
+                            "strict":  true,
+                            "noUnusedLocals":  true,
+                            "noUnusedParameters":  true,
+                            "noFallthroughCasesInSwitch":  true,
+                            "allowJs":  true,
+                            "paths":  {
+                                          "@/*":  [
+                                                      "./src/*"
+                                                  ]
+                                      }
+                        },
+    "include":  [
+                    "src",
+                    "vite-env.d.ts"
+                ]
+}
+</file>
+
+<file path="vite-env.d.ts">
+/// <reference types="vite/client" />
+</file>
+
+<file path="vite.config.ts">
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+
+  return {
+    plugins: [react()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      }
+    }
+  };
+});
+</file>
+
+<file path="eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+
+export default [
+  { ignores: ['dist'] },
+  {
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+]
+</file>
+
+<file path="public/google11cdad8470922202.html">
+google-site-verification: google11cdad8470922202.html
+</file>
+
+<file path="public/robots.txt">
+User-agent: *
+Allow: /
+</file>
+
+<file path="public/sitemap.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://tt-comments.online/</loc>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+</file>
+
+<file path="README.md">
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables (ВАЖЛИВО: додайте це)
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="COMPLETED_TASKS.md">
+# Виконані роботи з оптимізації та інтеграції TikTok Comment Generator
+
+## 1. Повна інтеграція з Backend (Supabase)
+* **Видалено заглушки:** Всі моки та локальні обходи видалено. Тепер додаток працює з реальною базою даних та Edge Functions.
+* **Supabase Client:** Налаштовано підключення до `fblqomqucdhtwokaqoap.supabase.co`.
+* **RPC Активація:** Функція активації PRO тепер використовує реальний RPC виклик `activate_license` для перевірки кодів у таблиці `licenses`.
+* **Edge Functions:**
+    * Інтегровано `generate-comment` для створення AI коментарів та покращення промптів аватара.
+    * Інтегровано `generate-tts` для озвучки коментарів реалістичними голосами TikTok.
+    * Інтегровано `proxy-image-TT-comments` для обходу CORS при завантаженні аватарів.
+
+## 2. Реалізація функціоналу та Контент
+* **Updates & FAQ:** Додано актуальну інформацію про проект, оновлення та відповіді на часті питання (включаючи розділ "Про нас").
+* **Voice AI:** Тепер використовується хмарний сервіс через Edge Function замість стандартного синтезу браузера, що дає значно кращу якість звуку.
+* **Підтримка:** Налаштовано відправку листів на `zaviiskyoleh@gmail.com` через системні налаштування.
+
+## 3. Дизайн та Адаптація (Mobile)
+* **Повна адаптивність:** Додаток перевірено та оптимізовано для всіх мобільних дозволів.
+* **Інформаційні блоки:** Секції Updates та FAQ тепер виглядають сучасно та зручні для використання на смартфонах.
+
+## 4. Безпека та Налаштування
+* **.env:** Всі чутливі ключі та URL винесено в змінні оточення.
+* **LocalStorage:** Збережено безпечне кешування статусу PRO для зручності користувача (не потрібно вводити код після кожного оновлення сторінки).
+
+## Як перевірити:
+1. Використовуйте будь-який активний код з вашої бази даних `licenses` для активації PRO.
+2. Спробуйте функцію озвучки (Mic icon) - вона тепер працює через хмару.
+3. Перевірте розділ FAQ внизу форми - там з'явилася інформація про нас.
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <title>TikTok Comment Generator | Free AI Voice & Verified Badge</title>
+    <meta name="description" content="Create realistic TikTok comment screenshots with AI text generation and realistic AI voice-over. Features: Blue Verified Badge, Dark Mode, and High-Quality PNG/SVG export." />
+    <meta name="keywords" content="tiktok comment generator, fake tiktok comment, tiktok text to speech, tiktok screenshot maker, verified badge tiktok, tiktok meme maker, no watermark" />
+    <meta name="author" content="TikTok Tools" />
+    <link rel="canonical" href="https://tt-comments.online/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tt-comments.online/" />
+    <meta property="og:title" content="TikTok Comment Generator | Create Viral Screenshots & AI Voice" />
+    <meta property="og:description" content="Generate fake TikTok comments with Blue Tick and AI Voice-over. High quality, no watermark. Try it for free!" />
+    <meta property="og:image" content="https://tt-comments.online/og-image.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://tt-comments.online/" />
+    <meta name="twitter:title" content="TikTok Comment Generator | AI Voice & Verified Badge" />
+    <meta name="twitter:description" content="The most realistic TikTok comment maker. Generate screenshots and AI voices instantly." />
+    <meta name="twitter:image" content="https://tt-comments.online/og-image.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="package.json">
+{
+  "name": "tiktok-comments",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "@tanstack/react-query": "^5.99.0",
+    "html-to-image": "^1.11.11",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^6.0.2",
+    "vite": "^7.3.1"
+  }
+}
+</file>
+
+</files>
