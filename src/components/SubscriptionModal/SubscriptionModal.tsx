@@ -3,6 +3,7 @@ import { Icons, Button, Input, Modal } from '@/components/ui';
 import { useLanguage, usePro } from '@/hooks';
 import { toast } from 'sonner';
 import PolicyModal from './PolicyModal';
+import { trackEvent } from '@/utils/analytics';
 
 const SubscriptionModal = () => {
   const { t } = useLanguage();
@@ -28,11 +29,13 @@ const SubscriptionModal = () => {
     if (result.success) {
       setCode('');
       toast.success(t('proSuccessToast'));
+      trackEvent('pro_activated', { method: 'code_input' });
       closePro();
     } else {
       const errMsg = result.error || t('invalidCode');
       setError(errMsg);
       toast.error(errMsg);
+      trackEvent('pro_activation_failed', { reason: errMsg });
     }
   };
 

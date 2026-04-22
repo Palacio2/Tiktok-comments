@@ -15,7 +15,7 @@ interface AiToolsSectionProps {
 }
 
 const AiToolsSection: React.FC<AiToolsSectionProps> = ({ 
-  textToEdit, onTextChange, onAvatarChange, onAddReply, onClear, onRandomize, isMainComment
+  onTextChange, onAvatarChange, onAddReply, onClear, onRandomize, isMainComment
 }) => {
   const { t } = useLanguage();
   const { isPro, openPro } = usePro();
