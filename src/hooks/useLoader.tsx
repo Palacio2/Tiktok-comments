@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useLanguage } from './useLanguage';
 
 interface LoaderContextType {
   showLoader: (text?: string) => void;
@@ -11,17 +12,18 @@ const LoaderContext = createContext<LoaderContextType | null>(null);
 export const LoaderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('');
+  const { t } = useLanguage();
 
   useEffect(() => {
-    showLoader('Завантаження...');
+    showLoader(t('loading'));
     const timer = setTimeout(() => {
       hideLoader();
     }, 1200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [t]);
 
   const showLoader = (text = '') => {
-    setLoaderText(text);
+    setLoaderText(text || t('loading'));
     setIsLoading(true);
   };
 

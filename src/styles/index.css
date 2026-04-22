@@ -11,8 +11,15 @@
 }
 
 @layer base {
+  /* ЦЕ ДУЖЕ ВАЖЛИВО ДЛЯ ФУТЕРА */
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
-    @apply bg-slate-50 text-slate-900 min-h-screen antialiased font-sans;
+    @apply bg-slate-50 text-slate-900 min-h-[100dvh] antialiased font-sans;
     background-color: var(--bg-page);
     color: var(--text-primary);
   }
@@ -31,7 +38,8 @@
 }
 
 @layer components {
-  .app-shell { @apply min-h-screen bg-[#FDFDFD] font-sans text-slate-800 pb-20; }
+  /* ПРИБРАНО pb-20, ДОДАНО flex flex-col */
+  .app-shell { @apply min-h-[100dvh] bg-[#FDFDFD] font-sans text-slate-800 flex flex-col; }
   
   .card-preview { @apply w-full bg-slate-50/50 rounded-3xl p-8 flex justify-center overflow-hidden border border-slate-100 shadow-sm; }
   .card-preview-inner { @apply shadow-lg shadow-slate-200/40; }

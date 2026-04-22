@@ -1,5 +1,5 @@
-import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
-import { translations, TranslationSchema } from '@/utils/translations';
+import { useState, useCallback, createContext, useContext, ReactNode, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface LanguageObj {
   code: string;
@@ -9,16 +9,14 @@ export interface LanguageObj {
 
 interface LanguageContextType {
   language: string;
-  t: TranslationSchema;
+  t: (key: string, options?: any) => string;
   isLangMenuOpen: boolean;
   currentLangObj: LanguageObj;
   LANGUAGES: LanguageObj[];
   toggleLangMenu: () => void;
   selectLanguage: (code: string) => void;
-  setLanguage: (code: string) => void;
 }
 
-// Винесли масив за межі компонента, щоб він не перестворювався при кожному рендері
 const LANGUAGES: LanguageObj[] = [
   { code: 'uk', label: 'Українська', countryCode: 'ua' },
   { code: 'en', label: 'English', countryCode: 'us' },
@@ -30,30 +28,26 @@ const LANGUAGES: LanguageObj[] = [
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState('uk');
+  const { t, i18n } = useTranslation();
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
-  const currentLangObj = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
-  
-  // Правильна типізація замість @ts-ignore
-  const t = translations[language as keyof typeof translations] || translations['uk'];
+  const currentLangObj = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
   const toggleLangMenu = useCallback(() => setIsLangMenuOpen(prev => !prev), []);
   
   const selectLanguage = useCallback((code: string) => {
-    setLanguage(code);
+    i18n.changeLanguage(code); // Змінюємо мову через i18next
     setIsLangMenuOpen(false);
-  }, []);
+  }, [i18n]);
 
   const value = {
-    language,
+    language: i18n.language,
     t,
     isLangMenuOpen,
     currentLangObj,
     LANGUAGES,
     toggleLangMenu,
     selectLanguage,
-    setLanguage
   };
 
   return (

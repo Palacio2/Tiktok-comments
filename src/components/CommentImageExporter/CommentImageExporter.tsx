@@ -56,9 +56,9 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
       link.click();
     };
     toast.promise(exportPromise(), {
-      loading: t.loading || '...',
-      success: t.exportSuccess || 'Success',
-      error: t.exportError || 'Error'
+      loading: t('loading'),
+      success: t('exportSuccess'),
+      error: t('exportError')
     });
   };
 
@@ -73,9 +73,9 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
       setTimeout(() => setCopied(false), 2000);
     };
     toast.promise(copyPromise(), {
-      loading: t.loading || '...',
-      success: t.copied || 'Success',
-      error: t.copyError || 'Error'
+      loading: t('loading'),
+      success: t('copied'),
+      error: t('copyError')
     });
   };
 
@@ -114,11 +114,11 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
       <div className="flex w-full max-w-lg gap-3">
         <Button onClick={handleCopy} variant="secondary" className="flex-1 h-14 rounded-2xl bg-white">
           {copied ? <Icons.Verified className="mr-2 text-emerald-500" size={18} /> : <Icons.Topic className="mr-2" size={18} />}
-          {copied ? (t.copied || 'Done') : (t.copyImage || 'Copy')}
+          {copied ? t('copied') : t('copyImage')}
         </Button>
         <Button onClick={handleExport} className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-[#00f2ea] to-[#00ff85] text-slate-900 border-0">
           <Icons.Download className="mr-2" size={18} />
-          {t.downloadBtn}
+          {t('downloadBtn')}
         </Button>
       </div>
     </div>

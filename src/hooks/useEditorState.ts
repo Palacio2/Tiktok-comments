@@ -26,7 +26,7 @@ export const useEditorState = () => {
 
   const handleAddReply = useCallback((replyToUsername?: string) => {
     if (commentData.replies.length >= APP_CONFIG.MAX_REPLIES) {
-      toast.error(t.aiError || 'Limit reached');
+      toast.error(t('limitReached'));
       return;
     }
     const newId = Date.now().toString();
@@ -36,7 +36,7 @@ export const useEditorState = () => {
         id: newId, 
         username: 'username', 
         replyingTo: replyToUsername,
-        text: 'New reply...', 
+        text: t('newReplyDefault'), 
         timeAgo: '1m', 
         likes: '0', 
         avatarUrl: null, 
@@ -70,7 +70,7 @@ export const useEditorState = () => {
         )
       }));
     }
-    toast.success(t.randomCommentApplied);
+    toast.success(t('randomCommentApplied'));
   }, [activeEditId, t]);
 
   const handleClearAction = useCallback(() => {
@@ -83,7 +83,7 @@ export const useEditorState = () => {
       }));
       setActiveEditId('main');
     }
-    toast.success(t.clear || 'Cleared');
+    toast.success(t('clearSuccess'));
   }, [activeEditId, t]);
 
   const activeData = activeEditId === 'main' 
