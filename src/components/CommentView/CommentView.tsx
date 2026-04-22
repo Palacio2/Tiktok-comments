@@ -1,104 +1,125 @@
-import { CommentData } from '@/types';
-import { Icons } from '@/components/ui';
-import { formatLikeCount } from '@/utils/helpers';
+import React from 'react';
+import { CommentData, ReplyData } from '@/types';
+import { Icons, Avatar, EditableText } from '@/components/ui';
+import { useLanguage } from '@/hooks';
 import ReplyItem from './ReplyItem';
-import { TranslationSchema } from '@/utils/translations';
 
 interface CommentViewProps {
   data: CommentData;
   isDark?: boolean;
-  t: TranslationSchema;
+  onLiveUpdate?: (field: keyof CommentData, value: string | ReplyData[]) => void;
+  activeEditId?: string;
+  onSelectEdit?: (id: string) => void;
+  onAddReply?: (replyToUsername?: string) => void;
+  onAvatarClick?: () => void;
 }
 
-const CommentView = ({ data, isDark = false, t }: CommentViewProps) => {
-  const displayLikes = formatLikeCount(data.likes) || '0';
+const CommentView = ({ data, isDark = false, onLiveUpdate, activeEditId, onSelectEdit, onAddReply, onAvatarClick }: CommentViewProps) => {
+  const { t } = useLanguage();
+
+  const handleUpdate = (field: keyof CommentData) => (value: string) => {
+    if (onLiveUpdate) onLiveUpdate(field, value);
+  };
+
+  const handleReplyUpdate = (replyId: string, field: keyof ReplyData, value: string) => {
+    if (onLiveUpdate && data.replies) {
+      const updated = data.replies.map(r => r.id === replyId ? { ...r, [field]: value } : r);
+      onLiveUpdate('replies', updated);
+    }
+  };
 
   return (
-    <div className={`font-tiktok w-full p-6 sm:p-8 rounded-3xl shadow-sm overflow-hidden ${isDark ? 'bg-[#121212] text-white' : 'bg-white text-black'}`}>
+    <div 
+      onClick={() => onSelectEdit?.('main')}
+      className={`font-tiktok w-full p-6 sm:p-8 rounded-[28px] shadow-sm overflow-hidden border-2 cursor-default transition-all ${isDark ? 'bg-[#121212] text-white' : 'bg-white text-black'} border-transparent`}
+    >
       <div className="flex gap-4">
-        
-        <div className="shrink-0 pt-1">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full p-[2px] bg-gradient-to-tr from-[#00f2ea] to-[#00ff85]">
-            <div className={`w-full h-full rounded-full border-[1.5px] overflow-hidden flex items-center justify-center ${isDark ? 'border-[#121212] bg-slate-800' : 'border-white bg-slate-100'}`}>
-              {data.avatarUrl ? (
-                <img src={data.avatarUrl} alt={data.username} className="w-full h-full object-cover" />
-              ) : (
-                <Icons.User size={26} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
-              )}
-            </div>
-          </div>
-        </div>
-
+        <Avatar 
+          url={data.avatarUrl} 
+          size="md" 
+          isDark={isDark} 
+          hasGradient 
+          onClick={(e: any) => { e.stopPropagation(); onSelectEdit?.('main'); onAvatarClick?.(); }} 
+        />
         <div className="flex-1 min-w-0">
           <div className="flex items-center flex-wrap leading-tight mb-1.5">
-            <span className={`text-[16px] sm:text-[18px] font-semibold truncate max-w-[250px] ${isDark ? 'text-white/70' : 'text-[#6b6f76]'}`}>
-              {data.username}
-            </span>
-            
-            {data.isVerified && (
-              <Icons.Verified size={16} className="text-[#20D5EC] shrink-0 ml-1.5" />
-            )}
-            
-            {data.isAuthor && (
-              <span className={`text-[15px] sm:text-[16px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>
-                {t.authorBadgeLabel || '· Автор'}
-              </span>
-            )}
+            <EditableText 
+              text={data.username}
+              onBlur={handleUpdate('username')}
+              className={`text-[16px] sm:text-[18px] font-semibold truncate max-w-[250px] px-1 -ml-1 ${isDark ? 'text-white/70 hover:bg-white/10 focus:bg-white/10' : 'text-[#6b6f76] hover:bg-slate-100/80 focus:bg-slate-100/80'}`}
+            />
+            {data.isVerified && <Icons.Verified size={16} className="text-[#20D5EC] shrink-0 ml-1.5" />}
+            {data.isAuthor && <span className={`text-[15px] sm:text-[16px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>{t.authorBadgeLabel}</span>}
           </div>
 
-          <p className={`text-[17px] sm:text-[19px] leading-[1.35] whitespace-pre-wrap break-words ${isDark ? 'text-white/95' : 'text-[#161722]'}`}>
-            {data.commentText}
-          </p>
+          <EditableText 
+            as="p"
+            text={data.commentText}
+            onBlur={handleUpdate('commentText')}
+            className={`text-[17px] sm:text-[19px] leading-[1.35] whitespace-pre-wrap break-words px-1 -ml-1 ${isDark ? 'text-white/95 hover:bg-white/10 focus:bg-white/10' : 'text-[#161722] hover:bg-slate-100/80 focus:bg-slate-100/80'}`}
+          />
 
           <div className="flex items-center justify-between mt-3 sm:mt-4">
             <div className="flex items-center gap-4">
-              <span className={`text-[14px] sm:text-[15px] font-medium ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
-                {data.timeAgo}
+              <EditableText 
+                text={data.timeAgo}
+                onBlur={handleUpdate('timeAgo')}
+                className={`text-[14px] sm:text-[15px] font-medium px-1 -ml-1 ${isDark ? 'text-white/50 hover:bg-white/10 focus:bg-white/10' : 'text-[#8a8b91] hover:bg-slate-100/80 focus:bg-slate-100/80'}`}
+              />
+              <span 
+                onClick={(e) => { e.stopPropagation(); onAddReply?.(); }}
+                className={`text-[14px] sm:text-[15px] font-bold cursor-pointer hover:underline ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}
+              >
+                {t.replyAction}
               </span>
-              <span className={`text-[14px] sm:text-[15px] font-bold cursor-pointer ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
-                {t.replyAction || 'Відповісти'}
-              </span>
-              
+
               {data.isLikedByCreator && (
                 <div className="relative flex items-center justify-center ml-1">
-                  <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border-[0.5px] ${isDark ? 'border-white/10 bg-slate-800' : 'border-black/10 bg-slate-100'}`}>
-                    {data.avatarUrl ? (
-                      <img src={data.avatarUrl} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <Icons.User size={16} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
-                    )}
+                  <div className={`w-[20px] h-[20px] rounded-full overflow-hidden border-[0.5px] ${isDark ? 'border-white/10 bg-slate-800' : 'border-black/10 bg-slate-100'}`}>
+                    <Icons.User size={14} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
                   </div>
-                  <div className={`absolute -bottom-1.5 -right-1.5 rounded-full p-[2px] ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
-                    <Icons.Heart size={12} className="text-[#ff3b5c] fill-[#ff3b5c]" />
+                  <div className={`absolute -bottom-1 -right-1 rounded-full p-[2px] ${isDark ? 'bg-[#121212]' : 'bg-white'}`}>
+                    <Icons.Heart size={10} className="text-[#ff3b5c] fill-[#ff3b5c]" />
                   </div>
                 </div>
               )}
             </div>
-            
             <div className={`flex items-center gap-5 ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
               <div className="flex items-center gap-1.5">
                 <Icons.HeartOutline size={22} />
-                {displayLikes !== '0' && <span className="text-[14px] font-medium">{displayLikes}</span>}
+                <EditableText 
+                  text={data.likes !== '0' ? data.likes : ''}
+                  onBlur={handleUpdate('likes')}
+                  className={`text-[14px] font-medium px-1 ${isDark ? 'hover:bg-white/10 focus:bg-white/10' : 'hover:bg-slate-100/80 focus:bg-slate-100/80'}`}
+                />
               </div>
               <Icons.CommentBubble size={22} />
             </div>
           </div>
 
           {data.replies && data.replies.length > 0 && (
-            <div className="mt-6 flex flex-col gap-5">
-              <div className="flex items-center gap-3">
+            <div className="mt-6 flex flex-col gap-2">
+              <div className="flex items-center gap-3 mb-2">
                 <div className={`w-[30px] border-b ${isDark ? 'border-white/10' : 'border-slate-200'}`}></div>
-                <div className={`text-[14px] sm:text-[15px] font-semibold flex items-center gap-1 cursor-pointer ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
-                  {(t.viewReplies || 'Подивитись {count} відповіді').replace('{count}', data.replies.length.toString())} <Icons.ChevronDown size={18} />
+                <div className={`text-[14px] sm:text-[15px] font-semibold flex items-center gap-1 ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
+                  {t.viewReplies?.replace('{count}', data.replies.length.toString()) || `${data.replies.length} replies`} <Icons.ChevronDown size={18} />
                 </div>
               </div>
               {data.replies.map((reply) => (
-                <ReplyItem key={reply.id} reply={reply} isDark={isDark} t={t} />
+                <ReplyItem 
+                  key={reply.id} 
+                  reply={reply} 
+                  isDark={isDark} 
+                  isActive={activeEditId === reply.id}
+                  onSelect={() => onSelectEdit?.(reply.id)}
+                  onLiveUpdate={(field, val) => handleReplyUpdate(reply.id, field, val)}
+                  onAddReply={(name) => onAddReply?.(name)}
+                  onAvatarClick={onAvatarClick}
+                />
               ))}
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

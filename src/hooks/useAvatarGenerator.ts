@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabaseClient';
+import { STORAGE_KEYS } from '@/constants';
 
 export const useAvatarGenerator = (
   onApply: (image: string) => void,
@@ -11,7 +12,7 @@ export const useAvatarGenerator = (
 
   const mutation = useMutation({
     mutationFn: async (prompt: string) => {
-      const proCode = localStorage.getItem('tiktok_gen_pro_key');
+      const proCode = localStorage.getItem(STORAGE_KEYS.PRO_TOKEN);
       const { data, error } = await supabase.functions.invoke('proxy-image-TT-comments', {
         body: { prompt, proCode }
       });
@@ -26,7 +27,6 @@ export const useAvatarGenerator = (
     },
     onError: (err, prompt) => {
       console.error('Помилка генерації аватара:', err);
-      // Fallback на безкоштовний аватар, якщо Edge Function впала
       const safePrompt = encodeURIComponent(prompt || 'avatar');
       setPreviewImage(`https://api.dicebear.com/9.x/avataaars/svg?seed=${safePrompt}&backgroundColor=b6e3f4,c0aede,d1d4f9`);
     }
@@ -44,7 +44,7 @@ export const useAvatarGenerator = (
     setTimeout(() => {
       setPreviewImage(null);
       setPromptText('');
-      mutation.reset(); // Скидаємо стан React Query
+      mutation.reset();
     }, 300);
   };
 

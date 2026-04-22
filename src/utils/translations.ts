@@ -15,13 +15,40 @@ export interface TranslationSchema {
   replies: string;
   addReply: string;
   exportSettings: string;
+  clear?: string
+  
+  // Експорт та буфер
+  watermark?: string;
+  randomComment?: string;
+  randomCommentApplied?: string;
+  copyImage?: string;
+  copied?: string;
+  exportSuccess?: string;
+  exportError?: string;
+  copyError?: string;
+  liveEditHint?: string;
+  toolbar?: string;
+  
+  // Бібліотека
+  search?: string;
+  allCategories?: string;
+  downloadSelected?: string;
+  downloadStarted?: string;
+  libraryDesc?: string;
+  noResults?: string;
+  tryAnotherSearch?: string;
+  
+  // Налаштування
   darkMode: string;
   downloadBtn: string;
   aiAssist: string;
+  mediaLibrary: string;
   authorSettings: string;
   commentContent: string;
   aiAvatarTitle: string;
   aiAvatarPrompt: string;
+  generatorNav?: string;
+  libraryNav?: string;
   generate: string;
   cancel: string;
   apply: string;
@@ -30,10 +57,11 @@ export interface TranslationSchema {
   presetAuto: string;
   presetSquare: string;
   presetStory: string;
-  presetCustom: string;
   replyNumber: string;
   likes: string;
   time: string;
+
+  // AI та TTS
   aiMoods: {
     funny: string;
     hater: string;
@@ -46,12 +74,20 @@ export interface TranslationSchema {
     medium: string;
     long: string;
   };
-  // Ключі для прев'ю коментаря
+  aiPromptError?: string;
+  aiSuccess?: string;
+  aiError?: string;
+  avatarSuccess?: string;
+  ttsLoading?: string;
+  ttsSuccess?: string;
+  ttsError?: string;
+
+  // Компонент коментаря
   authorBadgeLabel: string;
   replyAction: string;
   viewReplies: string;
   
-  // Нові ключі для лоадера та модалки PRO
+  // PRO модалка
   loading: string;
   proActiveTitle: string;
   proValidUntil: string;
@@ -59,6 +95,7 @@ export interface TranslationSchema {
   extendProBtn: string;
   enterCode: string;
   activateCode: string;
+  invalidCode?: string;
   getProModalTitle: string;
   getProModalDesc: string;
   orEnterCode: string;
@@ -76,16 +113,39 @@ export const translations: Record<string, TranslationSchema> = {
     authorBadge: "Бейдж автора",
     commentText: "Текст коментаря",
     commentPlaceholder: "Напишіть щось цікаве...",
+    mediaLibrary: "Бібліотека фонів",
     timeAgo: "Час",
+    generatorNav: "Генератор",
+    libraryNav: "Бібліотека",
     likesCount: "Лайки",
     likedByCreator: "Лайк автора",
     replies: "Відповіді",
     addReply: "Додати відповідь",
     exportSettings: "Налаштування експорту",
+    
+    watermark: "Водяний знак",
+    randomComment: "Випадково",
+    randomCommentApplied: "Випадкові дані застосовано 🎲",
+    copyImage: "Копіювати",
+    copied: "Скопійовано!",
+    exportSuccess: "Зображення збережено!",
+    exportError: "Помилка при експорті",
+    copyError: "Помилка при копіюванні",
+    liveEditHint: "Клікайте на текст або аватарку, щоб редагувати!",
+    toolbar: "Панель інструментів",
+    
+    search: "Пошук фонів...",
+    allCategories: "Усі категорії",
+    downloadSelected: "Завантажити вибрані ({count})",
+    downloadStarted: "Почалося завантаження {count} відео",
+    libraryDesc: "Шукай та завантажуй високоякісні відео-фони для своїх TikTok.",
+    noResults: "Нічого не знайдено",
+    tryAnotherSearch: "Спробуй змінити запит або категорію.",
+
     darkMode: "Темна тема",
     downloadBtn: "Завантажити",
-    aiAssist: "AI Помічник",
-    authorSettings: "Профіль автора",
+    aiAssist: "AI Текст",
+    authorSettings: "Профіль",
     commentContent: "Контент",
     aiAvatarTitle: "Створити AI Аватар",
     aiAvatarPrompt: "Напр. кіт у кіберпанк стилі...",
@@ -94,13 +154,13 @@ export const translations: Record<string, TranslationSchema> = {
     apply: "Застосувати",
     width: "Ширина",
     height: "Висота",
-    presetAuto: "Авто",
+    presetAuto: "АВТО",
     presetSquare: "1:1",
     presetStory: "9:16",
-    presetCustom: "Свій",
     replyNumber: "Відповідь",
     likes: "Лайки",
     time: "Час",
+    
     aiMoods: {
       funny: "😂 Смішний",
       hater: "😡 Хейтер",
@@ -113,20 +173,28 @@ export const translations: Record<string, TranslationSchema> = {
       medium: "Середній",
       long: "Довгий"
     },
+    aiPromptError: "Введіть тему або опис",
+    aiSuccess: "Текст успішно згенеровано!",
+    aiError: "Помилка генерації",
+    avatarSuccess: "Аватар застосовано!",
+    ttsLoading: "Генеруємо голос TikTok...",
+    ttsSuccess: "Аудіо збережено!",
+    ttsError: "Помилка озвучки",
+
     authorBadgeLabel: "· Автор",
     replyAction: "Відповісти",
     viewReplies: "Подивитись {count} відповіді",
 
-    // Переклади для лоадера та модалки PRO
     loading: "Завантаження...",
     proActiveTitle: "PRO Активовано!",
-    proValidUntil: "Ваша підписка дійсна ще:",
+    proValidUntil: "Діє до:",
     extendPro: "Бажаєте продовжити?",
-    extendProBtn: "Придбати новий код",
+    extendProBtn: "Придбати код",
     enterCode: "Введіть код активації",
-    activateCode: "Активувати код",
-    getProModalTitle: "Отримай PRO",
-    getProModalDesc: "Генеруй AI-коментарі, завантажуй в SVG без втрати якості та використовуй преміум-функції. (Діє 7 днів)",
+    activateCode: "Активувати",
+    invalidCode: "Невірний код активації",
+    getProModalTitle: "Отримати PRO",
+    getProModalDesc: "Генеруй AI-коментарі, TTS озвучку, прибирай водяний знак та качай SVG. (Діє 7 днів)",
     orEnterCode: "Або введіть код"
   },
   en: {
@@ -140,16 +208,39 @@ export const translations: Record<string, TranslationSchema> = {
     authorBadge: "Author Badge",
     commentText: "Comment Text",
     commentPlaceholder: "Write something cool...",
+    mediaLibrary: "Media Library",
     timeAgo: "Time",
+    generatorNav: "Generator",
+    libraryNav: "Library",
     likesCount: "Likes",
     likedByCreator: "Liked by Creator",
     replies: "Replies",
     addReply: "Add Reply",
     exportSettings: "Export Settings",
+    
+    watermark: "Watermark",
+    randomComment: "Random",
+    randomCommentApplied: "Random data applied 🎲",
+    copyImage: "Copy",
+    copied: "Copied!",
+    exportSuccess: "Image saved!",
+    exportError: "Export failed",
+    copyError: "Copying not supported",
+    liveEditHint: "Click text or avatar to edit!",
+    toolbar: "Toolbar",
+    
+    search: "Search backgrounds...",
+    allCategories: "All categories",
+    downloadSelected: "Download selected ({count})",
+    downloadStarted: "Started downloading {count} videos",
+    libraryDesc: "Search and download high-quality video backgrounds for your TikToks.",
+    noResults: "No results found",
+    tryAnotherSearch: "Try changing your search or category.",
+
     darkMode: "Dark Mode",
     downloadBtn: "Download",
-    aiAssist: "AI Assistant",
-    authorSettings: "Author Profile",
+    aiAssist: "AI Text",
+    authorSettings: "Profile",
     commentContent: "Content",
     aiAvatarTitle: "Create AI Avatar",
     aiAvatarPrompt: "E.g. a cat in cyberpunk style...",
@@ -158,13 +249,13 @@ export const translations: Record<string, TranslationSchema> = {
     apply: "Apply",
     width: "Width",
     height: "Height",
-    presetAuto: "Auto",
+    presetAuto: "AUTO",
     presetSquare: "1:1",
     presetStory: "9:16",
-    presetCustom: "Custom",
     replyNumber: "Reply",
     likes: "Likes",
     time: "Time",
+
     aiMoods: {
       funny: "😂 Funny",
       hater: "😡 Hater",
@@ -177,20 +268,28 @@ export const translations: Record<string, TranslationSchema> = {
       medium: "Medium",
       long: "Long"
     },
+    aiPromptError: "Please enter a topic",
+    aiSuccess: "Text generated successfully!",
+    aiError: "Generation error",
+    avatarSuccess: "Avatar applied!",
+    ttsLoading: "Generating TikTok voice...",
+    ttsSuccess: "Audio saved!",
+    ttsError: "TTS error",
+
     authorBadgeLabel: "· Creator",
     replyAction: "Reply",
     viewReplies: "View {count} replies",
 
-    // Переклади для лоадера та модалки PRO
     loading: "Loading...",
     proActiveTitle: "PRO is Active!",
-    proValidUntil: "Your subscription is valid for:",
+    proValidUntil: "Valid until:",
     extendPro: "Want to extend?",
-    extendProBtn: "Buy a new code",
+    extendProBtn: "Buy a code",
     enterCode: "Enter activation code",
-    activateCode: "Activate code",
-    getProModalTitle: "Get PRO",
-    getProModalDesc: "Generate AI comments, download in SVG without quality loss, and use premium features. (Valid for 7 days)",
+    activateCode: "Activate",
+    invalidCode: "Invalid activation code",
+    getProModalTitle: "Get PRO Access",
+    getProModalDesc: "Generate AI comments, TTS voice, remove watermark and export SVG. (Valid for 7 days)",
     orEnterCode: "Or enter code"
   }
 };

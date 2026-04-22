@@ -2,6 +2,7 @@ import React from 'react';
 import { Icons, Button, Input, Modal } from '@/components/ui';
 import { useAvatarGenerator } from '@/hooks/useAvatarGenerator';
 import { useLanguage } from '@/hooks/useLanguage';
+import { toast } from 'sonner';
 
 interface Props {
   isOpen: boolean;
@@ -11,6 +12,13 @@ interface Props {
 
 const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => {
   const { t } = useLanguage();
+  
+  const handleApplyWithToast = (img: string) => {
+    onApply(img);
+    toast.success(t.avatarSuccess || 'Аватар застосовано!');
+    onClose();
+  };
+
   const { promptText, setPromptText, previewImage, isLoading, status, handleGenerate, handleClose } = useAvatarGenerator(onApply, onClose);
 
   return (
@@ -24,10 +32,10 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
         </button>
       </div>
 
-      <div className="p-8 flex flex-col items-center gap-8">
-        <div className={`relative w-40 h-40 rounded-full border-4 border-slate-50 shadow-sm flex items-center justify-center overflow-hidden bg-slate-100 transition-all duration-500 ${isLoading ? 'animate-pulse scale-95' : 'scale-100'}`}>
+      <div className="p-6 flex flex-col items-center gap-6">
+        <div className="relative w-32 h-32 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center border-4 border-white shadow-lg">
           {previewImage ? (
-            <img src={previewImage} alt="Preview" className="w-full h-full object-cover animate-in fade-in zoom-in" />
+            <img src={previewImage} alt="AI Avatar Preview" className="w-full h-full object-cover" />
           ) : (
             <Icons.User size={64} className="text-slate-300" />
           )}
@@ -46,17 +54,20 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
             disabled={isLoading}
             className="bg-slate-50 border-slate-100 w-full"
           />
-          <Button variant="tiktok" onClick={handleGenerate} disabled={isLoading || !promptText.trim()} className="w-full h-12 text-base shadow-sm">
-            {isLoading ? (status || "Малюю...") : (t.generate || "Згенерувати")}
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button variant="primary" onClick={handleGenerate} disabled={isLoading || !promptText.trim()} className="h-12 text-sm">
+              {isLoading ? (status || "...") : (t.generate || "Малювати")}
+            </Button>
+            <Button 
+              variant="tiktok" 
+              onClick={() => previewImage && handleApplyWithToast(previewImage)} 
+              disabled={isLoading || !previewImage} 
+              className="h-12 text-sm"
+            >
+              {t.apply || "Застосувати"}
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <div className="p-6 bg-slate-50/50 flex gap-3 border-t border-slate-100">
-        <Button variant="ghost" onClick={handleClose} className="flex-1 h-12 text-[15px]">{t.cancel || "Скасувати"}</Button>
-        <Button variant="primary" onClick={() => previewImage && onApply(previewImage)} disabled={!previewImage || isLoading} className="flex-1 h-12 text-[15px]">
-          {t.apply || "Застосувати"}
-        </Button>
       </div>
     </Modal>
   );

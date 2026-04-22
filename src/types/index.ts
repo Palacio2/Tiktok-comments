@@ -1,6 +1,7 @@
 export interface ReplyData {
   id: string;
   username: string;
+  replyingTo?: string;
   text: string;
   timeAgo: string;
   likes: string;
@@ -27,5 +28,7 @@ export interface ExportSettings {
   width?: number | string;
   height?: number | string;
   isDark: boolean;
+  isTransparent: boolean;
+  showWatermark: boolean;
   customSize?: boolean;
 }

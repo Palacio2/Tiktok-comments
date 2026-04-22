@@ -1,20 +1,21 @@
 import React from 'react';
-import { useLanguage } from '@/hooks/useLanguage';
+import { useLanguage, usePro } from '@/hooks';
 import { FlagIcon, Icons, ProTimer } from '@/components/ui';
 
 interface HeaderProps {
-  isPro: boolean;
-  timeLeft?: string;
-  onOpenPro: () => void;
+  currentView: 'editor' | 'library';
+  onViewChange: (view: 'editor' | 'library') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ isPro, timeLeft, onOpenPro }) => {
+const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
+  // ДОДАНО: дістаємо generationsLeft з хука
+  const { isPro, timeLeft, generationsLeft, openPro } = usePro();
   const { currentLangObj, LANGUAGES, selectLanguage, isLangMenuOpen, toggleLangMenu, t } = useLanguage();
   const safeLabel = (val: string | undefined, fallback: string) => (typeof val === 'string' ? val : fallback);
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 h-16 sm:h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100/80 transition-all">
-      <div className="flex items-center gap-3 cursor-pointer group">
+      <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onViewChange('editor')}>
         <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105 shadow-sm">
           <Icons.MusicNote size={20} />
         </div>
@@ -30,9 +31,25 @@ const Header: React.FC<HeaderProps> = ({ isPro, timeLeft, onOpenPro }) => {
         </div>
       </div>
 
+      <div className="hidden md:flex bg-slate-100/80 p-1 rounded-2xl absolute left-1/2 -translate-x-1/2">
+        <button 
+          onClick={() => onViewChange('editor')}
+          className={`px-5 py-2 text-[14px] font-bold rounded-xl transition-all ${currentView === 'editor' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          {safeLabel(t.generatorNav, 'Генератор')}
+        </button>
+        <button 
+          onClick={() => onViewChange('library')}
+          className={`px-5 py-2 text-[14px] font-bold rounded-xl transition-all flex items-center gap-1.5 ${currentView === 'library' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Icons.Video size={16} />
+          {safeLabel(t.libraryNav, 'Бібліотека')}
+        </button>
+      </div>
+
       <div className="flex items-center gap-3 sm:gap-4">
         <button 
-          onClick={onOpenPro}
+          onClick={openPro}
           className={`
             relative overflow-hidden flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl font-bold text-sm transition-all duration-300
             ${isPro 
@@ -45,6 +62,15 @@ const Header: React.FC<HeaderProps> = ({ isPro, timeLeft, onOpenPro }) => {
             <>
               <Icons.Crown size={16} className="text-amber-500 hidden sm:block" />
               <span className="hidden sm:inline">{safeLabel(t.proActive, 'PRO')}</span>
+              
+              {/* ДОДАНО: Плашка з лімітом генерацій */}
+              {generationsLeft !== undefined && generationsLeft !== null && (
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-violet-100 rounded-md border border-violet-200">
+                  <Icons.Sparkles size={10} className="text-violet-500" />
+                  <span className="text-[11px] font-black text-violet-700">{generationsLeft}</span>
+                </div>
+              )}
+
               {timeLeft && <ProTimer timeLeft={timeLeft} />}
             </>
           ) : (

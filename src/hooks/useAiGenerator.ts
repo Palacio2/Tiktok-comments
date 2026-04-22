@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabaseClient';
+import { STORAGE_KEYS } from '@/constants';
 
 interface AiParams {
   topic: string;
@@ -13,7 +14,7 @@ export const useAiGenerator = (isPro: boolean) => {
     mutationFn: async ({ topic, mood, length, language }: AiParams) => {
       if (!isPro) return null;
       
-      const proCode = localStorage.getItem('tiktok_gen_pro_key');
+      const proCode = localStorage.getItem(STORAGE_KEYS.PRO_TOKEN);
       const { data, error } = await supabase.functions.invoke('generate-comment', {
         body: { type: 'comment', topic, mood, length, language, proCode }
       });

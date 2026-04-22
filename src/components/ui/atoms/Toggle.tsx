@@ -14,7 +14,7 @@ export const Toggle: React.FC<ToggleProps> = ({
   label 
 }) => {
   return (
-    <label className={`flex items-center justify-between px-4 py-3.5 bg-white border border-slate-100 shadow-sm rounded-2xl cursor-pointer transition-all active:scale-[0.98] select-none w-full ${disabled ? 'opacity-50' : 'hover:border-slate-200'}`}>
+    <label className={`flex items-center justify-between px-4 h-12 bg-white border border-slate-100 shadow-sm rounded-2xl cursor-pointer transition-all active:scale-[0.98] select-none w-full ${disabled ? 'opacity-50' : 'hover:border-slate-200'}`}>
       {label && (
         <div className="flex items-center">
           {label}
