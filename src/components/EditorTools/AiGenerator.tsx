@@ -20,7 +20,7 @@ const AiGenerator: React.FC<AiGeneratorProps> = ({ onGenerate }) => {
 
   const [prompt, setPrompt] = useState('');
   const [mood, setMood] = useState('funny');
-  const [length, setLength] = useState('short');
+  const [length] = useState('short');
   const [language, setLanguage] = useState('ukrainian');
 
   const { generateComment, isLoading } = useAiGenerator(isPro);

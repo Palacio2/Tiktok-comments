@@ -1,4 +1,3 @@
-import React from 'react';
 import { CommentData, ReplyData } from '@/types';
 import { Icons, Avatar, EditableText } from '@/components/ui';
 import { useLanguage } from '@/hooks';

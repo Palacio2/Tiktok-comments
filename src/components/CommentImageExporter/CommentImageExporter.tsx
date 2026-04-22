@@ -5,6 +5,7 @@ import { Icons } from '@/components/ui';
 import { useLanguage } from '@/hooks';
 import { toast } from 'sonner';
 import CommentView from '../CommentView/CommentView';
+import { trackEvent } from '@/utils/analytics';
 
 interface Props {
   data: CommentData;
@@ -45,6 +46,12 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
 
   const handleExport = async () => {
     if (!exportRef.current) return;
+    
+    trackEvent('download_comment', { 
+      format: settings.format, 
+      with_watermark: settings.showWatermark 
+    });
+
     const exportPromise = async () => {
       const options = getOptions();
       const dataUrl = settings.format === 'svg' 
@@ -55,6 +62,7 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
       link.href = dataUrl;
       link.click();
     };
+    
     toast.promise(exportPromise(), {
       loading: t('loading'),
       success: t('exportSuccess'),
@@ -64,6 +72,12 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
 
   const handleCopy = async () => {
     if (!exportRef.current) return;
+    
+    trackEvent('copy_comment', { 
+      format: settings.format, 
+      with_watermark: settings.showWatermark 
+    });
+
     const copyPromise = async () => {
       const options = getOptions();
       const blob = await toBlob(exportRef.current!, options);
@@ -72,6 +86,7 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     };
+    
     toast.promise(copyPromise(), {
       loading: t('loading'),
       success: t('copied'),
@@ -112,8 +127,6 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
         </div>
       </div>
       
-      {/* 🚀 ОНОВЛЕНИЙ БЛОК КНОПОК */}
-      {/* flex-row робить їх поруч навіть на телефонах */}
       <div className="flex flex-row w-full max-w-lg gap-3">
         <button 
           onClick={handleCopy} 
@@ -131,8 +144,6 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
           <span className="truncate">{t('downloadBtn')}</span>
         </button>
       </div>
-      {/* 🚀 КІНЕЦЬ ОНОВЛЕНОГО БЛОКУ */}
-
     </div>
   );
 };
