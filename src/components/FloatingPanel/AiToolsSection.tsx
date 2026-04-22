@@ -1,0 +1,75 @@
+import React, { useState } from 'react';
+import { FormSection, Icons } from '@/components/ui';
+import AiGenerator from '../EditorTools/AiGenerator';
+import TtsGenerator from '../EditorTools/TtsGenerator';
+import AvatarGeneratorModal from '../EditorTools/AvatarGeneratorModal';
+import { useLanguage, usePro } from '@/hooks';
+
+interface AiToolsSectionProps {
+  textToEdit: string;
+  onTextChange: (text: string) => void;
+  onAvatarChange: (url: string | null) => void;
+  onAddReply: () => void;
+  onClear: () => void;
+  onRandomize: () => void;
+  isMainComment: boolean;
+}
+
+const AiToolsSection: React.FC<AiToolsSectionProps> = ({ 
+  textToEdit, onTextChange, onAvatarChange, onAddReply, onClear, onRandomize, isMainComment
+}) => {
+  const { t } = useLanguage();
+  const { isPro, openPro } = usePro();
+  const [isAiAvatarOpen, setIsAiAvatarOpen] = useState(false);
+
+  return (
+    <FormSection title={t.aiAssist || "AI Помічник"} icon={<Icons.Sparkles size={18} className="text-slate-400" />}>
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-3">
+          <AiGenerator onGenerate={onTextChange} />
+          <TtsGenerator text={textToEdit} />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <button 
+            onClick={onRandomize}
+            className="flex items-center justify-center gap-2 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 text-[12px] font-bold hover:bg-indigo-100 transition-all shadow-sm"
+          >
+            <Icons.Topic size={14} /> {t.randomComment || 'Випадково'}
+          </button>
+
+          <button 
+            onClick={onAddReply}
+            className="flex items-center justify-center gap-2 h-10 rounded-xl bg-white border border-slate-100 text-slate-700 text-[12px] font-bold hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <Icons.Plus size={14} /> {t.addReply || 'Відповідь'}
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <button 
+            onClick={onClear}
+            className={`flex items-center justify-center gap-2 h-10 rounded-xl border transition-all shadow-sm ${
+              isMainComment 
+                ? 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100' 
+                : 'bg-red-50 border-red-100 text-red-500 hover:bg-red-100'
+            }`}
+          >
+            <Icons.Trash size={14} /> 
+            {isMainComment ? (t.clear || 'Очистити') : (t.cancel || 'Видалити')}
+          </button>
+
+          <button 
+            onClick={() => isPro ? setIsAiAvatarOpen(true) : openPro()}
+            className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900 text-white text-[12px] font-bold hover:bg-slate-800 transition-all shadow-sm"
+          >
+            <Icons.User size={14} /> {t.aiAvatarTitle ? t.aiAvatarTitle.replace('Створити ', '') : 'AI Аватар'}
+          </button>
+        </div>
+      </div>
+      <AvatarGeneratorModal isOpen={isAiAvatarOpen} onClose={() => setIsAiAvatarOpen(false)} onApply={(img) => { onAvatarChange(img); setIsAiAvatarOpen(false); }} />
+    </FormSection>
+  );
+};
+
+export default AiToolsSection;
