@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { toPng, toSvg, toBlob } from 'html-to-image';
 import { CommentData, ExportSettings } from '@/types';
-import { Button, Icons } from '@/components/ui';
+import { Icons } from '@/components/ui';
 import { useLanguage } from '@/hooks';
 import { toast } from 'sonner';
 import CommentView from '../CommentView/CommentView';
@@ -80,11 +80,11 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <div className="flex flex-col items-center gap-6 sm:gap-8 w-full max-w-2xl mx-auto">
       <div className="w-full flex justify-center overflow-visible">
         <div 
           ref={exportRef} 
-          className={`rounded-[28px] transition-all flex items-center justify-center overflow-hidden w-full relative ${settings.isTransparent ? 'shadow-none bg-transparent bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYNgvwMDwnxhMQApgGMDAoK+PXxZh0wkYMA6jYRQMFMDwkHw18jAAAwCOiBk/y1Y6rAAAAABJRU5ErkJggg==")]' : 'shadow-[0_8px_40px_-12px_rgba(0,0,0,0.15)]'}`}
+          className={`rounded-[24px] sm:rounded-[28px] transition-all flex items-center justify-center overflow-hidden w-full relative ${settings.isTransparent ? 'shadow-none bg-transparent bg-[url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYNgvwMDwnxhMQApgGMDAoK+PXxZh0wkYMA6jYRQMFMDwkHw18jAAAwCOiBk/y1Y6rAAAAABJRU5ErkJggg==")]' : 'shadow-[0_8px_40px_-12px_rgba(0,0,0,0.15)]'}`}
           style={{
             aspectRatio: settings.customSize && settings.width !== 'auto' && settings.height !== 'auto' ? `${settings.width}/${settings.height}` : 'auto',
             backgroundColor: settings.isTransparent ? 'transparent' : (settings.isDark ? '#121212' : '#FFFFFF'),
@@ -105,22 +105,34 @@ const CommentImageExporter = ({ data, settings, onLiveUpdate, activeEditId, onSe
           {settings.showWatermark && (
             <div className="absolute inset-0 pointer-events-none flex flex-wrap items-center justify-center z-20 opacity-20 overflow-hidden rotate-[-15deg] scale-125">
                {Array.from({ length: 48 }).map((_, i) => (
-                <span key={i} className="text-[18px] font-black text-slate-500 mx-4 my-2 whitespace-nowrap uppercase tracking-widest">TikTokGen.online</span>
+                <span key={i} className="text-[14px] sm:text-[18px] font-black text-slate-500 mx-3 my-2 whitespace-nowrap uppercase tracking-widest">TikTokGen.online</span>
               ))}
             </div>
           )}
         </div>
       </div>
-      <div className="flex w-full max-w-lg gap-3">
-        <Button onClick={handleCopy} variant="secondary" className="flex-1 h-14 rounded-2xl bg-white">
-          {copied ? <Icons.Verified className="mr-2 text-emerald-500" size={18} /> : <Icons.Topic className="mr-2" size={18} />}
-          {copied ? t('copied') : t('copyImage')}
-        </Button>
-        <Button onClick={handleExport} className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-[#00f2ea] to-[#00ff85] text-slate-900 border-0">
-          <Icons.Download className="mr-2" size={18} />
-          {t('downloadBtn')}
-        </Button>
+      
+      {/* 🚀 ОНОВЛЕНИЙ БЛОК КНОПОК */}
+      {/* flex-row робить їх поруч навіть на телефонах */}
+      <div className="flex flex-row w-full max-w-lg gap-3">
+        <button 
+          onClick={handleCopy} 
+          className="flex-1 flex items-center justify-center h-12 sm:h-14 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-[14px] sm:text-[15px] shadow-sm hover:bg-slate-50 transition-all active:scale-95"
+        >
+          {copied ? <Icons.Verified className="mr-1.5 text-emerald-500" size={18} /> : <Icons.Topic className="mr-1.5 text-slate-400" size={18} />}
+          <span className="truncate">{copied ? t('copied') : t('copyImage')}</span>
+        </button>
+        
+        <button 
+          onClick={handleExport} 
+          className="flex-1 flex items-center justify-center h-12 sm:h-14 rounded-2xl bg-gradient-to-r from-[#00f2ea] to-[#00ff85] text-slate-900 font-extrabold text-[14px] sm:text-[15px] shadow-[0_8px_16px_-6px_rgba(0,242,234,0.4)] hover:opacity-90 transition-all active:scale-95"
+        >
+          <Icons.Download className="mr-1.5" size={18} />
+          <span className="truncate">{t('downloadBtn')}</span>
+        </button>
       </div>
+      {/* 🚀 КІНЕЦЬ ОНОВЛЕНОГО БЛОКУ */}
+
     </div>
   );
 };

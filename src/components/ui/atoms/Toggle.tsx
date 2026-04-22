@@ -14,7 +14,7 @@ export const Toggle: React.FC<ToggleProps> = ({
   label 
 }) => {
   return (
-    <label className={`flex items-center justify-between px-4 h-12 bg-white border border-slate-100 shadow-sm rounded-2xl cursor-pointer transition-all active:scale-[0.98] select-none w-full ${disabled ? 'opacity-50' : 'hover:border-slate-200'}`}>
+    <label className={`flex items-center justify-between px-4 h-14 sm:h-12 bg-white border border-slate-100 shadow-sm rounded-2xl cursor-pointer transition-all duration-200 ease-out active:scale-[0.98] select-none w-full ${disabled ? 'opacity-50 pointer-events-none' : 'hover:border-slate-200'}`}>
       {label && (
         <div className="flex items-center">
           {label}
@@ -29,7 +29,7 @@ export const Toggle: React.FC<ToggleProps> = ({
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
         />
-        <div className="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#FE2C55]"></div>
+        <div className="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-4 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:shadow-sm after:transition-all after:duration-300 after:ease-out peer-checked:bg-[#FE2C55]"></div>
       </div>
     </label>
   );

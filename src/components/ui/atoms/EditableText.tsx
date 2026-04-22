@@ -20,7 +20,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
       contentEditable
       suppressContentEditableWarning
       onBlur={(e: React.FocusEvent<HTMLElement>) => onBlur(e.currentTarget.textContent || '')}
-      className={`outline-none cursor-text rounded transition-colors ${className}`}
+      className={`outline-none cursor-text rounded transition-all duration-300 ease-out ${className}`}
     >
       {text}
     </Tag>

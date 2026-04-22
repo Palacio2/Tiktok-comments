@@ -37,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {isLoading && (
-        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2.5" />
+        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2.5 shrink-0" />
       )}
       {children}
     </button>

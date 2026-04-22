@@ -16,10 +16,10 @@ export const Avatar: React.FC<AvatarProps> = ({ url, size = 'md', isDark = false
   const innerContent = (
     <div 
       onClick={onClick}
-      className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center transition-opacity ${onClick ? 'cursor-pointer hover:opacity-80' : ''} ${hasGradient ? 'border-[1.5px]' : 'border-[0.5px]'} ${isDark ? (hasGradient ? 'border-[#121212] bg-slate-800' : 'border-white/10 bg-slate-800') : (hasGradient ? 'border-white bg-slate-100' : 'border-black/5 bg-slate-100')}`}
+      className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 ease-out ${onClick ? 'cursor-pointer hover:opacity-85 active:scale-95' : ''} ${hasGradient ? 'border-[1.5px]' : 'border-[0.5px]'} ${isDark ? (hasGradient ? 'border-[#121212] bg-slate-800' : 'border-white/10 bg-slate-800') : (hasGradient ? 'border-white bg-slate-100' : 'border-black/5 bg-slate-100')}`}
     >
       {url ? (
-        <img src={url} alt="" className="w-full h-full object-cover" />
+        <img src={url} alt="Avatar" className="w-full h-full object-cover" />
       ) : (
         <Icons.User size={iconSize} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
       )}
@@ -29,7 +29,7 @@ export const Avatar: React.FC<AvatarProps> = ({ url, size = 'md', isDark = false
   if (hasGradient) {
     return (
       <div className="shrink-0 pt-1">
-        <div className={`${sizeClasses} rounded-full p-[2px] bg-gradient-to-tr from-[#00f2ea] to-[#00ff85]`}>
+        <div className={`${sizeClasses} rounded-full p-[2px] bg-gradient-to-tr from-[#00f2ea] to-[#00ff85] shadow-sm`}>
           {innerContent}
         </div>
       </div>
