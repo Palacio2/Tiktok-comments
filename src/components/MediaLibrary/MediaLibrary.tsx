@@ -52,12 +52,12 @@ const MediaLibrary: React.FC = () => {
 
   const handleDownloadSelected = () => {
     if (!isPro) {
-      toast.error(t.getProModalTitle || 'Ця функція доступна лише для PRO користувачів.');
+      toast.error(t('proOnlyFeature'));
       openPro();
       return;
     }
     
-    toast.success(t.downloadStarted?.replace('{count}', selectedVideos.size.toString()) || `Почалося завантаження ${selectedVideos.size} відео`);
+    toast.success(t('downloadStarted', { count: selectedVideos.size }));
     
     selectedVideos.forEach(id => {
       const bg = backgrounds.find(b => b.id === id);
@@ -91,9 +91,9 @@ const MediaLibrary: React.FC = () => {
         <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
           <Icons.Video size={32} className="text-[#FE2C55]" />
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4">{t.libraryNav || 'Бібліотека фонів'}</h1>
+        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4">{t('libraryNav')}</h1>
         <p className="text-slate-500 text-[16px] max-w-xl">
-          {t.libraryDesc || 'Шукай, вибирай та завантажуй високоякісні відео-фони для своїх TikTok. Наведи курсор для попереднього перегляду.'}
+          {t('libraryDescExt')}
         </p>
       </div>
 
@@ -105,7 +105,7 @@ const MediaLibrary: React.FC = () => {
               onClick={() => setActiveCat(cat)}
               className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all ${activeCat === cat ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
             >
-              {cat === 'All' ? (t.allCategories || 'Усі категорії') : cat}
+              {cat === 'All' ? t('allCategories') : cat}
             </button>
           ))}
         </div>
@@ -113,7 +113,7 @@ const MediaLibrary: React.FC = () => {
         <div className="flex gap-3 w-full sm:w-auto items-center">
           <div className="w-full sm:w-64">
             <Input 
-              placeholder={t.search || "Пошук фонів..."}
+              placeholder={t('search')}
               value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)} 
               className="h-11 bg-slate-50 border-slate-100"
@@ -122,7 +122,7 @@ const MediaLibrary: React.FC = () => {
           {selectedVideos.size > 0 && (
             <Button onClick={handleDownloadSelected} className="h-11 whitespace-nowrap rounded-xl shadow-md">
               <Icons.Download size={16} className="mr-2" />
-              {t.downloadSelected?.replace('{count}', selectedVideos.size.toString()) || `Завантажити (${selectedVideos.size})`}
+              {t('downloadSelected', { count: selectedVideos.size })}
             </Button>
           )}
         </div>
@@ -135,8 +135,8 @@ const MediaLibrary: React.FC = () => {
       ) : filteredVideos.length === 0 ? (
         <div className="text-center py-20">
           <Icons.Topic size={48} className="mx-auto text-slate-300 mb-4" />
-          <h3 className="text-xl font-bold text-slate-700">{t.noResults || 'Нічого не знайдено'}</h3>
-          <p className="text-slate-500">{t.tryAnotherSearch || 'Спробуй змінити запит або категорію.'}</p>
+          <h3 className="text-xl font-bold text-slate-700">{t('noResults')}</h3>
+          <p className="text-slate-500">{t('tryAnotherSearch')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

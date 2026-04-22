@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabaseClient';
 import { STORAGE_KEYS } from '@/constants';
+import { useLanguage } from './useLanguage';
 
 export const useAvatarGenerator = (
   onApply: (image: string) => void,
   onClose: () => void
 ) => {
+  const { t } = useLanguage();
   const [promptText, setPromptText] = useState('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -18,7 +20,7 @@ export const useAvatarGenerator = (
       });
 
       if (error) throw error;
-      if (!data?.result) throw new Error('Порожня відповідь сервера');
+      if (!data?.result) throw new Error(t('emptyServerResponse'));
 
       return data.result as string;
     },
@@ -26,13 +28,13 @@ export const useAvatarGenerator = (
       setPreviewImage(result);
     },
     onError: (err, prompt) => {
-      console.error('Помилка генерації аватара:', err);
+      console.error(err);
       const safePrompt = encodeURIComponent(prompt || 'avatar');
       setPreviewImage(`https://api.dicebear.com/9.x/avataaars/svg?seed=${safePrompt}&backgroundColor=b6e3f4,c0aede,d1d4f9`);
     }
   });
 
-  const status = mutation.isPending ? '✨ Зв\'язок з ШІ...' : (mutation.isSuccess ? 'Готово!' : '');
+  const status = mutation.isPending ? t('aiConnecting') : (mutation.isSuccess ? t('done') : '');
 
   const handleGenerate = () => {
     if (!promptText.trim()) return;

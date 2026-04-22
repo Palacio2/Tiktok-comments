@@ -49,7 +49,7 @@ const CommentView = ({ data, isDark = false, onLiveUpdate, activeEditId, onSelec
               className={`text-[16px] sm:text-[18px] font-semibold truncate max-w-[250px] px-1 -ml-1 ${isDark ? 'text-white/70 hover:bg-white/10 focus:bg-white/10' : 'text-[#6b6f76] hover:bg-slate-100/80 focus:bg-slate-100/80'}`}
             />
             {data.isVerified && <Icons.Verified size={16} className="text-[#20D5EC] shrink-0 ml-1.5" />}
-            {data.isAuthor && <span className={`text-[15px] sm:text-[16px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>{t.authorBadgeLabel}</span>}
+            {data.isAuthor && <span className={`text-[15px] sm:text-[16px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>{t('authorBadgeLabel')}</span>}
           </div>
 
           <EditableText 
@@ -70,7 +70,7 @@ const CommentView = ({ data, isDark = false, onLiveUpdate, activeEditId, onSelec
                 onClick={(e) => { e.stopPropagation(); onAddReply?.(); }}
                 className={`text-[14px] sm:text-[15px] font-bold cursor-pointer hover:underline ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}
               >
-                {t.replyAction}
+                {t('replyAction')}
               </span>
 
               {data.isLikedByCreator && (
@@ -102,7 +102,7 @@ const CommentView = ({ data, isDark = false, onLiveUpdate, activeEditId, onSelec
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-[30px] border-b ${isDark ? 'border-white/10' : 'border-slate-200'}`}></div>
                 <div className={`text-[14px] sm:text-[15px] font-semibold flex items-center gap-1 ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}>
-                  {t.viewReplies?.replace('{count}', data.replies.length.toString()) || `${data.replies.length} replies`} <Icons.ChevronDown size={18} />
+                  {t('viewReplies', { count: data.replies.length })} <Icons.ChevronDown size={18} />
                 </div>
               </div>
               {data.replies.map((reply) => (

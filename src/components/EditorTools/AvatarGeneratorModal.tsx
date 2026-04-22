@@ -15,7 +15,7 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
   
   const handleApplyWithToast = (img: string) => {
     onApply(img);
-    toast.success(t.avatarSuccess || 'Аватар застосовано!');
+    toast.success(t('avatarSuccess'));
     onClose();
   };
 
@@ -25,7 +25,7 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
     <Modal isOpen={isOpen} onClose={handleClose} className="border border-slate-100 shadow-xl shadow-slate-200/40">
       <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
         <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Icons.Sparkles className="text-slate-900" /> {t.aiAvatarTitle || "Створити аватар"}
+          <Icons.Sparkles className="text-slate-900" /> {t('aiAvatarTitle')}
         </h3>
         <button onClick={handleClose} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-900 rounded-full transition-colors">
           <Icons.X size={20} />
@@ -48,7 +48,7 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
         
         <div className="w-full space-y-4">
           <Input 
-            placeholder={t.aiAvatarPrompt || "Напр. кіт у кіберпанк стилі..."}
+            placeholder={t('aiAvatarPrompt')}
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
             disabled={isLoading}
@@ -56,7 +56,7 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
           />
           <div className="grid grid-cols-2 gap-3">
             <Button variant="primary" onClick={handleGenerate} disabled={isLoading || !promptText.trim()} className="h-12 text-sm">
-              {isLoading ? (status || "...") : (t.generate || "Малювати")}
+              {isLoading ? status : t('generate')}
             </Button>
             <Button 
               variant="tiktok" 
@@ -64,7 +64,7 @@ const AvatarGeneratorModal: React.FC<Props> = ({ isOpen, onClose, onApply }) => 
               disabled={isLoading || !previewImage} 
               className="h-12 text-sm"
             >
-              {t.apply || "Застосувати"}
+              {t('apply')}
             </Button>
           </div>
         </div>

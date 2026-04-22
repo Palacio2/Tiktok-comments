@@ -52,7 +52,7 @@ const ReplyItem = ({ reply, isDark, isActive, onSelect, onLiveUpdate, onAddReply
           )}
 
           {reply.isVerified && <Icons.Verified size={15} className="text-[#20D5EC] shrink-0 ml-1.5" />}
-          {reply.isAuthor && <span className={`text-[14px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>{t.authorBadgeLabel || '· Автор'}</span>}
+          {reply.isAuthor && <span className={`text-[14px] font-semibold ml-1.5 ${isDark ? 'text-[#20D5EC]' : 'text-[#00a896]'}`}>{t('authorBadgeLabel')}</span>}
         </div>
 
         <EditableText 
@@ -73,7 +73,7 @@ const ReplyItem = ({ reply, isDark, isActive, onSelect, onLiveUpdate, onAddReply
               onClick={(e) => { e.stopPropagation(); onAddReply?.(reply.username); }}
               className={`text-[13.5px] font-bold cursor-pointer hover:underline ${isDark ? 'text-white/50' : 'text-[#8a8b91]'}`}
             >
-              {t.replyAction || 'Відповісти'}
+              {t('replyAction')}
             </span>
             
             {reply.isLikedByCreator && (

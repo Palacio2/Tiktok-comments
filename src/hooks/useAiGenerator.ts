@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/utils/supabaseClient';
 import { STORAGE_KEYS } from '@/constants';
+import { useLanguage } from './useLanguage';
+import { toast } from 'sonner';
 
 interface AiParams {
   topic: string;
@@ -10,6 +12,8 @@ interface AiParams {
 }
 
 export const useAiGenerator = (isPro: boolean) => {
+  const { t } = useLanguage();
+
   const mutation = useMutation({
     mutationFn: async ({ topic, mood, length, language }: AiParams) => {
       if (!isPro) return null;
@@ -19,14 +23,14 @@ export const useAiGenerator = (isPro: boolean) => {
         body: { type: 'comment', topic, mood, length, language, proCode }
       });
       
-      if (error) throw new Error(error.message || 'Помилка сервера Supabase');
+      if (error) throw new Error(error.message || t('serverError'));
       if (data?.error) throw new Error(data.error);
 
       return data.result as string;
     },
     onError: (err: any) => {
       console.error(err);
-      alert("ШІ каже: " + err.message);
+      toast.error(`${t('aiSays')} ${err.message}`);
     }
   });
 

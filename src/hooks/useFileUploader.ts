@@ -1,7 +1,10 @@
 import { useRef, useCallback, ChangeEvent } from 'react';
+import { useLanguage } from './useLanguage';
+import { toast } from 'sonner';
 
 export const useFileUploader = (onFileSelect: (base64: string | null) => void) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useLanguage();
 
   const handlePick = () => fileInputRef.current?.click();
 
@@ -10,12 +13,12 @@ export const useFileUploader = (onFileSelect: (base64: string | null) => void) =
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert("Файл занадто великий! Максимум 2MB.");
+      toast.error(t('fileTooLarge'));
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      alert("Будь ласка, завантажте зображення.");
+      toast.error(t('fileNotImage'));
       return;
     }
 
@@ -24,7 +27,7 @@ export const useFileUploader = (onFileSelect: (base64: string | null) => void) =
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_SIZE = 400; // Розмір для TikTok аватарок
+        const MAX_SIZE = 400;
         let width = img.width;
         let height = img.height;
 
@@ -41,7 +44,6 @@ export const useFileUploader = (onFileSelect: (base64: string | null) => void) =
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
         
-        // Зменшуємо якість до 0.8 для економії пам'яті (Base64 буде крихітним)
         const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
         onFileSelect(resizedBase64);
       };
@@ -49,7 +51,7 @@ export const useFileUploader = (onFileSelect: (base64: string | null) => void) =
     };
     reader.readAsDataURL(file);
     event.target.value = '';
-  }, [onFileSelect]);
+  }, [onFileSelect, t]);
 
   return { fileInputRef, handlePick, handleFileChange };
 };

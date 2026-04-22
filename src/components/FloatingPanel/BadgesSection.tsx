@@ -18,7 +18,7 @@ const BadgesSection: React.FC<BadgesSectionProps> = ({ formData, onChange, onAva
   const { fileInputRef, handlePick, handleFileChange } = useFileUploader(onAvatarChange);
 
   return (
-    <FormSection title={t.authorSettings || "Профіль"} icon={<Icons.Verified size={18} className="text-slate-400" />}>
+    <FormSection title={t('authorSettings')} icon={<Icons.Verified size={18} className="text-slate-400" />}>
       <div className="flex gap-6 items-center">
         <div className="shrink-0">
           <div 
@@ -36,17 +36,17 @@ const BadgesSection: React.FC<BadgesSectionProps> = ({ formData, onChange, onAva
         
         <div className="flex-1 flex flex-col gap-2">
           <Toggle 
-            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Verified size={14} className="text-[#20D5EC]" /> {t.verified}</span>}
+            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Verified size={14} className="text-[#20D5EC]" /> {t('verified')}</span>}
             checked={formData.isVerified || false} 
             onChange={(c) => onChange('isVerified', c)} 
           />
           <Toggle 
-            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Info size={14} className="text-[#00a896]" /> {t.authorBadge || 'Автор'}</span>}
+            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Info size={14} className="text-[#00a896]" /> {t('authorBadge')}</span>}
             checked={formData.isAuthor || false} 
             onChange={(c) => onChange('isAuthor', c)} 
           />
           <Toggle 
-            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Heart size={14} className="text-[#FE2C55]" /> {t.likedByCreator}</span>}
+            label={<span className="flex items-center gap-2 text-[12px] font-bold text-slate-700"><Icons.Heart size={14} className="text-[#FE2C55]" /> {t('likedByCreator')}</span>}
             checked={formData.isLikedByCreator || false} 
             onChange={(c) => onChange('isLikedByCreator', c)} 
           />

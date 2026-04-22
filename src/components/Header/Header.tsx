@@ -8,10 +8,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
-  // ДОДАНО: дістаємо generationsLeft з хука
   const { isPro, timeLeft, generationsLeft, openPro } = usePro();
   const { currentLangObj, LANGUAGES, selectLanguage, isLangMenuOpen, toggleLangMenu, t } = useLanguage();
-  const safeLabel = (val: string | undefined, fallback: string) => (typeof val === 'string' ? val : fallback);
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 h-16 sm:h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100/80 transition-all">
@@ -21,11 +19,11 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
         </div>
         <div className="hidden sm:flex flex-col leading-none">
           <h1 className="text-lg font-black text-slate-900 tracking-tight m-0">
-            {safeLabel(t.appTitle, 'TikTok Gen')}
+            {t('appTitle')}
           </h1>
           {isPro && (
             <span className="text-[10px] font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent uppercase tracking-wider mt-0.5">
-              PRO
+              {t('proLabel')}
             </span>
           )}
         </div>
@@ -36,14 +34,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           onClick={() => onViewChange('editor')}
           className={`px-5 py-2 text-[14px] font-bold rounded-xl transition-all ${currentView === 'editor' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
-          {safeLabel(t.generatorNav, 'Генератор')}
+          {t('generatorNav')}
         </button>
         <button 
           onClick={() => onViewChange('library')}
           className={`px-5 py-2 text-[14px] font-bold rounded-xl transition-all flex items-center gap-1.5 ${currentView === 'library' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
           <Icons.Video size={16} />
-          {safeLabel(t.libraryNav, 'Бібліотека')}
+          {t('libraryNav')}
         </button>
       </div>
 
@@ -61,9 +59,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           {isPro ? (
             <>
               <Icons.Crown size={16} className="text-amber-500 hidden sm:block" />
-              <span className="hidden sm:inline">{safeLabel(t.proActive, 'PRO')}</span>
+              <span className="hidden sm:inline">{t('proActive')}</span>
               
-              {/* ДОДАНО: Плашка з лімітом генерацій */}
               {generationsLeft !== undefined && generationsLeft !== null && (
                 <div className="flex items-center gap-1 px-2 py-0.5 bg-violet-100 rounded-md border border-violet-200">
                   <Icons.Sparkles size={10} className="text-violet-500" />
@@ -76,8 +73,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           ) : (
             <>
               <Icons.Crown size={16} />
-              <span className="hidden sm:inline">{safeLabel(t.getPro, 'Get PRO')}</span>
-              <span className="sm:hidden">PRO</span>
+              <span className="hidden sm:inline">{t('getPro')}</span>
+              <span className="sm:hidden">{t('proLabel')}</span>
             </>
           )}
         </button>

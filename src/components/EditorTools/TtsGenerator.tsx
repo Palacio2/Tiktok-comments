@@ -11,14 +11,12 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
   const { isPro, openPro } = usePro();
   const { t } = useLanguage();
   
-  // Використовуємо наші хуки
   const { generateTts, isLoading: isGenerating } = useTtsGenerator(isPro);
-  const { data: voices, isLoading: isVoicesLoading } = useTtsVoices(); // Отримуємо голоси!
+  const { data: voices, isLoading: isVoicesLoading } = useTtsVoices();
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState('');
 
-  // Коли голоси завантажились, автоматично вибираємо перший
   useEffect(() => {
     if (voices && voices.length > 0 && !selectedVoice) {
       setSelectedVoice(voices[0].id);
@@ -27,12 +25,12 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
 
   const handleOpen = () => {
     if (!isPro) {
-      toast.error(t.getProModalTitle || 'Потрібна PRO підписка');
+      toast.error(t('getProModalTitle'));
       openPro();
       return;
     }
     if (!text.trim()) {
-      toast.error(t.aiPromptError || 'Спочатку введіть текст коментаря');
+      toast.error(t('aiPromptError'));
       return;
     }
     setIsOpen(true);
@@ -51,11 +49,11 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
     };
 
     toast.promise(ttsPromise(), {
-      loading: t.ttsLoading || 'Генеруємо голос TikTok...',
-      success: t.ttsSuccess || 'Аудіофайл збережено!',
+      loading: t('ttsLoading'),
+      success: t('ttsSuccess'),
       error: (err: unknown) => {
         if (err instanceof Error) return err.message;
-        return t.ttsError || 'Помилка озвучки';
+        return t('ttsError');
       },
     });
   };
@@ -74,7 +72,7 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
       <Modal isOpen={isOpen} onClose={() => !isGenerating && setIsOpen(false)} className="border border-slate-100 shadow-xl shadow-slate-200/40">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Icons.Mic className="text-[#20D5EC]" /> Озвучка коментаря
+            <Icons.Mic className="text-[#20D5EC]" /> {t('ttsModalTitle')}
           </h3>
           <button 
             onClick={() => setIsOpen(false)} 
@@ -88,7 +86,7 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
         <div className="p-6 flex flex-col gap-6">
           <div>
             <label className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
-              Текст для озвучки:
+              {t('textToVoice')}
             </label>
             <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-[14px] text-slate-700 max-h-24 overflow-y-auto custom-scrollbar font-medium">
               {text}
@@ -97,12 +95,12 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
 
           <div>
             <label className="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
-              Оберіть голос:
+              {t('chooseVoice')}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
               {isVoicesLoading ? (
                 <div className="col-span-2 text-center text-slate-400 py-4 text-sm font-bold">
-                  Завантаження голосів...
+                  {t('loadingVoices')}
                 </div>
               ) : (
                 voices?.map((v) => (
@@ -130,7 +128,7 @@ const TtsGenerator: React.FC<TtsGeneratorProps> = ({ text }) => {
             disabled={!selectedVoice || isVoicesLoading}
             className="h-12 w-full text-[15px] rounded-2xl bg-gradient-to-r from-[#20D5EC] to-[#00f2ea] text-slate-900 border-0 hover:opacity-90 disabled:opacity-50"
           >
-            Згенерувати аудіо
+            {t('generateAudio')}
           </Button>
         </div>
       </Modal>
